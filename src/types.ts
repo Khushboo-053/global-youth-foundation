@@ -131,11 +131,31 @@ export interface UserAccount {
   email: string;
   phone: string;
   joinedDate: string;
-  membershipStatus: 'Member' | 'Volunteer' | 'Applicant' | 'Guest';
+  membershipStatus: 'Member' | 'Volunteer' | 'Applicant' | 'Guest' | 'Admin';
   membershipId?: string;
   avatar?: string;
   city?: string;
   country?: string;
+  role?: string;
+  bloodGroup?: string;
+  emergencyContact?: string;
+  chapter?: string;
+  skills?: string[];
+  bio?: string;
+  volunteerHours?: number;
+}
+
+export interface LegalAidAppointment {
+  id: string;
+  serviceType: string;
+  preferredDate: string;
+  preferredTime: string;
+  location: string;
+  citizenName: string;
+  phone: string;
+  summary: string;
+  status: 'Confirmed' | 'Pending Review' | 'Completed';
+  createdAt: string;
 }
 
 export interface NotificationItem {

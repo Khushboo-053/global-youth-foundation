@@ -112,13 +112,13 @@ export const Navbar: React.FC = () => {
             </Link>
 
             {/* Desktop Navigation Links */}
-            <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
+            <nav className="hidden lg:flex items-center gap-1 xl:gap-3 shrink-0 whitespace-nowrap">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
                   id={`nav-link-${link.name.toLowerCase().replace(/\s+/g, '-')}`}
-                  className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                  className={`px-3 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200 ${
                     isActive(link.path)
                       ? 'text-teal-700 bg-teal-50/80 font-bold'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
@@ -130,11 +130,11 @@ export const Navbar: React.FC = () => {
             </nav>
 
             {/* Desktop Action Buttons */}
-            <div className="hidden lg:flex items-center gap-2.5">
+            <div className="hidden lg:flex items-center gap-2.5 shrink-0 whitespace-nowrap">
               <Link
                 to="/donate"
                 id="nav-donate-btn"
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow-sm hover:shadow transition-all duration-200"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow-xs hover:shadow transition-all duration-200 whitespace-nowrap"
               >
                 <Heart className="w-4 h-4 fill-white/20" />
                 <span>Donate</span>
@@ -143,33 +143,11 @@ export const Navbar: React.FC = () => {
               <Link
                 to="/grievance"
                 id="nav-grievance-btn"
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-900 text-white hover:bg-slate-800 text-sm font-semibold shadow-xs transition-all duration-200"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-900 text-white hover:bg-slate-800 text-sm font-semibold shadow-xs transition-all duration-200 whitespace-nowrap"
               >
                 <ShieldCheck className="w-4 h-4 text-teal-400" />
                 <span>Submit Grievance</span>
               </Link>
-
-              {user ? (
-                <Link
-                  to="/dashboard"
-                  id="nav-dashboard-btn"
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-sm font-medium transition-all"
-                >
-                  <div className="w-6 h-6 rounded-full bg-teal-600 text-white flex items-center justify-center text-xs font-bold">
-                    {user.fullName.charAt(0)}
-                  </div>
-                  <span className="hidden xl:inline max-w-[100px] truncate">{user.fullName}</span>
-                </Link>
-              ) : (
-                <Link
-                  to="/login"
-                  id="nav-login-btn"
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 text-sm font-semibold transition-all duration-200"
-                >
-                  <LogIn className="w-4 h-4 text-slate-500" />
-                  <span>Login</span>
-                </Link>
-              )}
             </div>
 
             {/* Mobile Hamburger Button */}
