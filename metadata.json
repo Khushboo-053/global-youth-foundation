@@ -1,0 +1,6 @@
+{
+  "name": "Global Youth Foundation",
+  "description": "Empowering Youth, Inspiring Change, Building a Better Tomorrow. A youth-led movement committed to peace, justice, rights, and harmony.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

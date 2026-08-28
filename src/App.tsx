@@ -1,0 +1,90 @@
+import React, { useEffect } from 'react';
+import { Routes, Route, useLocation, Link } from 'react-router-dom';
+import { Navbar } from './components/Navbar';
+import { Footer } from './components/Footer';
+import { Chatbot } from './components/Chatbot';
+import { HomePage } from './pages/HomePage';
+import { AboutPage } from './pages/AboutPage';
+import { ProgramsPage } from './pages/ProgramsPage';
+import { EventsPage } from './pages/EventsPage';
+import { ContactPage } from './pages/ContactPage';
+import { DonatePage } from './pages/DonatePage';
+import { MembershipPage } from './pages/MembershipPage';
+import { GrievancePage } from './pages/GrievancePage';
+import { TrackComplaintPage } from './pages/TrackComplaintPage';
+import { LoginPage } from './pages/LoginPage';
+import { SignupPage } from './pages/SignupPage';
+import { DashboardPage } from './pages/DashboardPage';
+import { ArrowLeft, Compass } from 'lucide-react';
+
+// Scroll to top helper on navigation
+const ScrollToTop: React.FC = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+  }, [pathname]);
+  return null;
+};
+
+// 404 Fallback
+const NotFoundPage: React.FC = () => (
+  <div className="min-h-[70vh] bg-slate-50 flex items-center justify-center p-4">
+    <div className="max-w-md w-full bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 text-center space-y-4 shadow-sm">
+      <div className="w-14 h-14 rounded-2xl bg-teal-50 border border-teal-200 text-teal-700 flex items-center justify-center mx-auto">
+        <Compass className="w-7 h-7" />
+      </div>
+      <h1 className="text-3xl font-extrabold text-slate-900">404</h1>
+      <h2 className="text-lg font-bold text-slate-800">Page Not Found</h2>
+      <p className="text-xs text-slate-500">
+        The page you are looking for might have been moved or does not exist.
+      </p>
+      <div className="pt-2">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold shadow-xs hover:bg-slate-800 transition-all"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Return to Homepage</span>
+        </Link>
+      </div>
+    </div>
+  </div>
+);
+
+export function App() {
+  return (
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-teal-500 selection:text-white font-sans antialiased">
+      <ScrollToTop />
+      
+      {/* Global Navigation */}
+      <Navbar />
+
+      {/* Main App Content Viewport */}
+      <main className="flex-1">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/programs" element={<ProgramsPage />} />
+          <Route path="/events" element={<EventsPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/donate" element={<DonatePage />} />
+          <Route path="/membership" element={<MembershipPage />} />
+          <Route path="/grievance" element={<GrievancePage />} />
+          <Route path="/track-complaint" element={<TrackComplaintPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </main>
+
+      {/* Global Footer */}
+      <Footer />
+
+      {/* Floating AI / Helpdesk Assistant */}
+      <Chatbot />
+    </div>
+  );
+}
+
+export default App;
