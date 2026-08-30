@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Routes, Route, useLocation, Link } from 'react-router-dom';
+import { Routes, Route, useLocation, Link, Navigate } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { Chatbot } from './components/Chatbot';
@@ -15,6 +15,9 @@ import { TrackComplaintPage } from './pages/TrackComplaintPage';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
 import { DashboardPage } from './pages/DashboardPage';
+import { AdminDashboardPage } from './pages/AdminDashboardPage';
+import { VolunteerDashboardPage } from './pages/VolunteerDashboardPage';
+import { ProtectedRoute } from './components/ProtectedRoute';
 import { ArrowLeft, Compass } from 'lucide-react';
 
 // Scroll to top helper on navigation
@@ -52,12 +55,18 @@ const NotFoundPage: React.FC = () => (
 );
 
 export function App() {
+  const location = useLocation();
+  const isLoginPage = location.pathname === '/login';
+  const isAdminRoute = location.pathname.startsWith('/admin');
+  const isVolunteerRoute = location.pathname.startsWith('/volunteer');
+  const hidePublicChrome = isLoginPage || isAdminRoute || isVolunteerRoute;
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-teal-500 selection:text-white font-sans antialiased">
       <ScrollToTop />
       
-      {/* Global Navigation */}
-      <Navbar />
+      {/* Global Navigation - hidden on Login page, Admin Desk, and Volunteer Dashboard */}
+      {!hidePublicChrome && <Navbar />}
 
       {/* Main App Content Viewport */}
       <main className="flex-1">
@@ -73,13 +82,55 @@ export function App() {
           <Route path="/track-complaint" element={<TrackComplaintPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
+          
+          {/* Authenticated Dashboards */}
+          <Route 
+            path="/dashboard" 
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin" 
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminDashboardPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/dashboard" 
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminDashboardPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/volunteer" 
+            element={
+              <ProtectedRoute allowedRoles={['volunteer', 'admin']}>
+                <VolunteerDashboardPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/volunteer/dashboard" 
+            element={
+              <ProtectedRoute allowedRoles={['volunteer', 'admin']}>
+                <VolunteerDashboardPage />
+              </ProtectedRoute>
+            } 
+          />
+          
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
 
-      {/* Global Footer */}
-      <Footer />
+      {/* Global Footer - hidden on Login page, Admin Desk, and Volunteer Dashboards */}
+      {!hidePublicChrome && <Footer />}
 
       {/* Floating AI / Helpdesk Assistant */}
       <Chatbot />

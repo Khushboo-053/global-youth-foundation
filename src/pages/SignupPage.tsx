@@ -11,6 +11,7 @@ import {
   ShieldCheck 
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { UserRole } from '../types';
 
 export const SignupPage: React.FC = () => {
   const { signup } = useApp();
@@ -21,13 +22,14 @@ export const SignupPage: React.FC = () => {
     email: '',
     phone: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    role: 'user' as UserRole
   });
 
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.email.trim() || !formData.password.trim()) {
       setError('Please fill in all required fields');
@@ -52,31 +54,35 @@ export const SignupPage: React.FC = () => {
     setIsLoading(true);
     setError('');
 
-    setTimeout(() => {
-      const success = signup(formData.name.trim(), formData.email.trim(), formData.password.trim(), formData.phone.trim());
-      setIsLoading(false);
-      if (success) {
-        navigate('/dashboard');
-      } else {
-        setError('An account with this email already exists.');
-      }
-    }, 600);
+    const res = await signup({
+      fullName: formData.name.trim(),
+      email: formData.email.trim(),
+      phone: formData.phone.trim(),
+      password: formData.password.trim(),
+      role: formData.role
+    });
+
+    setIsLoading(false);
+    if (res.success) {
+      navigate('/', { replace: true });
+    } else {
+      setError(res.error || 'An error occurred while creating your account.');
+    }
   };
 
   return (
     <div id="signup-page" className="min-h-[85vh] bg-slate-50 flex items-center justify-center p-4 py-16">
-      <div className="w-full max-w-md bg-white rounded-3xl border border-slate-200/90 shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="w-full max-w-md bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Top Banner */}
-        <div className="bg-slate-900 text-white p-8 text-center space-y-2 relative overflow-hidden">
-          <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-teal-500/20 blur-2xl" />
-          <div className="w-12 h-12 rounded-2xl bg-teal-500/20 border border-teal-400/40 text-teal-300 flex items-center justify-center mx-auto mb-3">
+        <div className="bg-[#2C3292] text-white p-8 text-center space-y-2 relative overflow-hidden">
+          <div className="w-12 h-12 rounded-2xl bg-white/10 border border-white/20 text-white flex items-center justify-center mx-auto mb-2">
             <UserPlus className="w-6 h-6" />
           </div>
           <h1 className="text-2xl font-extrabold text-white">
             Create Member Account
           </h1>
-          <p className="text-xs text-slate-300">
+          <p className="text-xs text-blue-200">
             Join the Global Youth Foundation digital network
           </p>
         </div>
@@ -91,10 +97,10 @@ export const SignupPage: React.FC = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4 text-xs">
             
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+              <label className="font-bold text-slate-700 uppercase tracking-wider">
                 Full Name <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
@@ -104,14 +110,14 @@ export const SignupPage: React.FC = () => {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="e.g. Yasir Lone"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#2C3292]"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+              <label className="font-bold text-slate-700 uppercase tracking-wider">
                 Email Address <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
@@ -121,14 +127,29 @@ export const SignupPage: React.FC = () => {
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="yasir@example.com"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#2C3292]"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+              <label className="font-bold text-slate-700 uppercase tracking-wider">
+                Account Role
+              </label>
+              <select
+                value={formData.role}
+                onChange={(e) => setFormData({ ...formData, role: e.target.value as UserRole })}
+                className="w-full p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold focus:ring-2 focus:ring-[#2C3292]"
+              >
+                <option value="user">Normal Citizen / Member</option>
+                <option value="volunteer">Youth Volunteer / Field Worker</option>
+                <option value="admin">Foundation Admin</option>
+              </select>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="font-bold text-slate-700 uppercase tracking-wider">
                 Phone Number (Optional)
               </label>
               <div className="relative">
@@ -137,14 +158,14 @@ export const SignupPage: React.FC = () => {
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  placeholder="9103599292"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  placeholder="+91 91035 99292"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#2C3292]"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+              <label className="font-bold text-slate-700 uppercase tracking-wider">
                 Password <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
@@ -154,14 +175,14 @@ export const SignupPage: React.FC = () => {
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   placeholder="Minimum 6 characters"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#2C3292]"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+              <label className="font-bold text-slate-700 uppercase tracking-wider">
                 Confirm Password <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
@@ -170,8 +191,8 @@ export const SignupPage: React.FC = () => {
                   type="password"
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  placeholder="Repeat your password"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  placeholder="Re-enter password"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#2C3292]"
                   required
                 />
               </div>
@@ -179,9 +200,8 @@ export const SignupPage: React.FC = () => {
 
             <button
               type="submit"
-              id="signup-submit-btn"
               disabled={isLoading}
-              className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl bg-teal-600 hover:bg-teal-700 disabled:opacity-50 text-white text-sm font-bold shadow-sm transition-all mt-2"
+              className="w-full inline-flex items-center justify-center gap-2 py-3 px-6 rounded-xl bg-[#2C3292] hover:bg-[#222665] disabled:opacity-50 text-white text-xs font-bold shadow-sm transition-all mt-2"
             >
               {isLoading ? (
                 <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -197,8 +217,8 @@ export const SignupPage: React.FC = () => {
 
           <div className="text-center text-xs text-slate-500 pt-2">
             Already have an account?{' '}
-            <Link to="/login" className="font-bold text-teal-700 hover:text-teal-900">
-              Log in here
+            <Link to="/login" className="font-bold text-[#2C3292] hover:underline">
+              Sign in
             </Link>
           </div>
 

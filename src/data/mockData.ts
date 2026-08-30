@@ -596,3 +596,50 @@ export const INITIAL_COMPLAINTS: GrievanceRecord[] = [
     ]
   }
 ];
+
+export const INITIAL_CONTACT_MESSAGES: any[] = [
+  {
+    id: 'msg-01',
+    name: 'Suhail Bashir',
+    email: 'suhail.bashir@example.com',
+    phone: '+91 94190 44211',
+    subject: 'Youth Leadership Workshop Collaboration',
+    message: 'Greetings GYF Team, We are organizing an inter-college youth conclave next month and would love to collaborate with GYF for a keynote and leadership training session.',
+    isRead: false,
+    status: 'unread',
+    createdAt: '2026-02-28 10:30 AM'
+  },
+  {
+    id: 'msg-02',
+    name: 'Dr. Mehak Qureshi',
+    email: 'mehak.q@kashmiruniv.edu',
+    phone: '+91 98581 12345',
+    subject: 'Legal Literacy Camp Partnership',
+    message: 'Hello, our department of law is interested in partnering with Global Youth Foundation for a free community legal aid and human rights awareness camp in rural Baramulla.',
+    isRead: false,
+    status: 'unread',
+    createdAt: '2026-02-27 03:45 PM'
+  },
+  {
+    id: 'msg-03',
+    name: 'Imran Farooq',
+    email: 'imran.f@gmail.com',
+    phone: '+91 97970 99881',
+    subject: 'Donation Receipt & Tax Certificate Query',
+    message: 'Dear Secretariat, I made a transfer of INR 5,000 yesterday towards the Winter Warmth Relief Drive. Could you please share the official stamped 80G receipt?',
+    isRead: true,
+    status: 'read',
+    createdAt: '2026-02-25 11:15 AM'
+  },
+  {
+    id: 'msg-04',
+    name: 'Fariha Jan',
+    email: 'fariha.youth@outlook.com',
+    phone: '+91 91035 77665',
+    subject: 'Volunteer Chapter in South Kashmir',
+    message: 'Respected Team, We have a group of 20 college students in Anantnag eager to establish a local GYF youth club and environmental drive chapter. How can we get affiliated?',
+    isRead: true,
+    status: 'read',
+    createdAt: '2026-02-24 02:10 PM'
+  }
+];

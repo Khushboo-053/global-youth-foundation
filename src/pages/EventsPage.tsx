@@ -13,16 +13,20 @@ import { EVENTS } from '../data/mockData';
 import { EventItem } from '../types';
 import { EventCard } from '../components/EventCard';
 import { Modal } from '../components/Modal';
+import { useApp } from '../context/AppContext';
 
 export const EventsPage: React.FC = () => {
+  const { events } = useApp();
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
+
+  const allEventsList = (events && events.length > 0) ? events : EVENTS;
 
   const categories = ['All', 'Workshop', 'Campaign', 'Peacebuilding', 'Environment', 'Outreach', 'Leadership'];
 
   const filteredEvents = activeCategory === 'All'
-    ? EVENTS
-    : EVENTS.filter(e => e.category === activeCategory);
+    ? allEventsList
+    : allEventsList.filter(e => e.category === activeCategory);
 
   const upcomingEvents = filteredEvents.filter(e => e.status === 'Upcoming');
   const completedEvents = filteredEvents.filter(e => e.status === 'Completed');

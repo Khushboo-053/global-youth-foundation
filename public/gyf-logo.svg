@@ -1,0 +1,12 @@
+<svg width="400" height="150" viewBox="0 0 400 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Rounded Blue Icon Box -->
+  <rect x="10" y="10" width="130" height="130" rx="30" fill="#2C3292" />
+  
+  <!-- Stylized Clasping Hands / Youth Unity Motif in Pure White -->
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M42 140C42 122 50 106 59 93C51 90 45 84 41 76C36 65 37 52 44 43C50 35 60 30 70 31C76 32 80 34 84 38C86 31 91 27 97 26C104 25 110 29 113 36C114 41 113 48 110 52C115 54 118 59 119 65C121 75 115 85 107 90C110 105 111 123 112 140H90C89 125 88 111 86 101C82 103 77 103 72 103C63 114 57 127 56 140H42ZM64 49C59 49 54 53 52 58C50 63 51 68 54 72C57 76 62 78 68 77C66 73 67 68 69 64C72 59 77 55 82 54C80 51 76 49 71 49C69 49 67 49 64 49ZM86 49C83 49 79 51 77 55C75 58 75 63 77 66C79 70 83 73 88 72C92 72 96 69 97 64C98 59 97 55 94 52C91 50 89 49 86 49Z" fill="#FFFFFF"/>
+
+  <!-- Global Youth Foundation Typography in #2C3292 -->
+  <text x="160" y="60" font-family="'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif" font-weight="900" font-size="34" fill="#2C3292" letter-spacing="-0.5">Global Youth</text>
+  <text x="160" y="98" font-family="'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif" font-weight="900" font-size="34" fill="#2C3292" letter-spacing="-0.5">Foundation</text>
+  <text x="162" y="125" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-weight="700" font-size="13" fill="#2C3292" letter-spacing="0.5">Empowering Youth • Inspiring Change</text>
+</svg>

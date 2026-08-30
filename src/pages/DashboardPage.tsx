@@ -133,7 +133,7 @@ export const DashboardPage: React.FC = () => {
               <span>Instant 1-Click Demo Profiles (Explore Now):</span>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <button
                 type="button"
                 onClick={() => loginAsDemo('member')}
@@ -142,7 +142,7 @@ export const DashboardPage: React.FC = () => {
                 <div className="text-xs font-bold text-slate-900 group-hover:text-teal-800">
                   Tariq Manzoor
                 </div>
-                <div className="text-[11px] text-teal-700 font-medium">Active Member</div>
+                <div className="text-[11px] text-teal-700 font-medium">Registered Member & Citizen</div>
               </button>
 
               <button
@@ -153,18 +153,7 @@ export const DashboardPage: React.FC = () => {
                 <div className="text-xs font-bold text-slate-900 group-hover:text-teal-800">
                   Aisha Begum
                 </div>
-                <div className="text-[11px] text-teal-700 font-medium">Volunteer Lead</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => loginAsDemo('officer')}
-                className="p-3 rounded-xl bg-white border border-slate-200 hover:border-teal-400 hover:bg-teal-50/50 text-left transition-all group"
-              >
-                <div className="text-xs font-bold text-slate-900 group-hover:text-teal-800">
-                  Adv. Farooq Mir
-                </div>
-                <div className="text-[11px] text-teal-700 font-medium">Ombudsman Officer</div>
+                <div className="text-[11px] text-teal-700 font-medium">Youth Member</div>
               </button>
             </div>
           </div>
@@ -279,27 +268,17 @@ export const DashboardPage: React.FC = () => {
                   user.membershipStatus === 'Member' ? 'bg-teal-500 text-slate-950' : 'text-slate-400 hover:text-white'
                 }`}
               >
-                Member
+                Member Profile
               </button>
               <button
                 type="button"
                 onClick={() => loginAsDemo('volunteer')}
-                title="Switch to Volunteer view"
+                title="Switch to Youth Volunteer profile"
                 className={`px-2.5 py-1 rounded-lg transition-colors ${
                   user.membershipStatus === 'Volunteer' ? 'bg-teal-500 text-slate-950' : 'text-slate-400 hover:text-white'
                 }`}
               >
-                Volunteer
-              </button>
-              <button
-                type="button"
-                onClick={() => loginAsDemo('officer')}
-                title="Switch to Staff/Ombudsman view"
-                className={`px-2.5 py-1 rounded-lg transition-colors ${
-                  user.membershipStatus === 'Admin' ? 'bg-teal-500 text-slate-950' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                Ombudsman
+                Youth Profile
               </button>
             </div>
 

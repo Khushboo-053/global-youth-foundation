@@ -16,6 +16,7 @@ import {
 import { PROGRAMS } from '../data/mockData';
 import { Program } from '../types';
 import { Modal } from '../components/Modal';
+import { useApp } from '../context/AppContext';
 
 const PROGRAM_ICONS: Record<string, any> = {
   Zap,
@@ -27,14 +28,18 @@ const PROGRAM_ICONS: Record<string, any> = {
 };
 
 export const ProgramsPage: React.FC = () => {
+  const { programs } = useApp();
   const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
   const [filter, setFilter] = useState<string>('All');
+
+  const allProgramsList = (programs && programs.length > 0) ? programs : PROGRAMS;
+  const activePrograms = allProgramsList.filter(p => !p.status || p.status === 'Active' || (p.status as any) === 'Published');
 
   const categories = ['All', 'Leadership & Skills', 'Advocacy & Justice', 'Peace & Harmony', 'Climate & Ecology', 'Grassroots Upliftment', 'Education & Learning'];
 
   const filteredPrograms = filter === 'All'
-    ? PROGRAMS
-    : PROGRAMS.filter(p => p.category === filter);
+    ? activePrograms
+    : activePrograms.filter(p => p.category === filter);
 
   return (
     <div id="programs-page" className="min-h-screen bg-slate-50 text-slate-800">

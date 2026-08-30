@@ -20,8 +20,7 @@ import { ORG_INFO } from '../data/mockData';
 import { useApp } from '../context/AppContext';
 
 export const ContactPage: React.FC = () => {
-  const { addNotification } = useApp();
-
+  const { submitContactMessage } = useApp();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -71,16 +70,21 @@ export const ContactPage: React.FC = () => {
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
     setIsSubmitting(true);
+    try {
+      await submitContactMessage({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim() || undefined,
+        subject: formData.subject.trim(),
+        message: formData.message.trim()
+      });
 
-    setTimeout(() => {
-      setIsSubmitting(false);
       setIsSuccess(true);
-      addNotification(`Message received from ${formData.name}. Our secretariat will respond shortly.`);
       setFormData({
         name: '',
         email: '',
@@ -88,7 +92,12 @@ export const ContactPage: React.FC = () => {
         subject: '',
         message: ''
       });
-    }, 600);
+      setErrors({});
+    } catch (err) {
+      console.error('Error submitting contact message:', err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

@@ -1,25 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   Menu, 
   X, 
   Heart, 
-  UserPlus, 
   LogIn, 
-  User, 
   ShieldCheck, 
   ChevronRight, 
   Phone, 
-  Mail 
+  Mail
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { ORG_INFO } from '../data/mockData';
+import { GyfLogo } from './GyfLogo';
 
 export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
   const { user } = useApp();
 
   useEffect(() => {
@@ -57,25 +55,29 @@ export const Navbar: React.FC = () => {
   return (
     <>
       {/* Top micro bar for quick official contact */}
-      <div className="bg-slate-900 text-slate-300 text-xs py-1.5 px-4 hidden md:block border-b border-slate-800">
+      <div className="bg-[#1f2360] text-blue-100 text-xs py-1.5 px-4 hidden md:block border-b border-[#2C3292]/30">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-6">
             <span className="flex items-center gap-1.5 hover:text-white transition-colors">
-              <Phone className="w-3.5 h-3.5 text-teal-400" />
+              <Phone className="w-3.5 h-3.5 text-blue-300" />
               <a href={`tel:${ORG_INFO.phone}`}>{ORG_INFO.phone}</a>
             </span>
             <span className="flex items-center gap-1.5 hover:text-white transition-colors">
-              <Mail className="w-3.5 h-3.5 text-teal-400" />
+              <Mail className="w-3.5 h-3.5 text-blue-300" />
               <a href={`mailto:${ORG_INFO.email}`}>{ORG_INFO.email}</a>
             </span>
           </div>
-          <div className="flex items-center gap-4 text-slate-400">
-            <Link to="/grievance" className="hover:text-teal-300 transition-colors flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5" /> Confidential Grievance Desk
+          <div className="flex items-center gap-4 text-blue-200">
+            <Link to="/grievance" className="hover:text-white transition-colors flex items-center gap-1">
+              <ShieldCheck className="w-3.5 h-3.5 text-blue-300" /> Confidential Grievance Desk
             </Link>
             <span>•</span>
-            <Link to="/track-complaint" className="hover:text-teal-300 transition-colors">
+            <Link to="/track-complaint" className="hover:text-white transition-colors">
               Track Docket
+            </Link>
+            <span>•</span>
+            <Link to="/login" className="hover:text-white font-bold text-teal-300 transition-colors">
+              Portal Login
             </Link>
           </div>
         </div>
@@ -86,8 +88,8 @@ export const Navbar: React.FC = () => {
         id="main-navbar"
         className={`sticky top-0 z-50 transition-all duration-300 ${
           isScrolled 
-            ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-200/80 py-3' 
-            : 'bg-white border-b border-slate-100 py-4'
+            ? 'bg-white/98 backdrop-blur-md shadow-sm border-b border-slate-200/80 py-2.5' 
+            : 'bg-white border-b border-slate-100 py-3.5'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -96,19 +98,9 @@ export const Navbar: React.FC = () => {
             <Link 
               to="/" 
               id="nav-brand-logo"
-              className="flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-teal-500 rounded-lg p-1"
+              className="flex items-center group focus:outline-none focus:ring-2 focus:ring-[#2C3292] rounded-lg p-1"
             >
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 via-teal-600 to-teal-500 flex items-center justify-center text-white shadow-md shadow-teal-500/20 group-hover:scale-105 transition-transform">
-                <span className="font-extrabold text-base tracking-tighter">GYF</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="font-bold text-slate-900 text-lg leading-tight tracking-tight group-hover:text-teal-700 transition-colors">
-                  Global Youth Foundation
-                </span>
-                <span className="text-[11px] font-medium text-slate-500 tracking-wider uppercase">
-                  Empowering Youth • Inspiring Change
-                </span>
-              </div>
+              <GyfLogo size="md" />
             </Link>
 
             {/* Desktop Navigation Links */}
@@ -118,10 +110,10 @@ export const Navbar: React.FC = () => {
                   key={link.path}
                   to={link.path}
                   id={`nav-link-${link.name.toLowerCase().replace(/\s+/g, '-')}`}
-                  className={`px-3 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200 ${
+                  className={`px-3.5 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200 ${
                     isActive(link.path)
-                      ? 'text-teal-700 bg-teal-50/80 font-bold'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                      ? 'text-[#2C3292] bg-[#f0f2fc] font-bold shadow-xs'
+                      : 'text-slate-600 hover:text-[#2C3292] hover:bg-slate-50'
                   }`}
                 >
                   {link.name}
@@ -134,7 +126,7 @@ export const Navbar: React.FC = () => {
               <Link
                 to="/donate"
                 id="nav-donate-btn"
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow-xs hover:shadow transition-all duration-200 whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#2C3292] hover:bg-[#222665] text-white text-sm font-semibold shadow-xs hover:shadow transition-all duration-200 whitespace-nowrap"
               >
                 <Heart className="w-4 h-4 fill-white/20" />
                 <span>Donate</span>
@@ -143,11 +135,39 @@ export const Navbar: React.FC = () => {
               <Link
                 to="/grievance"
                 id="nav-grievance-btn"
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-900 text-white hover:bg-slate-800 text-sm font-semibold shadow-xs transition-all duration-200 whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-900 text-white hover:bg-slate-800 text-sm font-semibold shadow-xs transition-all duration-200 whitespace-nowrap"
               >
-                <ShieldCheck className="w-4 h-4 text-teal-400" />
+                <ShieldCheck className="w-4 h-4 text-blue-300" />
                 <span>Submit Grievance</span>
               </Link>
+
+              {user ? (
+                <Link
+                  to={user.role === 'admin' ? '/admin' : user.role === 'volunteer' ? '/volunteer' : '/dashboard'}
+                  id="nav-dashboard-btn"
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-semibold border transition-all duration-200 whitespace-nowrap ${
+                    user.role === 'admin'
+                      ? 'bg-teal-900 text-white hover:bg-teal-950 border-teal-800 shadow-xs'
+                      : user.role === 'volunteer'
+                      ? 'bg-emerald-700 text-white hover:bg-emerald-800 border-emerald-600 shadow-xs'
+                      : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-200'
+                  }`}
+                >
+                  <LogIn className="w-4 h-4" />
+                  <span>
+                    {user.role === 'admin' ? 'Admin Desk' : user.role === 'volunteer' ? 'Volunteer Desk' : 'My Dashboard'}
+                  </span>
+                </Link>
+              ) : (
+                <Link
+                  to="/login"
+                  id="nav-login-btn"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-semibold border border-slate-200 transition-all duration-200 whitespace-nowrap"
+                >
+                  <LogIn className="w-4 h-4 text-[#2C3292]" />
+                  <span>Login</span>
+                </Link>
+              )}
             </div>
 
             {/* Mobile Hamburger Button */}
@@ -155,7 +175,7 @@ export const Navbar: React.FC = () => {
               <Link
                 to="/donate"
                 id="nav-mobile-donate-quick"
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-teal-600 text-white text-xs font-semibold"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#2C3292] text-white text-xs font-semibold"
               >
                 <Heart className="w-3.5 h-3.5" />
                 <span>Donate</span>
@@ -165,7 +185,7 @@ export const Navbar: React.FC = () => {
                 type="button"
                 id="nav-hamburger-btn"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="p-2 rounded-lg text-slate-700 hover:text-[#2C3292] hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-[#2C3292]"
                 aria-label="Toggle navigation menu"
               >
                 {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -184,7 +204,7 @@ export const Navbar: React.FC = () => {
                   to={link.path}
                   className={`flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm font-medium ${
                     isActive(link.path)
-                      ? 'text-teal-800 bg-teal-50 font-semibold'
+                      ? 'text-[#2C3292] bg-[#f0f2fc] font-semibold'
                       : 'text-slate-700 hover:bg-slate-50'
                   }`}
                 >
@@ -202,7 +222,7 @@ export const Navbar: React.FC = () => {
                 to="/grievance"
                 className="flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-50"
               >
-                <ShieldCheck className="w-4 h-4 text-teal-600" />
+                <ShieldCheck className="w-4 h-4 text-[#2C3292]" />
                 <span>Submit Grievance</span>
               </Link>
               <Link
@@ -219,25 +239,35 @@ export const Navbar: React.FC = () => {
                 to="/grievance"
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-slate-900 text-white font-semibold text-sm text-center shadow-xs"
               >
-                <ShieldCheck className="w-4 h-4 text-teal-400" />
+                <ShieldCheck className="w-4 h-4 text-blue-300" />
                 <span>Submit Grievance</span>
               </Link>
               
               {user ? (
                 <Link
-                  to="/dashboard"
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-slate-900 text-white font-semibold text-sm text-center"
+                  to={user.role === 'admin' ? '/admin' : user.role === 'volunteer' ? '/volunteer' : '/dashboard'}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-semibold text-sm text-center ${
+                    user.role === 'admin'
+                      ? 'bg-teal-900 text-white'
+                      : user.role === 'volunteer'
+                      ? 'bg-emerald-700 text-white'
+                      : 'bg-slate-100 text-slate-800'
+                  }`}
                 >
-                  <User className="w-4 h-4" />
-                  <span>My Dashboard ({user.fullName})</span>
+                  <LogIn className="w-4 h-4" />
+                  <span>
+                    {user.role === 'admin' ? 'Admin Desk' : user.role === 'volunteer' ? 'Volunteer Desk' : 'My Dashboard'}
+                  </span>
                 </Link>
               ) : (
                 <Link
                   to="/login"
+                  onClick={() => setMobileMenuOpen(false)}
                   className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-sm text-center"
                 >
-                  <LogIn className="w-4 h-4" />
-                  <span>Login / Register</span>
+                  <LogIn className="w-4 h-4 text-[#2C3292]" />
+                  <span>Login</span>
                 </Link>
               )}
             </div>
