@@ -706,6 +706,38 @@ export const api = {
       return getLocal<UserAccount[]>(STORAGE_KEYS.USERS, SEED_USERS);
     },
 
+    async create(user: UserAccount): Promise<UserAccount> {
+      const users = getLocal<UserAccount[]>(STORAGE_KEYS.USERS, SEED_USERS);
+      const existingIdx = users.findIndex(u => u.id === user.id || (u.email && user.email && u.email.toLowerCase() === user.email.toLowerCase()));
+      if (existingIdx !== -1) {
+        users[existingIdx] = { ...users[existingIdx], ...user };
+        setLocal(STORAGE_KEYS.USERS, users);
+        return users[existingIdx];
+      }
+      users.unshift(user);
+      setLocal(STORAGE_KEYS.USERS, users);
+
+      if (isSupabaseConfigured && supabase) {
+        await supabase.from('profiles').insert({
+          id: user.id,
+          full_name: user.fullName,
+          email: user.email,
+          phone: user.phone,
+          chapter: user.chapter,
+          blood_group: user.bloodGroup,
+          membership_status: user.membershipStatus,
+          membership_id: user.membershipId,
+          role_title: user.roleTitle,
+          role: user.role,
+          created_at: new Date().toISOString(),
+          is_active: user.isActive ?? true,
+          skills: user.skills || [],
+          volunteer_hours: user.volunteerHours || 0
+        });
+      }
+      return user;
+    },
+
     async update(id: string, updates: Partial<UserAccount>): Promise<UserAccount | null> {
       if (isSupabaseConfigured && supabase) {
         const payload: any = {};
@@ -733,8 +765,27 @@ export const api = {
         users[idx] = { ...users[idx], ...updates };
         setLocal(STORAGE_KEYS.USERS, users);
         return users[idx];
+      } else {
+        const newUser: UserAccount = {
+          id,
+          fullName: updates.fullName || 'Citizen User',
+          email: updates.email || '',
+          phone: updates.phone || '',
+          joinedDate: updates.joinedDate || new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+          membershipStatus: updates.membershipStatus || 'Member',
+          membershipId: updates.membershipId,
+          role: updates.role || 'user',
+          roleTitle: updates.roleTitle || 'Registered Member',
+          chapter: updates.chapter || 'Central Kashmir Hub (Srinagar & Bemina)',
+          bloodGroup: updates.bloodGroup || 'O+',
+          skills: updates.skills || [],
+          isActive: updates.isActive ?? true,
+          ...updates
+        };
+        users.unshift(newUser);
+        setLocal(STORAGE_KEYS.USERS, users);
+        return newUser;
       }
-      return null;
     },
 
     async updateRole(id: string, role: UserRole, roleTitle?: string): Promise<boolean> {
@@ -2338,8 +2389,9 @@ export const api = {
         programId,
         programTitle: prog?.title || 'Community Program',
         category: prog?.category || 'Youth Welfare',
-        location: customLocation || prog?.targetAudience || 'Kashmir Division',
+        location: customLocation || 'Kashmir Division',
         assignedRole,
+        progress: 0,
         progressPercentage: 0,
         status: 'Assigned',
         fieldNotes: [],
@@ -2386,6 +2438,7 @@ export const api = {
         volunteerName: vol?.fullName || 'Volunteer',
         eventId,
         eventTitle: evt?.title || 'Public Event',
+        category: evt?.category || 'Community',
         date: evt?.date || 'Upcoming',
         time: evt?.time || '10:00 AM',
         location: evt?.location || 'Srinagar Hub',

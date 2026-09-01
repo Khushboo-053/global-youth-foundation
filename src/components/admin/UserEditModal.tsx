@@ -137,7 +137,7 @@ export const UserEditModal: React.FC<UserEditModalProps> = ({
               onChange={(e) => setFormData({ ...formData, role: e.target.value as UserRole })}
               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-teal-700 focus:outline-hidden"
             >
-              <option value="user">Normal User (Citizen)</option>
+              <option value="user">Normal User (Website User)</option>
               <option value="volunteer">Youth Volunteer</option>
               <option value="admin">Administrator</option>
             </select>

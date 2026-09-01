@@ -32,7 +32,12 @@ import {
   BookOpen,
   HelpCircle,
   Flame,
-  Info
+  Info,
+  Menu,
+  X,
+  LayoutDashboard,
+  Heart,
+  MessageSquare
 } from 'lucide-react';
 import { useApp, DEMO_USERS } from '../context/AppContext';
 import { DigitalIdCard } from '../components/DigitalIdCard';
@@ -40,6 +45,7 @@ import { GrievanceDetailModal } from '../components/GrievanceDetailModal';
 import { LegalAidBookingModal } from '../components/LegalAidBookingModal';
 import { ComplaintStatus, GrievanceRecord } from '../types';
 import { EVENTS, ORG_INFO } from '../data/mockData';
+import { GyfLogo } from '../components/GyfLogo';
 
 type DashboardTab = 
   | 'overview' 
@@ -72,6 +78,7 @@ export const DashboardPage: React.FC = () => {
   // Active Tab state
   const tabParam = (searchParams.get('tab') as DashboardTab) || 'overview';
   const [activeTab, setActiveTab] = useState<DashboardTab>(tabParam);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Filter & Search states for Grievances
   const [grievanceFilter, setGrievanceFilter] = useState<string>('all');
@@ -96,6 +103,7 @@ export const DashboardPage: React.FC = () => {
   const handleTabChange = (tab: DashboardTab) => {
     setActiveTab(tab);
     setSearchParams({ tab });
+    setSidebarOpen(false);
   };
 
   const handleSaveProfile = (e: React.FormEvent) => {
@@ -116,7 +124,7 @@ export const DashboardPage: React.FC = () => {
 
           <div className="space-y-2">
             <span className="text-xs font-extrabold uppercase tracking-widest text-teal-700 bg-teal-50 px-3 py-1 rounded-full border border-teal-200">
-              Global Youth Foundation • Member & Citizen Portal
+              Global Youth Foundation • Member & Normal User Portal
             </span>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
               Sign In to Your GYF Dashboard
@@ -142,7 +150,7 @@ export const DashboardPage: React.FC = () => {
                 <div className="text-xs font-bold text-slate-900 group-hover:text-teal-800">
                   Tariq Manzoor
                 </div>
-                <div className="text-[11px] text-teal-700 font-medium">Registered Member & Citizen</div>
+                <div className="text-[11px] text-teal-700 font-medium">Normal User (Website User)</div>
               </button>
 
               <button
@@ -195,493 +203,749 @@ export const DashboardPage: React.FC = () => {
     return matchesFilter && matchesSearch;
   });
 
-  return (
-    <div id="gyf-dashboard-root" className="min-h-screen bg-slate-50 text-slate-800 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        
-        {/* Top Profile & Header Banner */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-slate-900 text-white border border-slate-800 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative overflow-hidden shadow-xl">
-          <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-teal-500/15 blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-sky-500/10 blur-3xl pointer-events-none" />
+  const mainServicesNav = [
+    {
+      id: 'overview' as DashboardTab,
+      label: 'Overview',
+      icon: LayoutDashboard,
+      description: 'Activity & Highlights'
+    },
+    {
+      id: 'grievances' as DashboardTab,
+      label: 'Grievance Cell',
+      icon: ShieldCheck,
+      count: complaints.length,
+      badge: activeComplaints > 0 ? `${activeComplaints} Active` : undefined,
+      description: 'Track Complaints'
+    },
+    {
+      id: 'identity' as DashboardTab,
+      label: 'Digital ID & Membership',
+      icon: CreditCard,
+      badge: user.membershipStatus || 'Member',
+      description: 'Official Credentials'
+    },
+    {
+      id: 'events' as DashboardTab,
+      label: 'Workshops & Events',
+      icon: Calendar,
+      count: registeredEvents.length > 0 ? registeredEvents.length : undefined,
+      description: 'Conventions & Training'
+    },
+    {
+      id: 'legalaid' as DashboardTab,
+      label: 'Legal Aid Helpdesk',
+      icon: Scale,
+      description: 'Pro-bono Redressal'
+    }
+  ];
 
-          {/* User Info Left */}
-          <div className="flex items-center gap-4 relative z-10">
-            <div className="relative">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-teal-500/20 border-2 border-teal-400/40 text-teal-300 flex items-center justify-center text-2xl font-extrabold shrink-0 shadow-inner overflow-hidden">
+  const accountNav = [
+    {
+      id: 'notifications' as DashboardTab,
+      label: 'Notifications',
+      icon: Bell,
+      unreadCount: unreadNotificationsCount,
+      description: 'Alerts & Updates'
+    },
+    {
+      id: 'settings' as DashboardTab,
+      label: 'Profile Settings',
+      icon: User,
+      description: 'Personal Info'
+    }
+  ];
+
+  return (
+    <div id="gyf-dashboard-root" className="min-h-screen bg-slate-100 flex flex-row font-sans">
+      
+      {/* ========================================================= */}
+      {/* LEFT SIDEBAR NAVIGATION (DESKTOP & MOBILE DRAWER) */}
+      {/* ========================================================= */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 w-64 bg-[#1b205a] text-slate-200 flex flex-col justify-between border-r border-[#2C3292]/30 shadow-2xl transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:h-screen lg:sticky lg:top-0 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        <div className="flex-1 flex flex-col min-h-0 overflow-y-auto">
+          
+          {/* Sidebar Top Header with Brand */}
+          <div className="p-5 border-b border-white/10 flex items-center justify-between gap-3">
+            <Link to="/" className="flex items-center gap-3 group">
+              <GyfLogo size="sm" variant="white" />
+              <div className="leading-tight">
+                <div className="font-extrabold text-xs text-white uppercase tracking-wider flex items-center gap-1.5">
+                  <span>User Portal</span>
+                </div>
+                <div className="text-[10px] text-blue-200 font-semibold">Global Youth Foundation</div>
+              </div>
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => setSidebarOpen(false)}
+              className="lg:hidden p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* User Profile Snapshot Card */}
+          <div className="p-4 mx-3.5 my-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <div className="w-10 h-10 rounded-xl bg-teal-800 text-white flex items-center justify-center font-black text-sm border border-teal-600/60 shrink-0 overflow-hidden shadow-inner">
+                  {user.avatar ? (
+                    <img src={user.avatar} alt={user.fullName} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
+                  ) : (
+                    user.fullName.charAt(0)
+                  )}
+                </div>
+                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-[#1b205a]" />
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <div className="font-bold text-xs text-white truncate flex items-center gap-1">
+                  <span>{user.fullName}</span>
+                </div>
+                <div className="text-[10.5px] text-teal-300 truncate font-medium">
+                  {user.roleTitle || 'Normal User (Website User)'}
+                </div>
+                <div className="text-[9.5px] text-blue-200/60 font-mono truncate">
+                  {user.membershipId || 'GYF-MEM-2025-084'}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between text-[10px] pt-2 border-t border-white/10 text-blue-200/80">
+              <span className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Active Member</span>
+              </span>
+              <span className="font-semibold text-white bg-white/10 px-2 py-0.5 rounded">
+                {user.chapter ? user.chapter.split(' ')[0] : 'Srinagar'}
+              </span>
+            </div>
+          </div>
+
+          {/* Navigation Items Group */}
+          <div className="p-4 space-y-6">
+            
+            {/* Section 1: Main Services */}
+            <div>
+              <span className="text-[10px] font-extrabold text-blue-300/70 uppercase tracking-wider px-3 mb-2 block">
+                Main Services
+              </span>
+              <nav className="space-y-1">
+                {mainServicesNav.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = activeTab === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      id={`user-nav-${item.id}`}
+                      onClick={() => handleTabChange(item.id)}
+                      className={`w-full flex items-center justify-start px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-left cursor-pointer ${
+                        isActive
+                          ? 'bg-teal-800 text-white shadow-sm font-black'
+                          : 'text-blue-100 hover:bg-white/10 hover:text-white'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-teal-200' : 'text-blue-200'}`} />
+                        <span className="truncate">{item.label}</span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
+
+            {/* Section 2: Account & Notifications */}
+            <div>
+              <span className="text-[10px] font-extrabold text-blue-300/70 uppercase tracking-wider px-3 mb-2 block">
+                Communications & Controls
+              </span>
+              <nav className="space-y-1">
+                {accountNav.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = activeTab === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      id={`user-nav-${item.id}`}
+                      onClick={() => handleTabChange(item.id)}
+                      className={`w-full flex items-center justify-start px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-left cursor-pointer ${
+                        isActive
+                          ? 'bg-teal-800 text-white shadow-sm font-black'
+                          : 'text-blue-200/90 hover:bg-white/10 hover:text-white'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-teal-200' : 'text-blue-300'}`} />
+                        <span className="truncate">{item.label}</span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
+
+            {/* Section 3: Quick Shortcuts */}
+            <div>
+              <span className="text-[10px] font-extrabold text-blue-300/70 uppercase tracking-wider px-3 mb-2 block">
+                Quick Shortcuts
+              </span>
+              <div className="space-y-1 text-xs">
+                <Link
+                  to="/grievance"
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-blue-100/80 hover:bg-white/10 hover:text-white transition-colors"
+                >
+                  <div className="flex items-center gap-2">
+                    <Plus className="w-3.5 h-3.5 text-teal-400" />
+                    <span>File New Grievance</span>
+                  </div>
+                  <ChevronRight className="w-3 h-3 text-blue-300/50" />
+                </Link>
+
+                <button
+                  type="button"
+                  onClick={() => setShowLegalAidModal(true)}
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-blue-100/80 hover:bg-white/10 hover:text-white transition-colors text-left"
+                >
+                  <div className="flex items-center gap-2">
+                    <Scale className="w-3.5 h-3.5 text-teal-400" />
+                    <span>Book Legal Aid Help</span>
+                  </div>
+                  <ChevronRight className="w-3 h-3 text-blue-300/50" />
+                </button>
+
+                <Link
+                  to="/donate"
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-blue-100/80 hover:bg-white/10 hover:text-white transition-colors"
+                >
+                  <div className="flex items-center gap-2">
+                    <Heart className="w-3.5 h-3.5 text-rose-400" />
+                    <span>Support Foundation</span>
+                  </div>
+                  <ChevronRight className="w-3 h-3 text-blue-300/50" />
+                </Link>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        {/* Sidebar Footer with Demo Role Switcher & Log Out */}
+        <div className="p-4 border-t border-white/10 bg-black/20 space-y-3">
+          
+          {/* Quick Profile Switcher */}
+          <div className="p-2 rounded-xl bg-black/20 border border-white/5 space-y-1.5">
+            <span className="text-[9.5px] font-extrabold text-blue-300/70 uppercase tracking-wider block px-1">
+              Switch Demo Profile:
+            </span>
+            <div className="grid grid-cols-2 gap-1.5 text-[11px] font-bold">
+              <button
+                type="button"
+                onClick={() => loginAsDemo('member')}
+                className={`py-1 px-2 rounded-lg transition-colors text-center truncate ${
+                  user.membershipStatus === 'Member' ? 'bg-teal-500 text-slate-950 font-black' : 'bg-white/5 text-blue-200 hover:bg-white/10'
+                }`}
+              >
+                Tariq (User)
+              </button>
+              <button
+                type="button"
+                onClick={() => loginAsDemo('volunteer')}
+                className={`py-1 px-2 rounded-lg transition-colors text-center truncate ${
+                  user.membershipStatus === 'Volunteer' ? 'bg-teal-500 text-slate-950 font-black' : 'bg-white/5 text-blue-200 hover:bg-white/10'
+                }`}
+              >
+                Aisha (Youth)
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Link
+              to="/"
+              className="flex-1 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-[11px] font-bold text-center flex items-center justify-center gap-1.5 transition-colors"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-blue-200" />
+              <span>Public Site</span>
+            </Link>
+
+            <button
+              type="button"
+              id="normal-user-logout-btn"
+              onClick={() => {
+                logout();
+                navigate('/');
+              }}
+              className="p-2 rounded-xl bg-rose-500/20 hover:bg-rose-500 text-rose-200 hover:text-white transition-colors"
+              title="Sign Out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      {/* Mobile Drawer Backdrop Overlay */}
+      {sidebarOpen && (
+        <div 
+          onClick={() => setSidebarOpen(false)}
+          className="fixed inset-0 z-30 bg-slate-900/60 backdrop-blur-xs lg:hidden"
+        />
+      )}
+
+      {/* ========================================================= */}
+      {/* MAIN DASHBOARD CONTENT AREA */}
+      {/* ========================================================= */}
+      <main className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+        
+        {/* Sticky Top Header Bar */}
+        <header className="sticky top-0 z-20 bg-white border-b border-slate-200/90 px-4 sm:px-8 py-3 flex items-center justify-between gap-4 shadow-xs">
+          
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
+              title="Toggle Menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-1.5 text-[11px] text-slate-400 font-medium">
+                <span>Normal User Portal</span>
+                <ChevronRight className="w-3 h-3 text-slate-300" />
+                <span className="text-teal-800 font-bold capitalize">
+                  {activeTab === 'overview' && 'Overview'}
+                  {activeTab === 'grievances' && 'Grievance Cell'}
+                  {activeTab === 'identity' && 'Digital ID Card'}
+                  {activeTab === 'events' && 'Workshops & Events'}
+                  {activeTab === 'legalaid' && 'Legal Aid Helpdesk'}
+                  {activeTab === 'notifications' && 'Notifications'}
+                  {activeTab === 'settings' && 'Profile Settings'}
+                </span>
+              </div>
+              <h1 className="text-sm sm:text-base font-extrabold text-slate-900 truncate">
+                {activeTab === 'overview' && `Welcome back, ${user.fullName.split(' ')[0]}`}
+                {activeTab === 'grievances' && 'Confidential Grievance Cell & Case Tracking'}
+                {activeTab === 'identity' && 'Official Digital Membership ID Credential'}
+                {activeTab === 'events' && 'Youth Seminars, Workshops & Civic Drives'}
+                {activeTab === 'legalaid' && 'Free Pro-Bono Legal Aid & Consultation Helpdesk'}
+                {activeTab === 'notifications' && 'Broadcast Alerts & Official Notifications'}
+                {activeTab === 'settings' && 'Personal Profile & Contact Preferences'}
+              </h1>
+            </div>
+          </div>
+
+          {/* Top Bar Right Action Controls */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link
+              to="/grievance"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition-all shadow-xs"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">File Grievance</span>
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => setShowLegalAidModal(true)}
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
+            >
+              <Scale className="w-3.5 h-3.5 text-teal-700" />
+              <span>Legal Help</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleTabChange('notifications')}
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 relative transition-colors"
+              title="Notifications"
+            >
+              <Bell className="w-4 h-4" />
+              {unreadNotificationsCount > 0 && (
+                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white" />
+              )}
+            </button>
+
+            {/* Profile Pill */}
+            <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
+              <div className="w-8 h-8 rounded-xl bg-teal-700 text-white flex items-center justify-center font-bold text-xs shrink-0 overflow-hidden">
                 {user.avatar ? (
                   <img src={user.avatar} alt={user.fullName} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
                 ) : (
                   user.fullName.charAt(0)
                 )}
               </div>
-              <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-slate-900 flex items-center justify-center">
-                <Check className="w-3 h-3 text-white stroke-[3]" />
+              <div className="hidden xl:block text-left leading-tight">
+                <div className="text-xs font-bold text-slate-900 truncate max-w-[110px]">{user.fullName}</div>
+                <div className="text-[10px] text-teal-700 font-semibold">Normal User</div>
               </div>
-            </div>
-
-            <div className="space-y-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[10px] font-extrabold text-teal-400 uppercase tracking-widest bg-teal-950/80 px-2 py-0.5 rounded border border-teal-500/30">
-                  {user.membershipStatus} Portal
-                </span>
-                <span className="font-mono text-[11px] font-bold text-slate-300 bg-slate-800 px-2 py-0.5 rounded border border-slate-700">
-                  {user.membershipId || 'GYF-MEM-2025-084'}
-                </span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
-                {user.fullName}
-              </h1>
-              <p className="text-xs text-slate-300 flex items-center gap-2">
-                <span>{user.email}</span>
-                <span>•</span>
-                <span>{user.chapter || 'Central Kashmir Hub'}</span>
-              </p>
             </div>
           </div>
+        </header>
 
-          {/* Quick Actions Right */}
-          <div className="flex flex-wrap items-center gap-2.5 relative z-10 w-full lg:w-auto">
-            <Link
-              to="/grievance"
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold transition-all shadow-xs"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Submit Grievance</span>
-            </Link>
-
-            <button
-              type="button"
-              onClick={() => setShowLegalAidModal(true)}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 transition-all cursor-pointer"
-            >
-              <Scale className="w-4 h-4 text-teal-400" />
-              <span>Legal Aid Helpdesk</span>
-            </button>
-
-            {/* Demo Switcher Quick Menu */}
-            <div className="flex items-center rounded-xl bg-slate-800 p-1 border border-slate-700 text-[11px] font-bold">
-              <button
-                type="button"
-                onClick={() => loginAsDemo('member')}
-                title="Switch to Member view"
-                className={`px-2.5 py-1 rounded-lg transition-colors ${
-                  user.membershipStatus === 'Member' ? 'bg-teal-500 text-slate-950' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                Member Profile
-              </button>
-              <button
-                type="button"
-                onClick={() => loginAsDemo('volunteer')}
-                title="Switch to Youth Volunteer profile"
-                className={`px-2.5 py-1 rounded-lg transition-colors ${
-                  user.membershipStatus === 'Volunteer' ? 'bg-teal-500 text-slate-950' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                Youth Profile
-              </button>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => {
-                logout();
-                navigate('/');
-              }}
-              title="Sign Out"
-              className="p-2.5 rounded-xl bg-slate-800 hover:bg-rose-900/60 text-slate-300 hover:text-rose-200 border border-slate-700 transition-all cursor-pointer"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* Navigation Tabs Bar */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-slate-200 scrollbar-none">
-          <button
-            type="button"
-            onClick={() => handleTabChange('overview')}
-            className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'overview'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200/80'
-            }`}
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Overview</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleTabChange('grievances')}
-            className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'grievances'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200/80'
-            }`}
-          >
-            <ShieldCheck className="w-3.5 h-3.5 text-teal-600" />
-            <span>Grievance Cell</span>
-            <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-slate-200 text-slate-800 font-extrabold">
-              {complaints.length}
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleTabChange('identity')}
-            className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'identity'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200/80'
-            }`}
-          >
-            <CreditCard className="w-3.5 h-3.5 text-sky-600" />
-            <span>Digital ID & Membership</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleTabChange('events')}
-            className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'events'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200/80'
-            }`}
-          >
-            <Calendar className="w-3.5 h-3.5 text-amber-600" />
-            <span>Workshops & Events</span>
-            {registeredEvents.length > 0 && (
-              <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-teal-100 text-teal-800 font-extrabold">
-                {registeredEvents.length} Enrolled
-              </span>
-            )}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleTabChange('legalaid')}
-            className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'legalaid'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200/80'
-            }`}
-          >
-            <Scale className="w-3.5 h-3.5 text-indigo-600" />
-            <span>Legal Aid Helpdesk</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleTabChange('notifications')}
-            className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'notifications'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200/80'
-            }`}
-          >
-            <Bell className="w-3.5 h-3.5 text-rose-500" />
-            <span>Notifications</span>
-            {unreadNotificationsCount > 0 && (
-              <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-rose-500 text-white font-extrabold">
-                {unreadNotificationsCount}
-              </span>
-            )}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleTabChange('settings')}
-            className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'settings'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200/80'
-            }`}
-          >
-            <Edit3 className="w-3.5 h-3.5" />
-            <span>Profile Settings</span>
-          </button>
-        </div>
-
-        {/* TAB 1: OVERVIEW */}
-        {activeTab === 'overview' && (
-          <div className="space-y-8 animate-fadeIn">
-            
-            {/* 4 Metrics Quick Summary */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                    Active Dockets
-                  </span>
-                  <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center">
-                    <Clock className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="text-3xl font-extrabold text-slate-900">
-                  {activeComplaints}
-                </div>
-                <div className="text-xs text-amber-700 font-semibold flex items-center gap-1">
-                  <span>Under active redressal</span>
-                </div>
-              </div>
-
-              <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                    Resolved Cases
-                  </span>
-                  <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
-                    <CheckCircle2 className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="text-3xl font-extrabold text-slate-900">
-                  {resolvedComplaints}
-                </div>
-                <div className="text-xs text-emerald-700 font-semibold flex items-center gap-1">
-                  <span>Mediation achieved</span>
-                </div>
-              </div>
-
-              <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                    Impact Hours
-                  </span>
-                  <div className="w-8 h-8 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center">
-                    <Award className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="text-3xl font-extrabold text-slate-900">
-                  {user.volunteerHours || 64}h
-                </div>
-                <div className="text-xs text-teal-700 font-semibold">
-                  Community service logged
-                </div>
-              </div>
-
-              <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                    Enrolled Events
-                  </span>
-                  <div className="w-8 h-8 rounded-xl bg-sky-100 text-sky-800 flex items-center justify-center">
-                    <Calendar className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="text-3xl font-extrabold text-slate-900">
-                  {registeredEvents.length}
-                </div>
-                <div className="text-xs text-sky-700 font-semibold">
-                  Upcoming workshops
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Actions & Live Secretariat Desk Status */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Inner Page Main Content */}
+        <div className="p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-8">
+          
+          {/* TAB 1: OVERVIEW */}
+          {activeTab === 'overview' && (
+            <div className="space-y-8 animate-fadeIn">
               
-              {/* Baramulla & Srinagar Helpdesk Card */}
-              <div className="p-6 sm:p-7 rounded-3xl bg-linear-to-br from-slate-900 to-slate-800 text-white border border-slate-800 shadow-sm space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-teal-400 text-xs font-bold uppercase tracking-wider">
-                    <Building className="w-4 h-4" />
-                    <span>Secretariat Help Desk</span>
-                  </div>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                    <span>OPEN TODAY</span>
-                  </span>
-                </div>
+              {/* Welcome Banner Card */}
+              <div className="p-6 sm:p-8 rounded-3xl bg-linear-to-r from-[#1b2252] via-[#242c6c] to-slate-900 text-white border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden shadow-lg">
+                <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-teal-500/15 blur-3xl pointer-events-none" />
+                <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-sky-500/10 blur-3xl pointer-events-none" />
 
-                <div>
-                  <h3 className="text-base font-bold text-white">
-                    Baramulla & Srinagar Grievance Cell
-                  </h3>
-                  <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-                    Offering free citizen document drafting, legal counseling, student scholarship follow-ups, and ombudsman mediation.
-                  </p>
-                </div>
-
-                <div className="space-y-2 text-xs text-slate-300 pt-2 border-t border-slate-800">
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-3.5 h-3.5 text-teal-400 shrink-0" />
-                    <span>Hours: 10:00 AM – 05:00 PM (Mon–Sat)</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Phone className="w-3.5 h-3.5 text-teal-400 shrink-0" />
-                    <span>Hotline: +91 91035 99292</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-3.5 h-3.5 text-teal-400 shrink-0" />
-                    <span>Baramulla Main Town & Srinagar (Bemina)</span>
-                  </div>
-                </div>
-
-                <div className="pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowLegalAidModal(true)}
-                    className="w-full py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold transition-all shadow-xs"
-                  >
-                    Book In-Person / Virtual Consultation
-                  </button>
-                </div>
-              </div>
-
-              {/* Digital Identity Mini Preview */}
-              <div className="p-6 sm:p-7 rounded-3xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                      Digital Credential
-                    </span>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-teal-50 text-teal-800 border border-teal-200">
-                      Active Member Card
-                    </span>
-                  </div>
-                  <h3 className="text-base font-bold text-slate-900">
-                    Official GYF Identity Card
-                  </h3>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    Your digital volunteer ID card with QR-verification code for community service and event entry.
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-slate-900 text-white space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-sm text-teal-300">{user.fullName}</span>
-                    <QrCode className="w-5 h-5 text-slate-400" />
-                  </div>
-                  <div className="text-[11px] text-slate-400 font-mono">
-                    ID: {user.membershipId || 'GYF-MEM-2025-084'}
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => handleTabChange('identity')}
-                  className="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all flex items-center justify-center gap-1.5"
-                >
-                  <CreditCard className="w-3.5 h-3.5" />
-                  <span>View & Print Full Card</span>
-                </button>
-              </div>
-
-              {/* Quick Grievance Submission Card */}
-              <div className="p-6 sm:p-7 rounded-3xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                      Civic Support
-                    </span>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
-                      Confidential
-                    </span>
-                  </div>
-                  <h3 className="text-base font-bold text-slate-900">
-                    Submit Community Grievance
-                  </h3>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    Lodge student scholarships, civic amenities, human rights, or ecological concerns securely with unique docket tracking.
-                  </p>
-                </div>
-
-                <div className="space-y-2 text-xs text-slate-600 bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                    <span>100% Anonymous filing supported</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                    <span>24–48hr initial review by ombudsman</span>
-                  </div>
-                </div>
-
-                <Link
-                  to="/grievance"
-                  className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-xs"
-                >
-                  <Plus className="w-3.5 h-3.5 text-teal-400" />
-                  <span>Open Grievance Form</span>
-                </Link>
-              </div>
-
-            </div>
-
-            {/* Recent Grievances Docket Section */}
-            <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
-                <div>
-                  <h2 className="text-lg font-bold text-slate-900">
-                    Recent Community Grievance Dockets
-                  </h2>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    Click any docket to view real-time progression history or update official notes
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() => handleTabChange('grievances')}
-                    className="inline-flex items-center gap-1 text-xs font-bold text-teal-700 hover:text-teal-900"
-                  >
-                    <span>View All Dockets ({complaints.length})</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                {complaints.slice(0, 3).map((item) => (
-                  <div
-                    key={item.id}
-                    onClick={() => setSelectedComplaint(item)}
-                    className="p-5 rounded-2xl bg-slate-50 hover:bg-teal-50/40 border border-slate-200/80 hover:border-teal-300 transition-all cursor-pointer space-y-3"
-                  >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                      <div className="flex items-center gap-2.5">
-                        <span className="font-mono text-xs font-extrabold text-teal-900 px-2.5 py-1 rounded bg-teal-100/70 border border-teal-200">
-                          {item.id}
-                        </span>
-                        <h3 className="text-sm font-bold text-slate-900 hover:text-teal-900">
-                          {item.subject}
-                        </h3>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${
-                          item.currentStatus === 'Resolved' ? 'bg-emerald-100 text-emerald-800' :
-                          item.currentStatus === 'In Progress' ? 'bg-amber-100 text-amber-800' :
-                          'bg-sky-100 text-sky-800'
-                        }`}>
-                          {item.currentStatus}
-                        </span>
-                        <span className="text-xs font-bold text-teal-700 ml-2 hidden sm:inline">
-                          View Details →
-                        </span>
-                      </div>
+                <div className="flex items-center gap-4 relative z-10">
+                  <div className="relative">
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-teal-500/20 border-2 border-teal-400/40 text-teal-300 flex items-center justify-center text-xl font-extrabold shrink-0 shadow-inner overflow-hidden">
+                      {user.avatar ? (
+                        <img src={user.avatar} alt={user.fullName} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
+                      ) : (
+                        user.fullName.charAt(0)
+                      )}
                     </div>
+                    <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-slate-900 flex items-center justify-center">
+                      <Check className="w-2.5 h-2.5 text-white stroke-[3]" />
+                    </div>
+                  </div>
 
-                    <p className="text-xs text-slate-600 line-clamp-1">
-                      {item.description}
+                  <div className="space-y-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-[10px] font-extrabold text-teal-400 uppercase tracking-widest bg-teal-950/80 px-2 py-0.5 rounded border border-teal-500/30">
+                        {user.membershipStatus || 'Member'} • Normal User
+                      </span>
+                      <span className="font-mono text-[11px] font-bold text-slate-300 bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700">
+                        {user.membershipId || 'GYF-MEM-2025-084'}
+                      </span>
+                    </div>
+                    <h2 className="text-xl sm:text-2xl font-extrabold text-white">
+                      {user.fullName}
+                    </h2>
+                    <p className="text-xs text-blue-200/80 flex items-center gap-2">
+                      <span>{user.email}</span>
+                      <span>•</span>
+                      <span>{user.chapter || 'Central Kashmir Hub'}</span>
                     </p>
+                  </div>
+                </div>
 
-                    <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-400 pt-1">
-                      <span>Category: <strong className="text-slate-700 font-medium">{item.category}</strong></span>
-                      <span>•</span>
-                      <span>Location: <strong className="text-slate-700 font-medium">{item.location}</strong></span>
-                      <span>•</span>
-                      <span>Updated: <strong className="text-slate-700 font-medium">{item.submittedAt}</strong></span>
+                <div className="flex items-center gap-2.5 relative z-10">
+                  <button
+                    type="button"
+                    onClick={() => handleTabChange('identity')}
+                    className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/15 transition-all flex items-center gap-1.5"
+                  >
+                    <CreditCard className="w-3.5 h-3.5 text-teal-300" />
+                    <span>View Digital ID</span>
+                  </button>
+                  <Link
+                    to="/grievance"
+                    className="px-4 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold transition-all shadow-xs flex items-center gap-1.5"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Submit Grievance</span>
+                  </Link>
+                </div>
+              </div>
+              
+              {/* 4 Metrics Quick Summary */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                      Active Dockets
+                    </span>
+                    <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center">
+                      <Clock className="w-4 h-4" />
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
+                  <div className="text-3xl font-extrabold text-slate-900">
+                    {activeComplaints}
+                  </div>
+                  <div className="text-xs text-amber-700 font-semibold flex items-center gap-1">
+                    <span>Under active redressal</span>
+                  </div>
+                </div>
 
-          </div>
-        )}
+                <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                      Resolved Cases
+                    </span>
+                    <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
+                      <CheckCircle2 className="w-4 h-4" />
+                    </div>
+                  </div>
+                  <div className="text-3xl font-extrabold text-slate-900">
+                    {resolvedComplaints}
+                  </div>
+                  <div className="text-xs text-emerald-700 font-semibold flex items-center gap-1">
+                    <span>Mediation achieved</span>
+                  </div>
+                </div>
+
+                <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                      Impact Hours
+                    </span>
+                    <div className="w-8 h-8 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center">
+                      <Award className="w-4 h-4" />
+                    </div>
+                  </div>
+                  <div className="text-3xl font-extrabold text-slate-900">
+                    {user.volunteerHours || 64}h
+                  </div>
+                  <div className="text-xs text-teal-700 font-semibold">
+                    Community service logged
+                  </div>
+                </div>
+
+                <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                      Enrolled Events
+                    </span>
+                    <div className="w-8 h-8 rounded-xl bg-sky-100 text-sky-800 flex items-center justify-center">
+                      <Calendar className="w-4 h-4" />
+                    </div>
+                  </div>
+                  <div className="text-3xl font-extrabold text-slate-900">
+                    {registeredEvents.length}
+                  </div>
+                  <div className="text-xs text-sky-700 font-semibold">
+                    Upcoming workshops
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick Actions & Live Secretariat Desk Status */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                {/* Baramulla & Srinagar Helpdesk Card */}
+                <div className="p-6 sm:p-7 rounded-3xl bg-linear-to-br from-slate-900 to-slate-800 text-white border border-slate-800 shadow-sm space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-teal-400 text-xs font-bold uppercase tracking-wider">
+                      <Building className="w-4 h-4" />
+                      <span>Secretariat Help Desk</span>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                      <span>OPEN TODAY</span>
+                    </span>
+                  </div>
+
+                  <div>
+                    <h3 className="text-base font-bold text-white">
+                      Baramulla & Srinagar Grievance Cell
+                    </h3>
+                    <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                      Offering free citizen document drafting, legal counseling, student scholarship follow-ups, and ombudsman mediation.
+                    </p>
+                  </div>
+
+                  <div className="space-y-2 text-xs text-slate-300 pt-2 border-t border-slate-800">
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-3.5 h-3.5 text-teal-400 shrink-0" />
+                      <span>Hours: 10:00 AM – 05:00 PM (Mon–Sat)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Phone className="w-3.5 h-3.5 text-teal-400 shrink-0" />
+                      <span>Hotline: +91 91035 99292</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-3.5 h-3.5 text-teal-400 shrink-0" />
+                      <span>Baramulla Main Town & Srinagar (Bemina)</span>
+                    </div>
+                  </div>
+
+                  <div className="pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowLegalAidModal(true)}
+                      className="w-full py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold transition-all shadow-xs"
+                    >
+                      Book In-Person / Virtual Consultation
+                    </button>
+                  </div>
+                </div>
+
+                {/* Digital Identity Mini Preview */}
+                <div className="p-6 sm:p-7 rounded-3xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                        Digital Credential
+                      </span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-teal-50 text-teal-800 border border-teal-200">
+                        Active Member Card
+                      </span>
+                    </div>
+                    <h3 className="text-base font-bold text-slate-900">
+                      Official GYF Identity Card
+                    </h3>
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      Your digital volunteer ID card with QR-verification code for community service and event entry.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-slate-900 text-white space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-sm text-teal-300">{user.fullName}</span>
+                      <QrCode className="w-5 h-5 text-slate-400" />
+                    </div>
+                    <div className="text-[11px] text-slate-400 font-mono">
+                      ID: {user.membershipId || 'GYF-MEM-2025-084'}
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleTabChange('identity')}
+                    className="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all flex items-center justify-center gap-1.5"
+                  >
+                    <CreditCard className="w-3.5 h-3.5" />
+                    <span>View & Print Full Card</span>
+                  </button>
+                </div>
+
+                {/* Quick Grievance Submission Card */}
+                <div className="p-6 sm:p-7 rounded-3xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                        Civic Support
+                      </span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                        Confidential
+                      </span>
+                    </div>
+                    <h3 className="text-base font-bold text-slate-900">
+                      Submit Community Grievance
+                    </h3>
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      Lodge student scholarships, civic amenities, human rights, or ecological concerns securely with unique docket tracking.
+                    </p>
+                  </div>
+
+                  <div className="space-y-2 text-xs text-slate-600 bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 shrink-0" />
+                      <span>100% Anonymous filing supported</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 shrink-0" />
+                      <span>24–48hr initial review by ombudsman</span>
+                    </div>
+                  </div>
+
+                  <Link
+                    to="/grievance"
+                    className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-xs"
+                  >
+                    <Plus className="w-3.5 h-3.5 text-teal-400" />
+                    <span>Open Grievance Form</span>
+                  </Link>
+                </div>
+
+              </div>
+
+              {/* Recent Grievances Docket Section */}
+              <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                  <div>
+                    <h2 className="text-lg font-bold text-slate-900">
+                      Recent Community Grievance Dockets
+                    </h2>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Click any docket to view real-time progression history or update official notes
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => handleTabChange('grievances')}
+                      className="inline-flex items-center gap-1 text-xs font-bold text-teal-700 hover:text-teal-900"
+                    >
+                      <span>View All Dockets ({complaints.length})</span>
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  {complaints.slice(0, 3).map((item) => (
+                    <div
+                      key={item.id}
+                      onClick={() => setSelectedComplaint(item)}
+                      className="p-5 rounded-2xl bg-slate-50 hover:bg-teal-50/40 border border-slate-200/80 hover:border-teal-300 transition-all cursor-pointer space-y-3"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div className="flex items-center gap-2.5">
+                          <span className="font-mono text-xs font-extrabold text-teal-900 px-2.5 py-1 rounded bg-teal-100/70 border border-teal-200">
+                            {item.id}
+                          </span>
+                          <h3 className="text-sm font-bold text-slate-900 hover:text-teal-900">
+                            {item.subject}
+                          </h3>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
+                            item.currentStatus === 'Closed'
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : item.currentStatus === 'In Progress'
+                              ? 'bg-amber-100 text-amber-800'
+                              : item.currentStatus === 'Assigned'
+                              ? 'bg-sky-100 text-sky-800'
+                              : 'bg-slate-200 text-slate-700'
+                          }`}>
+                            {item.currentStatus}
+                          </span>
+                          <span className="text-xs text-slate-400">
+                            {item.submittedAt}
+                          </span>
+                        </div>
+                      </div>
+
+                      <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                        {item.description}
+                      </p>
+
+                      <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-200/60 text-xs text-slate-500">
+                        <div className="flex items-center gap-4">
+                          <span className="flex items-center gap-1 font-medium">
+                            <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                            <span>{item.location}</span>
+                          </span>
+                          <span className="bg-slate-200/80 px-2 py-0.5 rounded text-[11px] font-semibold text-slate-700">
+                            {item.category}
+                          </span>
+                        </div>
+
+                        <span className="text-teal-700 font-bold inline-flex items-center gap-1 text-[11px]">
+                          <span>Track Docket Timeline</span>
+                          <ChevronRight className="w-3 h-3" />
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+          )}
 
         {/* TAB 2: GRIEVANCES REDRESSAL CELL */}
         {activeTab === 'grievances' && (
@@ -1414,7 +1678,8 @@ export const DashboardPage: React.FC = () => {
           </div>
         )}
 
-      </div>
+        </div>
+      </main>
 
       {/* Grievance Detail Modal */}
       {selectedComplaint && (

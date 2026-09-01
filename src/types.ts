@@ -48,10 +48,12 @@ export interface VolunteerProgramAssignment {
   beneficiariesTarget?: string;
   assignedRole: string;
   location: string;
-  date: string;
+  date?: string;
   progress: number; // 0 - 100
+  progressPercentage?: number; // 0 - 100
   status: 'Assigned' | 'In Progress' | 'Completed';
-  activityNotes: { id: string; note: string; timestamp: string; addedBy: string }[];
+  activityNotes?: { id: string; note: string; timestamp: string; addedBy: string }[];
+  fieldNotes?: string[];
   assignedAt: string;
   updatedAt?: string;
 }
@@ -62,7 +64,7 @@ export interface VolunteerEventAssignment {
   volunteerId: string;
   volunteerName?: string;
   eventTitle: string;
-  category: string;
+  category?: string;
   image?: string;
   description?: string;
   date: string;
@@ -71,7 +73,7 @@ export interface VolunteerEventAssignment {
   assignedRole: string;
   status: 'Assigned' | 'In Progress' | 'Completed';
   isCompleted: boolean;
-  notes: { id: string; note: string; timestamp: string; addedBy: string }[];
+  notes?: any[];
   assignedAt: string;
   updatedAt?: string;
 }
@@ -248,6 +250,9 @@ export interface GrievanceRecord {
   description: string;
   location: string;
   isAnonymous: boolean;
+  fullName?: string;
+  date?: string;
+  remarks?: string;
   complainantEmail?: string;
   complainantPhone?: string;
   attachmentName?: string;
@@ -257,6 +262,7 @@ export interface GrievanceRecord {
   timeline: ComplaintTimelineEvent[];
   assignedDepartment?: string;
   assignedVolunteerId?: string;
+  assignedToVolunteerId?: string;
   assignedVolunteerName?: string;
   priority: 'Low' | 'Medium' | 'High' | 'Urgent';
 }

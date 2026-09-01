@@ -32,7 +32,7 @@ export const DigitalIdCard: React.FC<DigitalIdCardProps> = ({ user }) => {
         {/* Card Header */}
         <div className="flex items-start justify-between gap-3 pb-4 border-b border-white/15">
           <div className="flex items-center gap-3">
-            <GyfLogo size="sm" variant="white" showText={false} />
+            <GyfLogo size="sm" variant="white" />
             <div>
               <span className="text-[10px] uppercase font-bold tracking-widest text-blue-200 block">
                 Official Credential

@@ -8,9 +8,15 @@ import {
   ShieldCheck, 
   AlertCircle,
   UserCheck,
-  User
+  User,
+  CheckCircle2,
+  XCircle,
+  Info,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { GyfLogo } from '../components/GyfLogo';
 
 export const LoginPage: React.FC = () => {
   const { user, login, loginAsDemo } = useApp();
@@ -20,6 +26,8 @@ export const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('Admin@GYF2026!');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showRoleInfo, setShowRoleInfo] = useState(false);
+  const [activeRoleInfoTab, setActiveRoleInfoTab] = useState<'user' | 'volunteer' | 'admin'>('user');
 
   const handleAfterLogin = (loggedInUser?: any) => {
     const targetUser = loggedInUser || user;
@@ -53,7 +61,7 @@ export const LoginPage: React.FC = () => {
   };
 
   const handleQuickDemo = (role: 'admin' | 'volunteer' | 'user') => {
-    const demoUser = loginAsDemo(role);
+    loginAsDemo(role);
     if (role === 'admin') {
       setEmail('admin@gyf.org');
       setPassword('Admin@GYF2026!');
@@ -71,7 +79,7 @@ export const LoginPage: React.FC = () => {
 
   return (
     <div id="login-page" className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-4 py-8 font-sans">
-      <div className="w-full max-w-[480px] mb-4 flex items-center justify-between">
+      <div className="w-full max-w-[500px] mb-4 flex items-center justify-between">
         <Link 
           to="/" 
           className="inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-900 transition-colors bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-xs"
@@ -84,20 +92,20 @@ export const LoginPage: React.FC = () => {
         </span>
       </div>
 
-      <div className="w-full max-w-[480px] bg-white rounded-[28px] border border-slate-100 shadow-[0_12px_45px_rgba(0,0,0,0.07)] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="w-full max-w-[500px] bg-white rounded-[28px] border border-slate-100 shadow-[0_12px_45px_rgba(0,0,0,0.07)] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Top Dark Navy Header Section */}
-        <div className="bg-[#272d8a] text-white pt-9 pb-8 px-8 text-center space-y-2.5 relative overflow-hidden">
-          <div className="w-13 h-13 rounded-2xl bg-white/10 border border-white/20 text-white flex items-center justify-center mx-auto mb-2 shadow-inner backdrop-blur-xs">
-            <Lock className="w-6 h-6 stroke-[2.2]" />
+        <div className="bg-[#272d8a] text-white pt-9 pb-8 px-8 text-center space-y-3 relative overflow-hidden">
+          <div className="flex justify-center mb-1">
+            <GyfLogo size="md" variant="white" />
           </div>
           
-          <h1 className="text-2xl sm:text-[28px] font-extrabold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-[26px] font-extrabold text-white tracking-tight">
             GYF Secure Portal Login
           </h1>
           
           <p className="text-xs text-blue-100/90 font-medium">
-            Role-based authentication for Admins, Volunteers, and Citizens
+            Role-based authentication for Admins, Volunteers, and Normal Users
           </p>
         </div>
 
@@ -107,7 +115,7 @@ export const LoginPage: React.FC = () => {
           {user && (
             <div className="p-3 rounded-xl bg-teal-50 border border-teal-200/80 text-teal-900 text-xs flex items-center justify-between gap-2">
               <span className="truncate">
-                Logged in as <strong className="font-bold">{user.fullName}</strong> ({user.role})
+                Logged in as <strong className="font-bold">{user.fullName}</strong> ({user.role === 'user' ? 'Normal User' : user.role})
               </span>
               <button
                 type="button"
@@ -128,9 +136,20 @@ export const LoginPage: React.FC = () => {
 
           {/* 1-Click Role Login Demo Buttons */}
           <div className="space-y-2.5">
-            <span className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider block">
-              1-CLICK LOGIN TO DASHBOARD:
-            </span>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider block">
+                1-CLICK LOGIN TO DASHBOARD:
+              </span>
+              <button
+                type="button"
+                onClick={() => setShowRoleInfo(!showRoleInfo)}
+                className="inline-flex items-center gap-1 text-[11px] font-bold text-[#272d8a] hover:text-[#1e2370] transition-colors"
+              >
+                <Info className="w-3.5 h-3.5" />
+                <span>Role Permissions</span>
+                {showRoleInfo ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+              </button>
+            </div>
             
             <div className="grid grid-cols-3 gap-2.5">
               {/* Admin Card */}
@@ -165,10 +184,10 @@ export const LoginPage: React.FC = () => {
                 </div>
               </button>
 
-              {/* Citizen Card */}
+              {/* Normal User (Website User) Card */}
               <button
                 type="button"
-                id="login-quick-citizen-btn"
+                id="login-quick-normal-user-btn"
                 onClick={() => handleQuickDemo('user')}
                 className="p-3 rounded-2xl bg-slate-50/60 hover:bg-slate-100/80 border border-slate-200 hover:border-slate-300 text-xs font-bold flex flex-col items-center gap-1.5 transition-all text-center group cursor-pointer"
               >
@@ -176,12 +195,120 @@ export const LoginPage: React.FC = () => {
                   <User className="w-4 h-4 stroke-[2.2]" />
                 </div>
                 <div className="leading-tight">
-                  <div className="font-extrabold text-slate-800 text-[13px]">Citizen</div>
-                  <div className="text-[11px] text-slate-400 font-medium">/dashboard</div>
+                  <div className="font-extrabold text-slate-800 text-[13px]">Normal User</div>
+                  <div className="text-[11px] text-slate-400 font-medium">Website User</div>
                 </div>
               </button>
             </div>
           </div>
+
+          {/* Interactive Role Permissions Explainer Guide */}
+          {showRoleInfo && (
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs space-y-3 animate-in fade-in duration-150">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                <span className="font-bold text-slate-800 text-[11px] uppercase tracking-wider">
+                  Role Capabilities & Boundaries
+                </span>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setActiveRoleInfoTab('user')}
+                    className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                      activeRoleInfoTab === 'user' ? 'bg-[#272d8a] text-white' : 'bg-slate-200 text-slate-700'
+                    }`}
+                  >
+                    Normal User
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveRoleInfoTab('volunteer')}
+                    className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                      activeRoleInfoTab === 'volunteer' ? 'bg-sky-600 text-white' : 'bg-slate-200 text-slate-700'
+                    }`}
+                  >
+                    Volunteer
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveRoleInfoTab('admin')}
+                    className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                      activeRoleInfoTab === 'admin' ? 'bg-purple-600 text-white' : 'bg-slate-200 text-slate-700'
+                    }`}
+                  >
+                    Admin
+                  </button>
+                </div>
+              </div>
+
+              {activeRoleInfoTab === 'user' && (
+                <div className="space-y-2.5">
+                  <div className="bg-white p-2.5 rounded-xl border border-slate-200">
+                    <p className="font-bold text-slate-800 text-xs">
+                      Normal User — Website User
+                    </p>
+                    <p className="text-[11px] text-slate-600 mt-0.5">
+                      Normal User is basically a visitor who creates an account and uses the services of the foundation.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+                    <div className="bg-emerald-50/80 p-2.5 rounded-xl border border-emerald-200 space-y-1">
+                      <p className="font-bold text-emerald-900 flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        Normal User Can:
+                      </p>
+                      <ul className="text-[10.5px] text-emerald-800 space-y-0.5 pl-4 list-disc">
+                        <li>Register / Login</li>
+                        <li>View Programs & Events</li>
+                        <li>Read Blogs & Articles</li>
+                        <li>Make Donations</li>
+                        <li>Submit Grievances</li>
+                        <li>Use Chatbot</li>
+                        <li>Apply to Become a Member</li>
+                        <li>Update their own profile</li>
+                        <li>View own submissions / status</li>
+                        <li>Receive notifications</li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-rose-50/80 p-2.5 rounded-xl border border-rose-200 space-y-1">
+                      <p className="font-bold text-rose-900 flex items-center gap-1">
+                        <XCircle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
+                        Normal User Cannot:
+                      </p>
+                      <ul className="text-[10.5px] text-rose-800 space-y-0.5 pl-4 list-disc">
+                        <li>Access Admin Dashboard</li>
+                        <li>Access Volunteer Dashboard</li>
+                        <li>Manage Programs/Events/Blogs</li>
+                        <li>Manage other users</li>
+                        <li>View other users&apos; information</li>
+                        <li>Manage donations</li>
+                        <li>Manage grievances by others</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeRoleInfoTab === 'volunteer' && (
+                <div className="space-y-1.5 bg-white p-2.5 rounded-xl border border-slate-200 text-[11px]">
+                  <p className="font-bold text-slate-800">Youth Volunteer / Field Worker</p>
+                  <p className="text-slate-600 text-[10.5px]">
+                    Field operatives tasked with handling community cases, logging service hours, managing assigned programs and events, and filing field activity reports.
+                  </p>
+                </div>
+              )}
+
+              {activeRoleInfoTab === 'admin' && (
+                <div className="space-y-1.5 bg-white p-2.5 rounded-xl border border-slate-200 text-[11px]">
+                  <p className="font-bold text-slate-800">Foundation Administrator</p>
+                  <p className="text-slate-600 text-[10.5px]">
+                    Full administrative governance over users, programs, event schedules, donation ledgers, grievance ombudsman desk, website content, and volunteer dispatch.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Divider */}
           <div className="relative flex py-1 items-center">

@@ -55,7 +55,7 @@ export const UserDetailModal: React.FC<UserDetailModalProps> = ({
                 {user.role.toUpperCase()}
               </span>
             </div>
-            <p className="text-xs text-slate-500 font-semibold">{user.roleTitle || 'Registered Citizen'}</p>
+            <p className="text-xs text-slate-500 font-semibold">{user.roleTitle || (user.role === 'user' ? 'Normal User (Website User)' : user.role)}</p>
             <div className="flex items-center gap-2 mt-1">
               <span className={`inline-flex items-center gap-1 text-[11px] font-bold ${
                 user.isActive ? 'text-emerald-700' : 'text-rose-700'

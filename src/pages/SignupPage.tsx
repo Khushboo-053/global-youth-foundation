@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { UserRole } from '../types';
+import { GyfLogo } from '../components/GyfLogo';
 
 export const SignupPage: React.FC = () => {
   const { signup } = useApp();
@@ -75,9 +76,9 @@ export const SignupPage: React.FC = () => {
       <div className="w-full max-w-md bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Top Banner */}
-        <div className="bg-[#2C3292] text-white p-8 text-center space-y-2 relative overflow-hidden">
-          <div className="w-12 h-12 rounded-2xl bg-white/10 border border-white/20 text-white flex items-center justify-center mx-auto mb-2">
-            <UserPlus className="w-6 h-6" />
+        <div className="bg-[#2C3292] text-white p-8 text-center space-y-3 relative overflow-hidden">
+          <div className="flex justify-center mb-1">
+            <GyfLogo size="md" variant="white" />
           </div>
           <h1 className="text-2xl font-extrabold text-white">
             Create Member Account
@@ -142,7 +143,7 @@ export const SignupPage: React.FC = () => {
                 onChange={(e) => setFormData({ ...formData, role: e.target.value as UserRole })}
                 className="w-full p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold focus:ring-2 focus:ring-[#2C3292]"
               >
-                <option value="user">Normal Citizen / Member</option>
+                <option value="user">Normal User (Website User)</option>
                 <option value="volunteer">Youth Volunteer / Field Worker</option>
                 <option value="admin">Foundation Admin</option>
               </select>

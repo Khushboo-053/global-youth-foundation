@@ -28,12 +28,14 @@ import { Modal } from '../Modal';
 
 interface AdminMembershipsTabProps {
   users: UserAccount[];
+  onCreateUser?: (userData: Omit<UserAccount, 'id'> & { id?: string }) => Promise<UserAccount>;
   onUpdateUser: (userId: string, data: Partial<UserAccount>) => Promise<void>;
   onDeleteUser: (userId: string) => Promise<{ success: boolean; error?: string }>;
 }
 
 export const AdminMembershipsTab: React.FC<AdminMembershipsTabProps> = ({
   users,
+  onCreateUser,
   onUpdateUser,
   onDeleteUser
 }) => {
@@ -163,7 +165,12 @@ export const AdminMembershipsTab: React.FC<AdminMembershipsTabProps> = ({
       skills: ['Community Mobilization', 'Youth Leadership']
     };
 
-    await onUpdateUser(newId, newAccount);
+    if (onCreateUser) {
+      await onCreateUser(newAccount);
+    } else {
+      await onUpdateUser(newId, newAccount);
+    }
+
     setShowAddModal(false);
     setNewFullName('');
     setNewEmail('');

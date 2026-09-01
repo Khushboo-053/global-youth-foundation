@@ -62,6 +62,7 @@ import { ProgramModal } from '../components/admin/ProgramModal';
 import { EventModal } from '../components/admin/EventModal';
 import { ContactDetailModal } from '../components/admin/ContactDetailModal';
 import { UserEditModal } from '../components/admin/UserEditModal';
+import { GyfLogo } from '../components/GyfLogo';
 
 export type AdminTab = 
   | 'overview' 
@@ -113,6 +114,7 @@ export const AdminDashboardPage: React.FC = () => {
     updateComplaintStatus,
     assignGrievance,
     deleteComplaint,
+    createUser,
     updateUser,
     updateUserRole,
     toggleUserStatus,
@@ -292,10 +294,8 @@ export const AdminDashboardPage: React.FC = () => {
           <div className="flex flex-col flex-1 overflow-y-auto">
             {/* Sidebar Brand Header */}
             <div className="p-5 border-b border-white/10 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-teal-800 text-white flex items-center justify-center font-black text-sm border border-teal-600/60 shadow-xs">
-                  GYF
-                </div>
+              <Link to="/" className="flex items-center gap-3 group">
+                <GyfLogo size="sm" variant="white" />
                 <div>
                   <h2 className="text-xs font-black text-white uppercase tracking-wider">
                     Admin Command Desk
@@ -304,7 +304,7 @@ export const AdminDashboardPage: React.FC = () => {
                     Global Youth Foundation
                   </p>
                 </div>
-              </div>
+              </Link>
 
               <button
                 type="button"
@@ -334,7 +334,7 @@ export const AdminDashboardPage: React.FC = () => {
                           setActiveTab(item.id as AdminTab);
                           setSidebarOpen(false);
                         }}
-                        className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                        className={`w-full flex items-center justify-start px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
                           isActive
                             ? 'bg-teal-800 text-white shadow-sm font-black'
                             : 'text-blue-100 hover:bg-white/10 hover:text-white'
@@ -344,18 +344,6 @@ export const AdminDashboardPage: React.FC = () => {
                           <Icon className={`w-4 h-4 ${isActive ? 'text-teal-200' : 'text-blue-200'}`} />
                           <span>{item.label}</span>
                         </div>
-
-                        {item.unreadCount !== undefined && item.unreadCount > 0 ? (
-                          <span className="px-2 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black">
-                            {item.unreadCount}
-                          </span>
-                        ) : item.count !== undefined ? (
-                          <span className={`text-[10px] px-2 py-0.5 rounded-md ${
-                            isActive ? 'bg-teal-900 text-teal-100' : 'bg-white/10 text-blue-200'
-                          }`}>
-                            {item.count}
-                          </span>
-                        ) : null}
                       </button>
                     );
                   })}
@@ -380,7 +368,7 @@ export const AdminDashboardPage: React.FC = () => {
                           setActiveTab(item.id as AdminTab);
                           setSidebarOpen(false);
                         }}
-                        className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                        className={`w-full flex items-center justify-start px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
                           isActive
                             ? 'bg-teal-800 text-white shadow-sm font-black'
                             : 'text-blue-200/90 hover:bg-white/10 hover:text-white'
@@ -390,18 +378,6 @@ export const AdminDashboardPage: React.FC = () => {
                           <Icon className={`w-4 h-4 ${isActive ? 'text-teal-200' : 'text-blue-300'}`} />
                           <span className="truncate">{item.label}</span>
                         </div>
-
-                        {item.unreadCount !== undefined && item.unreadCount > 0 ? (
-                          <span className="px-2 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black">
-                            {item.unreadCount}
-                          </span>
-                        ) : item.count !== undefined ? (
-                          <span className={`text-[10px] px-2 py-0.5 rounded-md ${
-                            isActive ? 'bg-teal-900 text-teal-100' : 'bg-white/10 text-blue-300'
-                          }`}>
-                            {item.count}
-                          </span>
-                        ) : null}
                       </button>
                     );
                   })}
@@ -621,16 +597,9 @@ export const AdminDashboardPage: React.FC = () => {
             {activeTab === 'programs' && (
               <AdminProgramsTab
                 programs={programs}
-                onOpenAddModal={() => {
-                  setEditingProgram(null);
-                  setShowProgramModal(true);
-                }}
-                onOpenEditModal={(prog) => {
-                  setEditingProgram(prog);
-                  setShowProgramModal(true);
-                }}
-                onDeleteProgram={handleDeleteProgram}
-                onTogglePublish={handleToggleProgramPublish}
+                onCreateProgram={createProgram}
+                onUpdateProgram={updateProgram}
+                onDeleteProgram={deleteProgram}
               />
             )}
 
@@ -638,16 +607,9 @@ export const AdminDashboardPage: React.FC = () => {
             {activeTab === 'events' && (
               <AdminEventsTab
                 events={events}
-                onOpenAddModal={() => {
-                  setEditingEvent(null);
-                  setShowEventModal(true);
-                }}
-                onOpenEditModal={(ev) => {
-                  setEditingEvent(ev);
-                  setShowEventModal(true);
-                }}
-                onDeleteEvent={handleDeleteEvent}
-                onTogglePublish={handleToggleEventPublish}
+                onCreateEvent={createEvent}
+                onUpdateEvent={updateEvent}
+                onDeleteEvent={deleteEvent}
               />
             )}
 
@@ -666,6 +628,7 @@ export const AdminDashboardPage: React.FC = () => {
             {activeTab === 'membership' && (
               <AdminMembershipsTab
                 users={users}
+                onCreateUser={createUser}
                 onUpdateUser={updateUser}
                 onDeleteUser={deleteUser}
               />

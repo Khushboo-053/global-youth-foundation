@@ -104,7 +104,7 @@ export const AdminUsersTab: React.FC<AdminUsersTabProps> = ({
             Users Management Roster
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
-            Manage system administrators, youth volunteers, and registered citizen profiles.
+            Manage system administrators, youth volunteers, and registered normal user profiles.
           </p>
         </div>
 
@@ -118,6 +118,9 @@ export const AdminUsersTab: React.FC<AdminUsersTabProps> = ({
           </span>
           <span className="px-3 py-1.5 rounded-xl bg-teal-50 border border-teal-200 text-xs font-bold text-teal-800">
             Volunteers: <strong className="text-teal-900">{users.filter(u => u.role === 'volunteer').length}</strong>
+          </span>
+          <span className="px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs font-bold text-slate-800">
+            Normal Users: <strong className="text-slate-900">{users.filter(u => u.role === 'user').length}</strong>
           </span>
         </div>
       </div>
@@ -184,7 +187,7 @@ export const AdminUsersTab: React.FC<AdminUsersTabProps> = ({
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
-              {r === 'all' ? 'All Roles' : r === 'user' ? 'Citizens' : r}
+              {r === 'all' ? 'All Roles' : r === 'user' ? 'Normal Users' : r}
             </button>
           ))}
         </div>
@@ -301,7 +304,7 @@ export const AdminUsersTab: React.FC<AdminUsersTabProps> = ({
                                 : 'bg-slate-50 text-slate-700 border-slate-200'
                             }`}
                           >
-                            <option value="user">Citizen</option>
+                            <option value="user">Normal User</option>
                             <option value="volunteer">Volunteer</option>
                             <option value="admin">Admin</option>
                           </select>

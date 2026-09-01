@@ -92,7 +92,7 @@ export const BroadcastNotificationModal: React.FC<BroadcastNotificationModalProp
               <option value="all">All Users & Stakeholders</option>
               <option value="volunteer">Volunteers Only</option>
               <option value="admin">Administrators Only</option>
-              <option value="user">Registered Citizens Only</option>
+              <option value="user">Registered Normal Users Only</option>
             </select>
           </div>
 

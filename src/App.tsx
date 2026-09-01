@@ -57,15 +57,17 @@ const NotFoundPage: React.FC = () => (
 export function App() {
   const location = useLocation();
   const isLoginPage = location.pathname === '/login';
+  const isSignupPage = location.pathname === '/signup';
+  const isDashboardRoute = location.pathname.startsWith('/dashboard');
   const isAdminRoute = location.pathname.startsWith('/admin');
   const isVolunteerRoute = location.pathname.startsWith('/volunteer');
-  const hidePublicChrome = isLoginPage || isAdminRoute || isVolunteerRoute;
+  const hidePublicChrome = isLoginPage || isSignupPage || isDashboardRoute || isAdminRoute || isVolunteerRoute;
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-teal-500 selection:text-white font-sans antialiased">
       <ScrollToTop />
       
-      {/* Global Navigation - hidden on Login page, Admin Desk, and Volunteer Dashboard */}
+      {/* Global Navigation - hidden on Auth pages and Portals (Normal User, Volunteer, Admin) */}
       {!hidePublicChrome && <Navbar />}
 
       {/* Main App Content Viewport */}

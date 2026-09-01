@@ -72,6 +72,7 @@ interface AppContextType {
   updateProfile: (data: Partial<UserAccount>) => Promise<void>;
   
   // Users & Volunteers Management
+  createUser: (userData: Omit<UserAccount, 'id'> & { id?: string }) => Promise<UserAccount>;
   updateUser: (userId: string, data: Partial<UserAccount>) => Promise<void>;
   updateUserRole: (userId: string, role: UserRole, roleTitle?: string) => Promise<{ success: boolean; error?: string }>;
   toggleUserStatus: (userId: string) => Promise<void>;
@@ -237,6 +238,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [volunteerEvents, setVolunteerEvents] = useState<VolunteerEventAssignment[]>([]);
   const [volunteerTasks, setVolunteerTasks] = useState<VolunteerTaskItem[]>([]);
   const [volunteerNotifications, setVolunteerNotifications] = useState<VolunteerNotificationItem[]>([]);
+  const [volunteerActivityReports, setVolunteerActivityReports] = useState<VolunteerActivityReport[]>([]);
 
   const [notifications, setNotifications] = useState<NotificationItem[]>(() => {
     try {
@@ -520,6 +522,37 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // --------------------------------------------------------------------------
   // USER & VOLUNTEER MANAGEMENT
   // --------------------------------------------------------------------------
+  const createUser = async (userData: Omit<UserAccount, 'id'> & { id?: string }): Promise<UserAccount> => {
+    const newId = userData.id || `usr_${Date.now()}`;
+    const generatedMemId = userData.membershipId || (userData.membershipStatus === 'Member' ? `GYF-2026-${Math.floor(1000 + Math.random() * 9000)}` : undefined);
+    
+    const newAccount: UserAccount = {
+      id: newId,
+      fullName: userData.fullName,
+      email: userData.email,
+      phone: userData.phone || '',
+      joinedDate: userData.joinedDate || new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+      membershipStatus: userData.membershipStatus || 'Member',
+      membershipId: generatedMemId,
+      role: userData.role || (userData.membershipStatus === 'Volunteer' ? 'volunteer' : 'user'),
+      roleTitle: userData.roleTitle || (userData.membershipStatus === 'Volunteer' ? 'Youth Volunteer' : 'Registered Member & Youth Advocate'),
+      chapter: userData.chapter || 'Central Kashmir Hub (Srinagar & Bemina)',
+      bloodGroup: userData.bloodGroup || 'O+',
+      skills: userData.skills || ['Community Mobilization', 'Youth Leadership'],
+      bio: userData.bio || '',
+      city: userData.city || 'Srinagar',
+      country: userData.country || 'India',
+      isActive: userData.isActive ?? true,
+      volunteerHours: userData.volunteerHours || 0,
+      ...userData
+    };
+
+    const created = await api.users.create(newAccount);
+    await api.activity.log(user?.id || 'admin', user?.fullName || 'Admin', 'Enrolled Member / Created User Account', 'User Management', `Added user ${userData.fullName} (${userData.email})`);
+    await refreshAllData();
+    return created;
+  };
+
   const updateUser = async (userId: string, data: Partial<UserAccount>) => {
     await api.users.update(userId, data);
     await api.activity.log(user?.id || 'admin', user?.fullName || 'Admin', 'Updated User Info', 'User Management', `Updated profile data for user ${userId}`);
@@ -814,10 +847,30 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const record = await api.memberships.create(data);
     await api.activity.log('applicant', data.fullName, 'Submitted Membership Application', 'Membership', `Application ID: ${record.applicationId}`);
 
+    // Also register an applicant record in users so they appear immediately in the admin roster
+    const newUserId = `usr_${Date.now()}`;
+    await api.users.create({
+      id: newUserId,
+      fullName: data.fullName,
+      email: data.email,
+      phone: data.phone,
+      joinedDate: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+      membershipStatus: 'Applicant',
+      membershipId: record.applicationId,
+      city: data.city,
+      country: data.country || 'India',
+      role: 'user',
+      roleTitle: 'Membership Applicant',
+      chapter: data.city ? `${data.city} Chapter` : 'Central Kashmir Hub (Srinagar & Bemina)',
+      skills: [data.areaOfInterest],
+      bio: data.motivation,
+      isActive: true
+    });
+
     const newNotif: NotificationItem = {
       id: `notif-${Date.now()}`,
       title: 'Membership Application Submitted',
-      message: `Application ${record.applicationId} is queued for credentials verification.`,
+      message: `Application ${record.applicationId} by ${data.fullName} is queued for credentials verification.`,
       date: 'Just now',
       isRead: false,
       type: 'membership'
@@ -829,6 +882,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const updateMembershipStatus = async (applicationId: string, status: 'Pending Review' | 'Approved' | 'Active Member' | 'Rejected') => {
     await api.memberships.updateStatus(applicationId, status);
+    
+    // Sync matching user profile in users
+    const allUsers = await api.users.getAll();
+    const matchingUser = allUsers.find(u => u.membershipId === applicationId || (u.email && u.membershipStatus === 'Applicant'));
+    if (matchingUser) {
+      if (status === 'Approved' || status === 'Active Member') {
+        const memId = matchingUser.membershipId || `GYF-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+        await api.users.update(matchingUser.id, {
+          membershipStatus: 'Member',
+          membershipId: memId,
+          isActive: true,
+          roleTitle: 'Registered Member & Youth Advocate'
+        });
+      } else if (status === 'Rejected') {
+        await api.users.update(matchingUser.id, {
+          membershipStatus: 'Guest',
+          isActive: false
+        });
+      }
+    }
+
     await api.activity.log(user?.id || 'admin', user?.fullName || 'Admin', 'Updated Membership Status', 'Membership', `Application ${applicationId} marked as ${status}`);
     await refreshAllData();
   };
@@ -922,19 +996,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setVolunteerEvents([]);
       setVolunteerTasks([]);
       setVolunteerNotifications([]);
+      setVolunteerActivityReports([]);
       return;
     }
     try {
-      const [progs, evts, tsks, notifs] = await Promise.all([
+      const [progs, evts, tsks, notifs, reports] = await Promise.all([
         api.volunteerData.getPrograms(user.id),
         api.volunteerData.getEvents(user.id),
         api.volunteerData.getTasks(user.id),
-        api.volunteerData.getNotifications(user.id)
+        api.volunteerData.getNotifications(user.id),
+        api.volunteerData.getActivityReports(user.id)
       ]);
       setVolunteerPrograms(progs);
       setVolunteerEvents(evts);
       setVolunteerTasks(tsks);
       setVolunteerNotifications(notifs);
+      setVolunteerActivityReports(reports);
     } catch (err) {
       console.error('Error fetching volunteer data:', err);
     }
@@ -1011,6 +1088,33 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setUsers(prev => prev.map(u => u.id === user.id ? { ...u, volunteerHours: newTotal } : u));
   };
 
+  const submitVolunteerActivityReport = async (reportData: Omit<VolunteerActivityReport, 'id' | 'createdAt' | 'status'>) => {
+    const newReport = await api.volunteerData.submitActivityReport(reportData);
+    setVolunteerActivityReports(prev => [newReport, ...prev]);
+    return newReport;
+  };
+
+  const reviewVolunteerActivityReport = async (reportId: string, feedback: string) => {
+    const updated = await api.volunteerData.reviewActivityReport(reportId, feedback);
+    setVolunteerActivityReports(prev => prev.map(r => r.id === reportId ? updated : r));
+    return updated;
+  };
+
+  const assignProgramToVolunteer = async (programId: string, volunteerId: string, assignedRole: string, location?: string) => {
+    const newAssign = await api.volunteerData.assignProgram(programId, volunteerId, assignedRole, location);
+    return newAssign;
+  };
+
+  const assignEventToVolunteer = async (eventId: string, volunteerId: string, assignedRole: string) => {
+    const newAssign = await api.volunteerData.assignEvent(eventId, volunteerId, assignedRole);
+    return newAssign;
+  };
+
+  const assignTaskToVolunteer = async (task: Omit<VolunteerTaskItem, 'id' | 'createdAt' | 'status' | 'progressNotes'>) => {
+    const newTask = await api.volunteerData.assignTask(task);
+    return newTask;
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -1035,6 +1139,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         volunteerEvents,
         volunteerTasks,
         volunteerNotifications,
+        volunteerActivityReports,
         updateVolunteerProgramProgress,
         updateVolunteerEventStatus,
         updateVolunteerGrievance,
@@ -1043,12 +1148,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         markAllVolunteerNotificationsRead,
         updateVolunteerProfile,
         logVolunteerSelfHours,
+        submitVolunteerActivityReport,
+        reviewVolunteerActivityReport,
+        assignProgramToVolunteer,
+        assignEventToVolunteer,
+        assignTaskToVolunteer,
         refreshVolunteerData,
         login,
         loginAsDemo,
         signup,
         logout,
         updateProfile,
+        createUser,
         updateUser,
         updateUserRole,
         toggleUserStatus,
