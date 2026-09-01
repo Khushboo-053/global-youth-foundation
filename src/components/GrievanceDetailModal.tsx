@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { ComplaintTimeline } from './ComplaintTimeline';
 import { useApp } from '../context/AppContext';
+import { EvidenceAttachmentCard } from './common/EvidenceAttachmentCard';
 
 interface GrievanceDetailModalProps {
   complaint: GrievanceRecord;
@@ -136,6 +137,21 @@ export const GrievanceDetailModal: React.FC<GrievanceDetailModalProps> = ({ comp
             <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-sm text-slate-700 leading-relaxed">
               {complaint.description}
             </div>
+
+            {complaint.attachmentName && (
+              <div className="pt-2">
+                <EvidenceAttachmentCard
+                  attachmentName={complaint.attachmentName}
+                  attachmentSize={complaint.attachmentSize || '1.4 MB'}
+                  attachmentUrl={complaint.attachmentUrl}
+                  attachmentType={complaint.attachmentType}
+                  docketId={complaint.id}
+                  category={complaint.category}
+                  subject={complaint.subject}
+                  submittedAt={complaint.submittedAt}
+                />
+              </div>
+            )}
           </div>
 
           {/* Complainant Privacy Info */}

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { GrievanceRecord, ComplaintStatus, UserAccount } from '../../types';
 import { Modal } from '../Modal';
+import { EvidenceAttachmentCard } from '../common/EvidenceAttachmentCard';
 
 interface GrievanceOmbudsmanModalProps {
   isOpen: boolean;
@@ -181,9 +182,17 @@ export const GrievanceOmbudsmanModal: React.FC<GrievanceOmbudsmanModalProps> = (
             {grievance.description}
           </p>
           {grievance.attachmentName && (
-            <div className="pt-2 border-t border-slate-100 flex items-center gap-2 text-xs font-semibold text-teal-800">
-              <Paperclip className="w-3.5 h-3.5" />
-              <span>Evidence Attached: {grievance.attachmentName} ({grievance.attachmentSize || '1.4 MB'})</span>
+            <div className="pt-2 border-t border-slate-100">
+              <EvidenceAttachmentCard
+                attachmentName={grievance.attachmentName}
+                attachmentSize={grievance.attachmentSize || '1.4 MB'}
+                attachmentUrl={grievance.attachmentUrl}
+                attachmentType={grievance.attachmentType}
+                docketId={grievance.id}
+                category={grievance.category}
+                subject={grievance.subject}
+                submittedAt={grievance.submittedAt}
+              />
             </div>
           )}
         </div>

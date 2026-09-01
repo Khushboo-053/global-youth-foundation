@@ -27,7 +27,10 @@ export const GrievancePage: React.FC = () => {
     location: '',
     email: user?.email || '',
     phone: user?.phone || '',
-    attachmentName: ''
+    attachmentName: '',
+    attachmentSize: '',
+    attachmentUrl: '',
+    attachmentType: ''
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -47,7 +50,22 @@ export const GrievancePage: React.FC = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setFormData(prev => ({ ...prev, attachmentName: e.target.files![0].name }));
+      const file = e.target.files[0];
+      const sizeStr = file.size > 1024 * 1024 
+        ? `${(file.size / (1024 * 1024)).toFixed(1)} MB` 
+        : `${Math.max(1, Math.round(file.size / 1024))} KB`;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setFormData(prev => ({
+          ...prev,
+          attachmentName: file.name,
+          attachmentSize: sizeStr,
+          attachmentUrl: event.target?.result as string,
+          attachmentType: file.type || 'application/octet-stream'
+        }));
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -73,14 +91,14 @@ export const GrievancePage: React.FC = () => {
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
     setIsSubmitting(true);
 
-    setTimeout(() => {
-      const record = submitGrievance({
+    try {
+      const record = await submitGrievance({
         category: formData.category,
         subject: formData.subject.trim(),
         description: formData.description.trim(),
@@ -88,13 +106,19 @@ export const GrievancePage: React.FC = () => {
         isAnonymous: isAnonymous,
         complainantEmail: isAnonymous ? undefined : formData.email.trim(),
         complainantPhone: isAnonymous ? undefined : formData.phone.trim(),
-        attachmentName: formData.attachmentName || undefined
+        attachmentName: formData.attachmentName || undefined,
+        attachmentSize: formData.attachmentSize || undefined,
+        attachmentUrl: formData.attachmentUrl || undefined,
+        attachmentType: formData.attachmentType || undefined
       });
 
       setIsSubmitting(false);
       setSubmittedComplaint(record);
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 700);
+    } catch (error) {
+      console.error('Error submitting grievance:', error);
+      setIsSubmitting(false);
+    }
   };
 
   const copyComplaintId = () => {

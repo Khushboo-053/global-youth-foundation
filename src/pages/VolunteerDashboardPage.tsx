@@ -45,6 +45,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { GyfLogo } from '../components/GyfLogo';
+import { EvidenceAttachmentCard } from '../components/common/EvidenceAttachmentCard';
 import { 
   VolunteerProgramAssignment, 
   VolunteerEventAssignment, 
@@ -1326,6 +1327,21 @@ export const VolunteerDashboardPage: React.FC = () => {
                           <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
                           <span className="truncate">{grv.location}</span>
                         </p>
+
+                        {grv.attachmentName && (
+                          <div className="pt-2">
+                            <EvidenceAttachmentCard
+                              attachmentName={grv.attachmentName}
+                              attachmentSize={grv.attachmentSize || '1.4 MB'}
+                              attachmentUrl={grv.attachmentUrl}
+                              attachmentType={grv.attachmentType}
+                              docketId={grv.id}
+                              category={grv.category}
+                              subject={grv.subject}
+                              submittedAt={grv.submittedAt}
+                            />
+                          </div>
+                        )}
                       </div>
 
                       {grv.remarks && (
@@ -2092,6 +2108,21 @@ export const VolunteerDashboardPage: React.FC = () => {
                 <p className="text-xs font-black text-slate-900 mt-1">{selectedGrievance.subject}</p>
                 <p className="text-[11px] text-slate-500">{selectedGrievance.location}</p>
               </div>
+
+              {selectedGrievance.attachmentName && (
+                <div className="pt-1">
+                  <EvidenceAttachmentCard
+                    attachmentName={selectedGrievance.attachmentName}
+                    attachmentSize={selectedGrievance.attachmentSize || '1.4 MB'}
+                    attachmentUrl={selectedGrievance.attachmentUrl}
+                    attachmentType={selectedGrievance.attachmentType}
+                    docketId={selectedGrievance.id}
+                    category={selectedGrievance.category}
+                    subject={selectedGrievance.subject}
+                    submittedAt={selectedGrievance.submittedAt}
+                  />
+                </div>
+              )}
 
               <div>
                 <label className="text-[11px] font-semibold text-slate-700 block mb-1">Investigation Status</label>

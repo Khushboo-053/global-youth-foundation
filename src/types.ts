@@ -257,6 +257,8 @@ export interface GrievanceRecord {
   complainantPhone?: string;
   attachmentName?: string;
   attachmentSize?: string;
+  attachmentUrl?: string;
+  attachmentType?: string;
   submittedAt: string;
   currentStatus: ComplaintStatus;
   timeline: ComplaintTimelineEvent[];

@@ -1118,6 +1118,8 @@ export const api = {
       complainantPhone?: string;
       attachmentName?: string;
       attachmentSize?: string;
+      attachmentUrl?: string;
+      attachmentType?: string;
       priority?: 'Low' | 'Medium' | 'High' | 'Urgent';
     }): Promise<GrievanceRecord> {
       const randomSix = Math.floor(100000 + Math.random() * 900000);
@@ -1147,6 +1149,8 @@ export const api = {
         complainantPhone: data.complainantPhone,
         attachmentName: data.attachmentName,
         attachmentSize: data.attachmentSize,
+        attachmentUrl: data.attachmentUrl,
+        attachmentType: data.attachmentType,
         submittedAt,
         currentStatus: 'Submitted',
         priority: data.priority || 'Medium',
@@ -1939,6 +1943,7 @@ export const api = {
       message: string;
       type: 'info' | 'complaint' | 'membership' | 'event';
       actionUrl?: string;
+      audience?: string;
     }): Promise<any> {
       const newNotif = {
         id: `notif-${Date.now()}`,
@@ -1952,6 +1957,27 @@ export const api = {
       const notifs = getLocal<any[]>(STORAGE_KEYS.NOTIFICATIONS, SEED_NOTIFICATIONS);
       notifs.unshift(newNotif);
       setLocal(STORAGE_KEYS.NOTIFICATIONS, notifs);
+
+      // Also dispatch to Volunteer notification center
+      try {
+        const volNotifs = getLocal<VolunteerNotificationItem[]>(STORAGE_KEYS.VOLUNTEER_NOTIFICATIONS, SEED_VOLUNTEER_NOTIFICATIONS);
+        const newVolNotif: VolunteerNotificationItem = {
+          id: `vnotif-${Date.now()}`,
+          volunteerId: 'all_volunteers',
+          title: notification.title,
+          message: notification.message,
+          type: notification.type === 'complaint' ? 'grievance' : notification.type === 'event' ? 'event' : 'announcement',
+          date: 'Just now',
+          createdAt: new Date().toISOString(),
+          isRead: false,
+          actionTab: notification.actionUrl?.includes('grievance') ? 'grievances' : notification.actionUrl?.includes('event') ? 'events' : 'dashboard'
+        };
+        volNotifs.unshift(newVolNotif);
+        setLocal(STORAGE_KEYS.VOLUNTEER_NOTIFICATIONS, volNotifs);
+      } catch (e) {
+        console.error('Failed to dispatch volunteer notification', e);
+      }
+
       return newNotif;
     },
 

@@ -13,8 +13,53 @@ import {
   Megaphone, 
   TrendingUp,
   Eye,
-  FileText
+  FileText,
+  Users,
+  Plus,
+  Trash2,
+  Image as ImageIcon,
+  Edit3
 } from 'lucide-react';
+import { CouncilMemberModal } from './CouncilMemberModal';
+
+export interface LeadershipMember {
+  id: string;
+  name: string;
+  role: string;
+  bio: string;
+  image: string;
+}
+
+const DEFAULT_LEADERS: LeadershipMember[] = [
+  {
+    id: 'lead-1',
+    name: 'Adil Farooq',
+    role: 'Executive Director & Founder',
+    bio: 'Grassroots human rights advocate with 8+ years experience in youth development and community mediation.',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'
+  },
+  {
+    id: 'lead-2',
+    name: 'Shafia Hassan',
+    role: 'Head of Grievance Redressal & Legal Aid',
+    bio: 'Paralegal specialist committed to accessible justice and transparent civic complaint resolution.',
+    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80'
+  },
+  {
+    id: 'lead-3',
+    name: 'Muzamil Bashir',
+    role: 'Director of Programs & Youth Partnerships',
+    bio: 'Mobilizing student councils and environmental chapters across regional higher education centers.',
+    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80'
+  },
+  {
+    id: 'lead-4',
+    name: 'Dr. Rabia Qadir',
+    role: 'Chief Advisor - Health & Community Upliftment',
+    bio: 'Public health researcher guiding adolescent wellness drives and winter relief campaigns.',
+    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80'
+  }
+];
 
 export const AdminWebsiteContentTab: React.FC = () => {
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -60,6 +105,11 @@ export const AdminWebsiteContentTab: React.FC = () => {
   const [bankIfsc, setBankIfsc] = useState('JAKA0MACOMS');
   const [bankUpi, setBankUpi] = useState('gyf.ombudsman@jkb');
 
+  // Leadership Team (About Page)
+  const [leadershipTeam, setLeadershipTeam] = useState<LeadershipMember[]>(DEFAULT_LEADERS);
+  const [isCouncilModalOpen, setIsCouncilModalOpen] = useState(false);
+  const [editingCouncilMember, setEditingCouncilMember] = useState<LeadershipMember | null>(null);
+
   // Load from local storage if previously edited
   useEffect(() => {
     try {
@@ -84,11 +134,84 @@ export const AdminWebsiteContentTab: React.FC = () => {
         if (data.bankAccountNumber) setBankAccountNumber(data.bankAccountNumber);
         if (data.bankIfsc) setBankIfsc(data.bankIfsc);
         if (data.bankUpi) setBankUpi(data.bankUpi);
+        if (Array.isArray(data.leadershipTeam) && data.leadershipTeam.length > 0) {
+          setLeadershipTeam(data.leadershipTeam);
+        }
       }
     } catch (e) {
       // ignore
     }
   }, []);
+
+  const handleOpenAddCouncilModal = () => {
+    setEditingCouncilMember(null);
+    setIsCouncilModalOpen(true);
+  };
+
+  const handleOpenEditCouncilModal = (member: LeadershipMember) => {
+    setEditingCouncilMember(member);
+    setIsCouncilModalOpen(true);
+  };
+
+  const handleSaveCouncilMember = (member: LeadershipMember) => {
+    setLeadershipTeam(prev => {
+      const exists = prev.some(m => m.id === member.id);
+      let updated: LeadershipMember[];
+      if (exists) {
+        updated = prev.map(m => m.id === member.id ? member : m);
+      } else {
+        updated = [...prev, member];
+      }
+
+      // Auto-persist immediately to localStorage
+      try {
+        const saved = localStorage.getItem('gyf_website_content');
+        const existingData = saved ? JSON.parse(saved) : {};
+        localStorage.setItem('gyf_website_content', JSON.stringify({
+          ...existingData,
+          leadershipTeam: updated,
+          updatedAt: new Date().toISOString()
+        }));
+      } catch (e) {
+        // ignore
+      }
+
+      return updated;
+    });
+
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 4000);
+  };
+
+  const handleUpdateLeader = (id: string, field: keyof LeadershipMember, value: string) => {
+    setLeadershipTeam(prev => prev.map(m => m.id === id ? { ...m, [field]: value } : m));
+  };
+
+  const handleRemoveLeader = (id: string) => {
+    if (leadershipTeam.length <= 1) {
+      alert('You must keep at least one leadership team member on the council.');
+      return;
+    }
+    if (window.confirm('Are you sure you want to remove this member from the Leadership Council?')) {
+      setLeadershipTeam(prev => {
+        const updated = prev.filter(m => m.id !== id);
+        try {
+          const saved = localStorage.getItem('gyf_website_content');
+          const existingData = saved ? JSON.parse(saved) : {};
+          localStorage.setItem('gyf_website_content', JSON.stringify({
+            ...existingData,
+            leadershipTeam: updated,
+            updatedAt: new Date().toISOString()
+          }));
+        } catch (e) {
+          // ignore
+        }
+        return updated;
+      });
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 4000);
+    }
+  };
 
   const handleSaveAll = (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,6 +237,7 @@ export const AdminWebsiteContentTab: React.FC = () => {
       bankAccountNumber,
       bankIfsc,
       bankUpi,
+      leadershipTeam,
       updatedAt: new Date().toISOString()
     };
 
@@ -123,7 +247,7 @@ export const AdminWebsiteContentTab: React.FC = () => {
   };
 
   const handleResetDefaults = () => {
-    if (window.confirm('Reset all website content back to factory defaults?')) {
+    if (window.confirm('Reset all website content and leadership council back to factory defaults?')) {
       localStorage.removeItem('gyf_website_content');
       setAnnouncementText('🚀 GYF Youth Fellowship 2026 Applications Are Now Live! Pro-Bono Paralegal Legal Aid Clinic Open Mon-Sat.');
       setAnnouncementActive(true);
@@ -131,6 +255,7 @@ export const AdminWebsiteContentTab: React.FC = () => {
       setHeroSubtitle('Global Youth Foundation operates Kashmir’s leading youth ombudsman network, pro-bono paralegal aid desk, and civic advocacy coalitions for institutional accountability.');
       setMissionText('To foster a just, inclusive, and accountable society by mobilizing youth as frontline human rights monitors, providing accessible legal redressal, and bridging citizen grievances with civic authorities.');
       setVisionText('A democratic valley and nation where every young person is empowered with constitutional awareness, legal aid protection, and active civic participation.');
+      setLeadershipTeam(DEFAULT_LEADERS);
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 4000);
     }
@@ -147,7 +272,7 @@ export const AdminWebsiteContentTab: React.FC = () => {
             <span>Website Content & Live Copy Management</span>
           </h2>
           <p className="text-xs text-slate-500 font-medium mt-0.5">
-            Control the announcement banner, homepage hero copy, organizational mission/vision, public impact stats, and banking details in real-time.
+            Control the announcement banner, homepage hero copy, leadership council, mission/vision, public impact stats, and banking details in real-time.
           </p>
         </div>
 
@@ -175,7 +300,7 @@ export const AdminWebsiteContentTab: React.FC = () => {
       {saveSuccess && (
         <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-bold flex items-center gap-2.5 animate-in fade-in">
           <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-          <span>Website content updated and published live across all public portals!</span>
+          <span>Website content & Leadership Council updated and published live across all public pages!</span>
         </div>
       )}
 
@@ -218,7 +343,138 @@ export const AdminWebsiteContentTab: React.FC = () => {
           </div>
         </div>
 
-        {/* SECTION 2: Hero & Value Proposition */}
+        {/* SECTION 2: Youth Leadership Council & Governance Team (About Page) */}
+        <div className="p-5 sm:p-6 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center">
+                <Users className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider">
+                  Youth Leadership Council & Governance Team
+                </h3>
+                <p className="text-[11px] text-slate-400">
+                  Manage the names, roles, bios, and profile photos displayed on the About Us page
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleOpenAddCouncilModal}
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-teal-800 hover:bg-teal-900 text-white text-xs font-bold shadow-xs hover:shadow-md transition-all cursor-pointer w-fit"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Add Council Member</span>
+            </button>
+          </div>
+
+          {/* Members Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {leadershipTeam.map((member, index) => (
+              <div 
+                key={member.id || index}
+                className="p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition-all space-y-3 relative group"
+              >
+                <div className="flex items-start gap-3">
+                  {/* Photo Preview */}
+                  <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-200 shrink-0 border border-slate-300 relative shadow-2xs">
+                    <img
+                      src={member.image || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}
+                      alt={member.name}
+                      className="w-full h-full object-cover"
+                      referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80';
+                      }}
+                    />
+                  </div>
+
+                  {/* Name & Role Inputs */}
+                  <div className="flex-1 space-y-2">
+                    <div>
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        Full Name
+                      </label>
+                      <input
+                        type="text"
+                        value={member.name}
+                        onChange={(e) => handleUpdateLeader(member.id, 'name', e.target.value)}
+                        className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-bold text-slate-900 focus:outline-none focus:ring-1 focus:ring-teal-800"
+                        placeholder="e.g. Adil Farooq"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        Role / Designation
+                      </label>
+                      <input
+                        type="text"
+                        value={member.role}
+                        onChange={(e) => handleUpdateLeader(member.id, 'role', e.target.value)}
+                        className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-semibold text-teal-800 focus:outline-none focus:ring-1 focus:ring-teal-800"
+                        placeholder="e.g. Executive Director & Founder"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Action Buttons: Modal Edit & Remove */}
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => handleOpenEditCouncilModal(member)}
+                      title="Edit in Modal"
+                      className="p-1.5 rounded-lg text-slate-500 hover:text-teal-800 hover:bg-teal-50 transition-colors"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveLeader(member.id)}
+                      title="Remove Member"
+                      className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Bio */}
+                <div>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                    Bio / Experience Description
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={member.bio}
+                    onChange={(e) => handleUpdateLeader(member.id, 'bio', e.target.value)}
+                    className="w-full p-2 rounded-lg bg-white border border-slate-200 text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-teal-800"
+                    placeholder="Brief background and expertise..."
+                  />
+                </div>
+
+                {/* Photo URL */}
+                <div>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1 flex items-center gap-1">
+                    <ImageIcon className="w-3 h-3 text-slate-400" />
+                    <span>Photo Image URL</span>
+                  </label>
+                  <input
+                    type="url"
+                    value={member.image}
+                    onChange={(e) => handleUpdateLeader(member.id, 'image', e.target.value)}
+                    className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-[11px] font-mono text-slate-600 focus:outline-none focus:ring-1 focus:ring-teal-800"
+                    placeholder="https://images.unsplash.com/..."
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* SECTION 3: Hero & Value Proposition */}
         <div className="p-5 sm:p-6 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-4">
           <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
             <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center">
@@ -283,7 +539,7 @@ export const AdminWebsiteContentTab: React.FC = () => {
           </div>
         </div>
 
-        {/* SECTION 3: Mission & Vision Statements */}
+        {/* SECTION 4: Mission & Vision Statements */}
         <div className="p-5 sm:p-6 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-4">
           <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
             <div className="w-8 h-8 rounded-xl bg-teal-50 text-teal-800 flex items-center justify-center">
@@ -322,7 +578,7 @@ export const AdminWebsiteContentTab: React.FC = () => {
           </div>
         </div>
 
-        {/* SECTION 4: Live Impact Numbers */}
+        {/* SECTION 5: Live Impact Numbers */}
         <div className="p-5 sm:p-6 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-4">
           <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
             <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
@@ -385,7 +641,7 @@ export const AdminWebsiteContentTab: React.FC = () => {
           </div>
         </div>
 
-        {/* SECTION 5: Contact, Hotline & Banking Info */}
+        {/* SECTION 6: Contact, Hotline & Banking Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
           {/* Contact Details */}
@@ -514,6 +770,17 @@ export const AdminWebsiteContentTab: React.FC = () => {
           </button>
         </div>
       </form>
+
+      {/* Council Member Add / Edit Modal */}
+      <CouncilMemberModal
+        isOpen={isCouncilModalOpen}
+        onClose={() => {
+          setIsCouncilModalOpen(false);
+          setEditingCouncilMember(null);
+        }}
+        onSave={handleSaveCouncilMember}
+        initialMember={editingCouncilMember}
+      />
 
     </div>
   );

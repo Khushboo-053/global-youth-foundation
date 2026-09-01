@@ -119,6 +119,9 @@ interface AppContextType {
     complainantEmail?: string;
     complainantPhone?: string;
     attachmentName?: string;
+    attachmentSize?: string;
+    attachmentUrl?: string;
+    attachmentType?: string;
     priority?: 'Low' | 'Medium' | 'High' | 'Urgent';
   }) => Promise<GrievanceRecord>;
   getComplaintById: (id: string) => GrievanceRecord | undefined;
@@ -800,6 +803,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     complainantEmail?: string;
     complainantPhone?: string;
     attachmentName?: string;
+    attachmentSize?: string;
+    attachmentUrl?: string;
+    attachmentType?: string;
     priority?: 'Low' | 'Medium' | 'High' | 'Urgent';
   }): Promise<GrievanceRecord> => {
     const record = await api.grievances.create(data);

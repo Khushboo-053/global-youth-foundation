@@ -69,14 +69,14 @@ export const MembershipPage: React.FC = () => {
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
     setIsSubmitting(true);
 
-    setTimeout(() => {
-      const record = submitMembership({
+    try {
+      const record = await submitMembership({
         fullName: formData.fullName.trim(),
         email: formData.email.trim(),
         phone: formData.phone.trim(),
@@ -92,7 +92,10 @@ export const MembershipPage: React.FC = () => {
       setIsSubmitting(false);
       setSubmittedApp(record);
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 600);
+    } catch (error) {
+      console.error('Error submitting membership application:', error);
+      setIsSubmitting(false);
+    }
   };
 
   const copyAppId = () => {

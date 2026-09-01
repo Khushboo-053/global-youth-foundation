@@ -15,6 +15,7 @@ import {
 import { useApp } from '../context/AppContext';
 import { ComplaintTimeline } from '../components/ComplaintTimeline';
 import { GrievanceRecord } from '../types';
+import { EvidenceAttachmentCard } from '../components/common/EvidenceAttachmentCard';
 
 export const TrackComplaintPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -179,6 +180,31 @@ export const TrackComplaintPage: React.FC = () => {
                   <span className="text-slate-400 font-medium">Date Registered</span>
                   <div className="font-bold text-slate-800 font-mono">{searchedRecord.submittedAt}</div>
                 </div>
+              </div>
+
+              {/* Grievance Statement & Attached Evidence */}
+              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+                  Statement of Grievance
+                </span>
+                <p className="text-xs text-slate-700 leading-relaxed">
+                  {searchedRecord.description}
+                </p>
+
+                {searchedRecord.attachmentName && (
+                  <div className="pt-2 border-t border-slate-200">
+                    <EvidenceAttachmentCard
+                      attachmentName={searchedRecord.attachmentName}
+                      attachmentSize={searchedRecord.attachmentSize || '1.4 MB'}
+                      attachmentUrl={searchedRecord.attachmentUrl}
+                      attachmentType={searchedRecord.attachmentType}
+                      docketId={searchedRecord.id}
+                      category={searchedRecord.category}
+                      subject={searchedRecord.subject}
+                      submittedAt={searchedRecord.submittedAt}
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Status Timeline */}
