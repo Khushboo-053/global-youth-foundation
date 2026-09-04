@@ -7,12 +7,15 @@ import {
   ShieldCheck, 
   ChevronRight, 
   Phone, 
-  Mail
+  Mail,
+  Megaphone
 } from 'lucide-react';
 import { ORG_INFO } from '../data/mockData';
 import { GyfLogo } from './GyfLogo';
+import { useApp } from '../context/AppContext';
 
 export const Navbar: React.FC = () => {
+  const { websiteContent, user } = useApp();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
@@ -49,19 +52,68 @@ export const Navbar: React.FC = () => {
     return location.pathname.startsWith(path);
   };
 
+  const displayPhone = websiteContent?.contactPhone || ORG_INFO.phone;
+  const displayEmail = websiteContent?.contactEmail || ORG_INFO.email;
+  const announcementText = websiteContent?.announcementText?.trim();
+  const isAnnouncementActive = websiteContent?.announcementActive !== false && Boolean(announcementText);
+
   return (
     <>
+      {/* Top Banner Announcements - Continuous News Headline Ticker */}
+      {isAnnouncementActive && (
+        <div 
+          id="top-banner-announcements" 
+          className="bg-gradient-to-r from-slate-950 via-[#0e1335] to-slate-950 text-white text-xs border-b border-indigo-900/60 overflow-hidden relative z-50 shadow-xs"
+        >
+          <div className="max-w-7xl mx-auto flex items-center h-8 sm:h-9 px-3 sm:px-4">
+            {/* News Headline Ticker Marquee */}
+            <div className="flex-1 overflow-hidden relative py-0.5">
+              <div 
+                className="animate-news-ticker flex items-center gap-10 font-medium text-slate-100 text-xs sm:text-[13px] tracking-wide cursor-default hover:text-white"
+                title="Hover to pause announcement"
+              >
+                <span className="flex items-center gap-2">
+                  {announcementText}
+                </span>
+                <span className="text-amber-400 font-bold opacity-80 select-none">•</span>
+                <span className="flex items-center gap-2">
+                  {announcementText}
+                </span>
+                <span className="text-amber-400 font-bold opacity-80 select-none">•</span>
+                <span className="flex items-center gap-2">
+                  {announcementText}
+                </span>
+                <span className="text-amber-400 font-bold opacity-80 select-none">•</span>
+                <span className="flex items-center gap-2">
+                  {announcementText}
+                </span>
+              </div>
+            </div>
+
+            {/* Quick Action Link / Button on Right */}
+            <div className="shrink-0 ml-3 hidden md:flex items-center gap-2 z-10 pl-3 border-l border-slate-700/60">
+              <Link 
+                to="/membership" 
+                className="text-[11px] font-semibold text-amber-300 hover:text-amber-200 transition-colors flex items-center gap-1 bg-white/5 hover:bg-white/10 px-2.5 py-0.5 rounded border border-amber-400/30"
+              >
+                <span>Apply / Join</span> <ChevronRight className="w-3 h-3" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Top micro bar for quick official contact */}
       <div className="bg-[#1f2360] text-blue-100 text-xs py-1.5 px-4 hidden md:block border-b border-[#2C3292]/30">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-6">
             <span className="flex items-center gap-1.5 hover:text-white transition-colors">
               <Phone className="w-3.5 h-3.5 text-blue-300" />
-              <a href={`tel:${ORG_INFO.phone}`}>{ORG_INFO.phone}</a>
+              <a href={`tel:${displayPhone}`}>{displayPhone}</a>
             </span>
             <span className="flex items-center gap-1.5 hover:text-white transition-colors">
               <Mail className="w-3.5 h-3.5 text-blue-300" />
-              <a href={`mailto:${ORG_INFO.email}`}>{ORG_INFO.email}</a>
+              <a href={`mailto:${displayEmail}`}>{displayEmail}</a>
             </span>
           </div>
           <div className="flex items-center gap-4 text-blue-200">
@@ -69,13 +121,22 @@ export const Navbar: React.FC = () => {
               <ShieldCheck className="w-3.5 h-3.5 text-blue-300" /> Confidential Grievance Desk
             </Link>
             <span>•</span>
-            <Link to="/track-complaint" className="hover:text-white transition-colors">
-              Track Docket
+            <Link to="/track-complaint" className="hover:text-white transition-colors flex items-center gap-1">
+              <span>Track Complaint</span>
             </Link>
             <span>•</span>
-            <Link to="/login" className="hover:text-white font-bold text-teal-300 transition-colors">
-              Portal Login
-            </Link>
+            {user ? (
+              <Link 
+                to={user.role === 'admin' ? '/admin' : user.role === 'volunteer' ? '/volunteer' : '/dashboard'} 
+                className="hover:text-white font-bold text-teal-300 transition-colors"
+              >
+                {user.role === 'admin' ? 'Admin Desk' : user.role === 'volunteer' ? 'Volunteer Desk' : 'My Portal'}
+              </Link>
+            ) : (
+              <Link to="/login" className="hover:text-white font-bold text-teal-300 transition-colors">
+                Portal Login
+              </Link>
+            )}
           </div>
         </div>
       </div>

@@ -7,26 +7,39 @@ import {
   Landmark, 
   FileCheck, 
   HelpCircle,
-  QrCode
+  QrCode,
+  Smartphone
 } from 'lucide-react';
 import { ORG_INFO } from '../data/mockData';
+import { useApp } from '../context/AppContext';
 
 export const BankDetailsCard: React.FC<{ showExtraGuide?: boolean }> = ({ showExtraGuide = true }) => {
+  const { websiteContent } = useApp();
   const [copiedAcc, setCopiedAcc] = useState(false);
   const [copiedIfsc, setCopiedIfsc] = useState(false);
+  const [copiedUpi, setCopiedUpi] = useState(false);
 
-  const copyToClipboard = (text: string, type: 'acc' | 'ifsc') => {
+  const copyToClipboard = (text: string, type: 'acc' | 'ifsc' | 'upi') => {
     navigator.clipboard.writeText(text);
     if (type === 'acc') {
       setCopiedAcc(true);
       setTimeout(() => setCopiedAcc(false), 2500);
-    } else {
+    } else if (type === 'ifsc') {
       setCopiedIfsc(true);
       setTimeout(() => setCopiedIfsc(false), 2500);
+    } else {
+      setCopiedUpi(true);
+      setTimeout(() => setCopiedUpi(false), 2500);
     }
   };
 
-  const { bankDetails } = ORG_INFO;
+  const accountName = websiteContent?.bankAccountName || ORG_INFO.bankDetails.accountName;
+  const bankName = websiteContent?.bankName || ORG_INFO.bankDetails.bankName;
+  const accountNumber = websiteContent?.bankAccountNumber || ORG_INFO.bankDetails.accountNumber;
+  const ifscCode = websiteContent?.bankIfsc || ORG_INFO.bankDetails.ifscCode;
+  const upiId = websiteContent?.bankUpi || 'gyf.ombudsman@jkb';
+  const branch = ORG_INFO.bankDetails.branch;
+  const accountType = ORG_INFO.bankDetails.accountType;
 
   return (
     <div id="bank-details-card" className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 sm:p-8 space-y-6">
@@ -60,7 +73,7 @@ export const BankDetailsCard: React.FC<{ showExtraGuide?: boolean }> = ({ showEx
             Bank Name
           </span>
           <span className="font-bold text-slate-900 text-base">
-            {bankDetails.bankName}
+            {bankName}
           </span>
         </div>
 
@@ -70,7 +83,7 @@ export const BankDetailsCard: React.FC<{ showExtraGuide?: boolean }> = ({ showEx
             Account Name
           </span>
           <span className="font-bold text-slate-900 text-base">
-            {bankDetails.accountName}
+            {accountName}
           </span>
         </div>
 
@@ -81,14 +94,14 @@ export const BankDetailsCard: React.FC<{ showExtraGuide?: boolean }> = ({ showEx
               Account Number
             </span>
             <span className="font-mono font-extrabold text-slate-900 text-lg sm:text-xl tracking-wider">
-              {bankDetails.accountNumber}
+              {accountNumber}
             </span>
           </div>
           <button
             type="button"
             id="copy-account-number-btn"
-            onClick={() => copyToClipboard(bankDetails.accountNumber, 'acc')}
-            className={`inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg font-semibold text-xs transition-all shadow-sm ${
+            onClick={() => copyToClipboard(accountNumber, 'acc')}
+            className={`inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg font-semibold text-xs transition-all shadow-sm cursor-pointer ${
               copiedAcc 
                 ? 'bg-emerald-600 text-white' 
                 : 'bg-teal-600 hover:bg-teal-700 text-white'
@@ -115,14 +128,14 @@ export const BankDetailsCard: React.FC<{ showExtraGuide?: boolean }> = ({ showEx
               IFSC Code
             </span>
             <span className="font-mono font-extrabold text-slate-900 text-lg sm:text-xl tracking-wider">
-              {bankDetails.ifscCode}
+              {ifscCode}
             </span>
           </div>
           <button
             type="button"
             id="copy-ifsc-btn"
-            onClick={() => copyToClipboard(bankDetails.ifscCode, 'ifsc')}
-            className={`inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg font-semibold text-xs transition-all shadow-sm ${
+            onClick={() => copyToClipboard(ifscCode, 'ifsc')}
+            className={`inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg font-semibold text-xs transition-all shadow-sm cursor-pointer ${
               copiedIfsc 
                 ? 'bg-emerald-600 text-white' 
                 : 'bg-sky-700 hover:bg-sky-800 text-white'
@@ -142,13 +155,50 @@ export const BankDetailsCard: React.FC<{ showExtraGuide?: boolean }> = ({ showEx
           </button>
         </div>
 
+        {/* Official UPI VPA with Copy Button */}
+        {upiId && (
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl bg-purple-50/60 border border-purple-100 gap-3">
+            <div>
+              <span className="text-xs font-bold text-purple-800 uppercase tracking-wider block flex items-center gap-1.5">
+                <Smartphone className="w-3.5 h-3.5 text-purple-700" />
+                <span>Official UPI VPA / ID</span>
+              </span>
+              <span className="font-mono font-extrabold text-slate-900 text-base sm:text-lg tracking-wider">
+                {upiId}
+              </span>
+            </div>
+            <button
+              type="button"
+              id="copy-upi-btn"
+              onClick={() => copyToClipboard(upiId, 'upi')}
+              className={`inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg font-semibold text-xs transition-all shadow-sm cursor-pointer ${
+                copiedUpi 
+                  ? 'bg-emerald-600 text-white' 
+                  : 'bg-purple-700 hover:bg-purple-800 text-white'
+              }`}
+            >
+              {copiedUpi ? (
+                <>
+                  <Check className="w-4 h-4" />
+                  <span>Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4" />
+                  <span>Copy UPI ID</span>
+                </>
+              )}
+            </button>
+          </div>
+        )}
+
         {/* Branch */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-100 gap-1 sm:gap-4">
           <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
             Branch
           </span>
           <span className="font-semibold text-slate-800">
-            {bankDetails.branch}
+            {branch}
           </span>
         </div>
 
@@ -158,7 +208,7 @@ export const BankDetailsCard: React.FC<{ showExtraGuide?: boolean }> = ({ showEx
             Account Type
           </span>
           <span className="font-semibold text-slate-800">
-            {bankDetails.accountType}
+            {accountType}
           </span>
         </div>
       </div>

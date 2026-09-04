@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   Heart, 
@@ -19,7 +19,8 @@ import {
   Linkedin,
   Youtube,
   Twitter,
-  ChevronRight
+  ChevronRight,
+  HeartHandshake
 } from 'lucide-react';
 import { 
   ORG_INFO, 
@@ -36,18 +37,71 @@ import { NewsCard } from '../components/NewsCard';
 import { TestimonialCard } from '../components/TestimonialCard';
 import { GalleryGrid } from '../components/GalleryGrid';
 import { Modal } from '../components/Modal';
-import { EventItem, NewsItem } from '../types';
+import { VolunteerRegistrationModal } from '../components/VolunteerRegistrationModal';
+import { EventItem, NewsItem, ImpactStat } from '../types';
 import { useApp } from '../context/AppContext';
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  const { programs: livePrograms, events: liveEvents, blogs: liveBlogs } = useApp();
+  const { programs: livePrograms, events: liveEvents, blogs: liveBlogs, websiteContent } = useApp();
   const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
+  const [isVolunteerModalOpen, setIsVolunteerModalOpen] = useState(false);
 
   const displayPrograms = (livePrograms && livePrograms.length > 0) ? livePrograms.filter(p => !p.status || p.status === 'Active' || (p.status as any) === 'Published') : PROGRAMS;
   const displayEvents = (liveEvents && liveEvents.length > 0) ? liveEvents.filter(e => !e.status || e.status === 'Upcoming' || e.status === 'Completed' || (e.status as any) === 'Published') : EVENTS;
   const displayNews = (liveBlogs && liveBlogs.length > 0) ? liveBlogs.filter(b => b.isPublished !== false) : NEWS_ITEMS;
+
+  const heroTitle = websiteContent?.heroTitle || 'Empowering Youth. Defending Human Rights. Resolving Grievances.';
+  const heroSubtitle = websiteContent?.heroSubtitle || ORG_INFO.description;
+  const primaryCta = websiteContent?.primaryCtaText || 'Submit Grievance';
+  const secondaryCta = websiteContent?.secondaryCtaText || 'Become a Member';
+
+  const coreImpactStats = useMemo<ImpactStat[]>(() => {
+    const rawYouth = websiteContent?.statYouthTrained || '25,000+';
+    const rawCases = websiteContent?.statCasesResolved || '1,840+';
+    const rawDistricts = websiteContent?.statDistrictsCovered || '10';
+    const rawLegal = websiteContent?.statLegalAidProvided || '3,200+';
+
+    return [
+      {
+        id: 'stat-youth-trained',
+        label: 'Youth Trained',
+        value: rawYouth,
+        numericValue: parseInt(rawYouth.replace(/[^0-9]/g, '')) || 25000,
+        suffix: rawYouth.includes('+') ? '+' : (rawYouth.includes('%') ? '%' : ''),
+        icon: 'Users',
+        description: 'Young leaders, fellows, and students trained in peacebuilding, constitutional literacy & civic leadership across J&K.'
+      },
+      {
+        id: 'stat-cases-resolved',
+        label: 'Grievances Resolved',
+        value: rawCases,
+        numericValue: parseInt(rawCases.replace(/[^0-9]/g, '')) || 1840,
+        suffix: rawCases.includes('+') ? '+' : (rawCases.includes('%') ? '%' : ''),
+        icon: 'CheckCircle2',
+        description: 'Formal citizen complaints, human rights petitions, and public grievances successfully redressed with institutions.'
+      },
+      {
+        id: 'stat-districts-covered',
+        label: 'Districts Covered',
+        value: rawDistricts,
+        numericValue: parseInt(rawDistricts.replace(/[^0-9]/g, '')) || 10,
+        suffix: rawDistricts.includes('+') ? '+' : '',
+        icon: 'Globe',
+        description: 'Active district volunteer chapters, pro-bono ombudsman desks, and community cells operational across the Kashmir valley.'
+      },
+      {
+        id: 'stat-legal-aid',
+        label: 'Legal Aid Beneficiaries',
+        value: rawLegal,
+        numericValue: parseInt(rawLegal.replace(/[^0-9]/g, '')) || 3200,
+        suffix: rawLegal.includes('+') ? '+' : (rawLegal.includes('%') ? '%' : ''),
+        icon: 'Scale',
+        description: 'Marginalized families, youth, and victims of injustice receiving free pro-bono legal counsel and paralegal support.'
+      }
+    ];
+  }, [websiteContent]);
 
   return (
     <div id="home-page" className="min-h-screen bg-slate-50 text-slate-800">
@@ -71,19 +125,12 @@ export const HomePage: React.FC = () => {
                 <span>Youth-Led Global Movement</span>
               </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.1]">
-                Global Youth <br className="hidden sm:inline" />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-blue-100 to-white">
-                  Foundation
-                </span>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.15]">
+                {heroTitle}
               </h1>
 
-              <p className="text-lg sm:text-xl font-medium text-blue-200/95 tracking-tight italic">
-                “{ORG_INFO.tagline}”
-              </p>
-
-              <p className="text-base sm:text-lg text-slate-200 leading-relaxed max-w-2xl">
-                {ORG_INFO.description}
+              <p className="text-base sm:text-lg text-slate-200 leading-relaxed max-w-2xl font-normal">
+                {heroSubtitle}
               </p>
 
               {/* Action Buttons */}
@@ -94,32 +141,36 @@ export const HomePage: React.FC = () => {
                   className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-white text-[#2C3292] hover:bg-blue-50 text-sm font-bold shadow-lg shadow-black/20 transition-all duration-200 hover:-translate-y-0.5"
                 >
                   <ShieldCheck className="w-4 h-4 text-[#2C3292]" />
-                  <span>Submit Grievance</span>
+                  <span>{primaryCta}</span>
                 </Link>
 
                 <Link
-                  to="/donate"
+                  to="/membership"
                   id="hero-donate-now-btn"
                   className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-[#2C3292] hover:bg-[#3d45ab] text-white text-sm font-bold border border-white/20 backdrop-blur-md shadow-lg shadow-[#2C3292]/30 transition-all duration-200 hover:-translate-y-0.5"
                 >
                   <Heart className="w-4 h-4 text-blue-200 fill-blue-200/30" />
-                  <span>Donate Now</span>
+                  <span>{secondaryCta}</span>
                 </Link>
               </div>
 
-              {/* Trust Indicators */}
-              <div className="pt-6 border-t border-blue-900/60 grid grid-cols-3 gap-4 text-xs text-blue-200">
-                <div>
-                  <div className="font-extrabold text-white text-base">100%</div>
-                  <div>Youth-Driven Action</div>
+              {/* Trust Indicators - 4 Live Public Impact Metrics */}
+              <div className="pt-6 border-t border-blue-900/60 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs text-blue-200">
+                <div className="bg-white/5 p-3 rounded-xl border border-white/10 hover:border-white/20 transition-colors">
+                  <div className="font-extrabold text-white text-base font-mono">{websiteContent?.statYouthTrained || '25,000+'}</div>
+                  <div className="text-blue-200/90 text-[11px] font-medium mt-0.5">Youth Trained</div>
                 </div>
-                <div>
-                  <div className="font-extrabold text-white text-base">500+</div>
-                  <div>Active Volunteers</div>
+                <div className="bg-white/5 p-3 rounded-xl border border-white/10 hover:border-white/20 transition-colors">
+                  <div className="font-extrabold text-white text-base font-mono">{websiteContent?.statCasesResolved || '1,840+'}</div>
+                  <div className="text-blue-200/90 text-[11px] font-medium mt-0.5">Grievances Resolved</div>
                 </div>
-                <div>
-                  <div className="font-extrabold text-white text-base">980+</div>
-                  <div>Resolved Grievances</div>
+                <div className="bg-white/5 p-3 rounded-xl border border-white/10 hover:border-white/20 transition-colors">
+                  <div className="font-extrabold text-white text-base font-mono">{websiteContent?.statDistrictsCovered || '10'}</div>
+                  <div className="text-blue-200/90 text-[11px] font-medium mt-0.5">Districts Covered</div>
+                </div>
+                <div className="bg-white/5 p-3 rounded-xl border border-white/10 hover:border-white/20 transition-colors">
+                  <div className="font-extrabold text-white text-base font-mono">{websiteContent?.statLegalAidProvided || '3,200+'}</div>
+                  <div className="text-blue-200/90 text-[11px] font-medium mt-0.5">Legal Aid Beneficiaries</div>
                 </div>
               </div>
             </div>
@@ -194,7 +245,11 @@ export const HomePage: React.FC = () => {
               </div>
 
               <p className="text-base sm:text-lg text-slate-700 leading-relaxed">
-                At Global Youth Foundation, we are a dynamic, youth-led movement committed to creating a world defined by peace, justice, rights, and harmony. Our motto, <span className="font-semibold text-slate-900">‘Empowering Youth, Inspiring Change, Building a Better Tomorrow.’</span> reflects our unwavering dedication to empowering young people to take meaningful action and drive positive change.
+                {websiteContent?.missionText || (
+                  <>
+                    At Global Youth Foundation, we are a dynamic, youth-led movement committed to creating a world defined by peace, justice, rights, and harmony. Our motto, <span className="font-semibold text-slate-900">‘Empowering Youth, Inspiring Change, Building a Better Tomorrow.’</span> reflects our unwavering dedication to empowering young people to take meaningful action and drive positive change.
+                  </>
+                )}
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
@@ -214,7 +269,7 @@ export const HomePage: React.FC = () => {
                 </div>
               </div>
 
-              <div>
+              <div className="flex flex-wrap items-center gap-3 pt-2">
                 <Link
                   to="/about"
                   id="about-read-more-btn"
@@ -223,6 +278,16 @@ export const HomePage: React.FC = () => {
                   <span>Read More</span>
                   <ArrowRight className="w-4 h-4 text-blue-200" />
                 </Link>
+
+                <button
+                  type="button"
+                  id="join-as-volunteer-btn"
+                  onClick={() => setIsVolunteerModalOpen(true)}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-sm font-bold shadow-sm transition-all cursor-pointer"
+                >
+                  <HeartHandshake className="w-4 h-4 text-teal-200" />
+                  <span>Join as Volunteer</span>
+                </button>
               </div>
 
             </div>
@@ -238,19 +303,20 @@ export const HomePage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
           <div className="text-center max-w-2xl mx-auto space-y-3">
-            <span className="text-xs font-bold text-[#2C3292] uppercase tracking-wider">
-              Measurable Progress
-            </span>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs font-black uppercase tracking-wider">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Live Public Impact Metrics</span>
+            </div>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
               Our Footprint & Impact Statistics
             </h2>
             <p className="text-sm text-slate-600">
-              Data-driven community outcomes achieved through youth volunteering, mediation, and civic mobilization.
+              Audited statistics featured on homepage counters and official foundation reports.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {IMPACT_STATS.map((stat) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {coreImpactStats.map((stat) => (
               <StatCounter key={stat.id} stat={stat} />
             ))}
           </div>
@@ -685,6 +751,12 @@ export const HomePage: React.FC = () => {
           </div>
         )}
       </Modal>
+
+      {/* Join as Volunteer Registration Modal */}
+      <VolunteerRegistrationModal
+        isOpen={isVolunteerModalOpen}
+        onClose={() => setIsVolunteerModalOpen(false)}
+      />
 
     </div>
   );

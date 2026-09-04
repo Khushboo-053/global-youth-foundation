@@ -8,7 +8,7 @@ import {
   Image as ImageIcon,
   UserCheck
 } from 'lucide-react';
-import { LeadershipMember } from './AdminWebsiteContentTab';
+import { LeadershipMember } from '../../types';
 
 interface CouncilMemberModalProps {
   isOpen: boolean;

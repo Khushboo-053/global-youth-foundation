@@ -16,8 +16,14 @@ import {
 } from 'lucide-react';
 import { ORG_INFO } from '../data/mockData';
 import { GyfLogo } from './GyfLogo';
+import { useApp } from '../context/AppContext';
 
 export const Footer: React.FC = () => {
+  const { websiteContent } = useApp();
+  const phone = websiteContent?.contactPhone || ORG_INFO.phone;
+  const legalAidHotline = websiteContent?.legalAidHotline || '1800-GYF-LEGAL (Toll Free)';
+  const email = websiteContent?.contactEmail || ORG_INFO.email;
+  const address = websiteContent?.hqAddress || ORG_INFO.addressDisplay || 'Peace & Civic Action Complex, M.A. Road, Srinagar, J&K 190001';
   return (
     <footer id="main-footer" className="bg-[#14173d] text-slate-300 pt-16 pb-12 border-t border-[#2C3292]/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -126,12 +132,24 @@ export const Footer: React.FC = () => {
               Official Contact
             </h4>
             <div className="space-y-3 text-sm text-slate-400">
+              {legalAidHotline && (
+                <div className="flex items-start gap-2.5">
+                  <Phone className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <div>
+                    <div className="text-[11px] text-emerald-400 font-semibold">Legal Aid Hotline (24/7)</div>
+                    <a href={`tel:${legalAidHotline.replace(/[^\d+]/g, '')}`} className="font-bold text-white hover:text-emerald-300 font-mono transition-colors">
+                      {legalAidHotline}
+                    </a>
+                  </div>
+                </div>
+              )}
+
               <div className="flex items-start gap-2.5">
                 <Phone className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
                 <div>
                   <div className="text-xs text-slate-500">Official Helpline</div>
-                  <a href={`tel:${ORG_INFO.phone}`} className="font-semibold text-slate-200 hover:text-white transition-colors">
-                    {ORG_INFO.phone}
+                  <a href={`tel:${phone}`} className="font-semibold text-slate-200 hover:text-white transition-colors">
+                    {phone}
                   </a>
                 </div>
               </div>
@@ -140,8 +158,8 @@ export const Footer: React.FC = () => {
                 <Mail className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
                 <div>
                   <div className="text-xs text-slate-500">Official Inquiries</div>
-                  <a href={`mailto:${ORG_INFO.email}`} className="text-xs font-medium text-slate-200 hover:text-white break-all transition-colors">
-                    {ORG_INFO.email}
+                  <a href={`mailto:${email}`} className="text-xs font-medium text-slate-200 hover:text-white break-all transition-colors">
+                    {email}
                   </a>
                 </div>
               </div>
@@ -149,7 +167,7 @@ export const Footer: React.FC = () => {
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
                 <div className="text-xs text-slate-400">
-                  Bemina, Srinagar, J&K
+                  {address}
                 </div>
               </div>
             </div>

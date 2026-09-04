@@ -5,7 +5,11 @@ import {
   Users, 
   HeartHandshake, 
   Award, 
-  Globe 
+  Globe,
+  Scale,
+  ShieldCheck,
+  TrendingUp,
+  MapPin
 } from 'lucide-react';
 import { ImpactStat } from '../types';
 
@@ -15,7 +19,11 @@ const ICON_MAP: Record<string, any> = {
   Users,
   HeartHandshake,
   Award,
-  Globe
+  Globe,
+  Scale,
+  ShieldCheck,
+  TrendingUp,
+  MapPin
 };
 
 export const StatCounter: React.FC<{ stat: ImpactStat }> = ({ stat }) => {
@@ -24,12 +32,15 @@ export const StatCounter: React.FC<{ stat: ImpactStat }> = ({ stat }) => {
 
   useEffect(() => {
     let start = 0;
-    const end = stat.numericValue;
-    if (start === end) return;
+    const end = stat.numericValue || 0;
+    if (start === end) {
+      setCount(end);
+      return;
+    }
 
     const duration = 1200;
     const incrementTime = 25;
-    const step = Math.ceil(end / (duration / incrementTime));
+    const step = Math.max(1, Math.ceil(end / (duration / incrementTime)));
 
     const timer = setInterval(() => {
       start += step;
@@ -44,6 +55,10 @@ export const StatCounter: React.FC<{ stat: ImpactStat }> = ({ stat }) => {
     return () => clearInterval(timer);
   }, [stat.numericValue]);
 
+  const displayDisplay = stat.numericValue && stat.numericValue > 0 
+    ? `${count.toLocaleString()}${stat.suffix}`
+    : stat.value;
+
   return (
     <div className="group p-6 rounded-2xl bg-white border border-slate-200/80 hover:border-teal-300 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between">
       <div className="flex items-center justify-between gap-4 mb-4">
@@ -51,7 +66,7 @@ export const StatCounter: React.FC<{ stat: ImpactStat }> = ({ stat }) => {
           <IconComponent className="w-6 h-6" />
         </div>
         <span className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight font-mono">
-          {count.toLocaleString()}{stat.suffix}
+          {displayDisplay}
         </span>
       </div>
 

@@ -242,6 +242,7 @@ export const GrievanceOmbudsmanModal: React.FC<GrievanceOmbudsmanModalProps> = (
                 <option value="In Progress">In Progress (Active Investigation)</option>
                 <option value="Resolved">Resolved (Sanction/Order Complete)</option>
                 <option value="Closed">Closed</option>
+                <option value="Rejected">Rejected (Ineligible / Dismissed)</option>
               </select>
             </div>
 

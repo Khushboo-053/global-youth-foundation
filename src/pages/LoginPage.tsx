@@ -31,10 +31,10 @@ export const LoginPage: React.FC = () => {
 
   const handleAfterLogin = (loggedInUser?: any) => {
     const targetUser = loggedInUser || user;
-    if (targetUser?.role === 'volunteer' || targetUser?.membershipStatus === 'Volunteer') {
-      navigate('/volunteer', { replace: true });
-    } else if (targetUser?.role === 'admin') {
+    if (targetUser?.role === 'admin' || targetUser?.email?.toLowerCase() === 'admin@gyf.org') {
       navigate('/admin', { replace: true });
+    } else if (targetUser?.role === 'volunteer' || targetUser?.membershipStatus === 'Volunteer') {
+      navigate('/volunteer', { replace: true });
     } else {
       navigate('/dashboard', { replace: true });
     }

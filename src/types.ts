@@ -1,12 +1,25 @@
 export type UserRole = 'admin' | 'volunteer' | 'user';
 
+export interface VolunteerApplicationInput {
+  fullName: string;
+  email: string;
+  phone: string;
+  chapter: string;
+  skills: string[];
+  bio: string;
+  bloodGroup?: string;
+  emergencyContact?: string;
+  availability?: string;
+  professionOrEducation?: string;
+}
+
 export interface UserAccount {
   id: string;
   fullName: string;
   email: string;
   phone: string;
   joinedDate: string;
-  membershipStatus: 'Member' | 'Volunteer' | 'Applicant' | 'Guest' | 'Admin';
+  membershipStatus: 'Member' | 'Volunteer' | 'Applicant' | 'Guest' | 'Admin' | 'Rejected';
   membershipId?: string;
   avatar?: string;
   city?: string;
@@ -21,6 +34,8 @@ export interface UserAccount {
   volunteerHours?: number;
   isActive: boolean;
   createdAt?: string;
+  availability?: string;
+  professionOrEducation?: string;
 }
 
 export interface VolunteerPermissions {
@@ -234,7 +249,8 @@ export type ComplaintStatus =
   | 'Assigned' 
   | 'In Progress' 
   | 'Resolved' 
-  | 'Closed';
+  | 'Closed'
+  | 'Rejected';
 
 export interface ComplaintTimelineEvent {
   status: ComplaintStatus;
@@ -369,3 +385,38 @@ export interface ContactMessage {
   status: 'unread' | 'read' | 'replied';
   createdAt: string;
 }
+
+export interface LeadershipMember {
+  id: string;
+  name: string;
+  role: string;
+  bio: string;
+  image: string;
+}
+
+export interface WebsiteContent {
+  announcementText: string;
+  announcementActive: boolean;
+  heroTitle: string;
+  heroSubtitle: string;
+  primaryCtaText: string;
+  secondaryCtaText: string;
+  missionText: string;
+  visionText: string;
+  statYouthTrained: string;
+  statCasesResolved: string;
+  statDistrictsCovered: string;
+  statLegalAidProvided: string;
+  contactEmail: string;
+  contactPhone: string;
+  legalAidHotline: string;
+  hqAddress: string;
+  bankAccountName: string;
+  bankName: string;
+  bankAccountNumber: string;
+  bankIfsc: string;
+  bankUpi: string;
+  leadershipTeam: LeadershipMember[];
+  updatedAt?: string;
+}
+

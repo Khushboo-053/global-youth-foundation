@@ -19,7 +19,9 @@ import {
   VolunteerEventAssignment,
   VolunteerTaskItem,
   VolunteerNotificationItem,
-  VolunteerActivityReport
+  VolunteerActivityReport,
+  WebsiteContent,
+  LeadershipMember
 } from '../types';
 import { 
   PROGRAMS as INITIAL_PROGRAMS, 
@@ -51,7 +53,66 @@ const STORAGE_KEYS = {
   VOLUNTEER_TASKS: 'gyf_db_vol_tasks_v2',
   VOLUNTEER_NOTIFICATIONS: 'gyf_db_vol_notifs_v2',
   VOLUNTEER_ACTIVITY_REPORTS: 'gyf_db_vol_reports_v2',
+  WEBSITE_CONTENT: 'gyf_website_content',
 };
+
+export const DEFAULT_LEADERSHIP_COUNCIL: LeadershipMember[] = [
+  {
+    id: 'lead-1',
+    name: 'Adil Farooq',
+    role: 'Executive Director & Founder',
+    bio: 'Grassroots human rights advocate with 8+ years experience in youth development and community mediation.',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'
+  },
+  {
+    id: 'lead-2',
+    name: 'Shafia Hassan',
+    role: 'Head of Grievance Redressal & Legal Aid',
+    bio: 'Paralegal specialist committed to accessible justice and transparent civic complaint resolution.',
+    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80'
+  },
+  {
+    id: 'lead-3',
+    name: 'Muzamil Bashir',
+    role: 'Director of Programs & Youth Partnerships',
+    bio: 'Mobilizing student councils and environmental chapters across regional higher education centers.',
+    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80'
+  },
+  {
+    id: 'lead-4',
+    name: 'Dr. Rabia Qadir',
+    role: 'Chief Advisor - Health & Community Upliftment',
+    bio: 'Public health researcher guiding adolescent wellness drives and winter relief campaigns.',
+    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80'
+  }
+];
+
+export const DEFAULT_WEBSITE_CONTENT: WebsiteContent = {
+  announcementText: 'GYF Youth Fellowship 2026',
+  announcementActive: true,
+  heroTitle: 'Empowering Youth. Defending Human Rights. Resolving Grievances.',
+  heroSubtitle: 'Global Youth Foundation operates Kashmir’s leading youth ombudsman network, pro-bono paralegal aid desk, and civic advocacy coalitions for institutional accountability.',
+  primaryCtaText: 'Submit a Grievance',
+  secondaryCtaText: 'Become a Member',
+  missionText: 'To foster a just, inclusive, and accountable society by mobilizing youth as frontline human rights monitors, providing accessible legal redressal, and bridging citizen grievances with civic authorities.',
+  visionText: 'A democratic valley and nation where every young person is empowered with constitutional awareness, legal aid protection, and active civic participation.',
+  statYouthTrained: '25,000+',
+  statCasesResolved: '1,840+',
+  statDistrictsCovered: '10',
+  statLegalAidProvided: '3,200+',
+  contactEmail: 'contact@gyf.org',
+  contactPhone: '+91 194 245 8921',
+  legalAidHotline: '1800-GYF-LEGAL (Toll Free)',
+  hqAddress: 'Peace & Civic Action Complex, M.A. Road, Srinagar, J&K 190001',
+  bankAccountName: 'Global Youth Foundation Trust',
+  bankName: 'Jammu & Kashmir Bank Ltd.',
+  bankAccountNumber: '0012010100009842',
+  bankIfsc: 'JAKA0MACOMS',
+  bankUpi: 'gyf.ombudsman@jkb',
+  leadershipTeam: DEFAULT_LEADERSHIP_COUNCIL,
+  updatedAt: new Date().toISOString()
+};
+
 
 const SEED_NOTIFICATIONS = [
   {
@@ -166,6 +227,52 @@ export const SEED_USERS: UserAccount[] = [
     bio: 'Leading youth peer-to-peer tutoring circles in South Kashmir.',
     volunteerHours: 30,
     isActive: true
+  },
+  {
+    id: 'usr-gyf-vol-applicant-01',
+    fullName: 'Zubair Altaf Bhat',
+    email: 'zubair.bhat@example.com',
+    phone: '+91 94191 22334',
+    joinedDate: 'May 2026',
+    membershipStatus: 'Applicant',
+    membershipId: 'GYF-VOL-4821',
+    city: 'Srinagar',
+    country: 'India',
+    role: 'volunteer',
+    roleTitle: 'Youth Volunteer Applicant',
+    bloodGroup: 'O+',
+    emergencyContact: '+91 94190 99887 (Father - Altaf Ahmad Bhat)',
+    chapter: 'Central Kashmir Hub (Srinagar)',
+    professionOrEducation: 'Master of Social Work (MSW) Student at Kashmir University',
+    availability: 'Weekends (4-8 hours/week)',
+    skills: ['Legal Aid & Human Rights', 'Youth Leadership Workshops', 'Disaster Relief & Field Operations'],
+    bio: 'I am dedicated to grassroots youth empowerment and legal awareness in Srinagar. I have actively coordinated flood relief kits and believe in peaceful, constructive civic engagement for societal upliftment.',
+    volunteerHours: 0,
+    isActive: false,
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80'
+  },
+  {
+    id: 'usr-gyf-vol-applicant-02',
+    fullName: 'Saima Jan Dar',
+    email: 'saima.dar@example.com',
+    phone: '+91 98583 77665',
+    joinedDate: 'May 2026',
+    membershipStatus: 'Applicant',
+    membershipId: 'GYF-VOL-4822',
+    city: 'Anantnag',
+    country: 'India',
+    role: 'volunteer',
+    roleTitle: 'Youth Volunteer Applicant',
+    bloodGroup: 'B+',
+    emergencyContact: '+91 98581 11223 (Sister - Nida Jan)',
+    chapter: 'South Kashmir Hub (Anantnag)',
+    professionOrEducation: 'High School Science Educator & Youth Counselor',
+    availability: 'Weekdays Evening & Weekend Drives',
+    skills: ['Mental Health & Counseling', 'Education & Peer Tutoring', 'First Aid & Health Camps'],
+    bio: 'Having witnessed educational disruptions in rural Anantnag, I want to lead mental health awareness and after-school remedial tutoring circles for underprivileged youth under the GYF banner.',
+    volunteerHours: 0,
+    isActive: false,
+    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80'
   }
 ];
 
@@ -178,6 +285,24 @@ export const SEED_VOLUNTEER_PERMS: Record<string, VolunteerPermissions> = {
     canViewMembers: true,
     assignedChapter: 'North Kashmir Hub (Baramulla)',
     notes: 'Approved for grievance field verification and event attendance management.'
+  },
+  'usr-gyf-vol-applicant-01': {
+    volunteerId: 'usr-gyf-vol-applicant-01',
+    canManageGrievances: false,
+    canManageEvents: false,
+    canManagePrograms: false,
+    canViewMembers: true,
+    assignedChapter: 'Central Kashmir Hub (Srinagar)',
+    notes: 'Volunteer application submitted in May 2026. Availability: Weekends (4-8 hours/week). Profession: MSW Student at Kashmir University.'
+  },
+  'usr-gyf-vol-applicant-02': {
+    volunteerId: 'usr-gyf-vol-applicant-02',
+    canManageGrievances: false,
+    canManageEvents: false,
+    canManagePrograms: false,
+    canViewMembers: true,
+    assignedChapter: 'South Kashmir Hub (Anantnag)',
+    notes: 'Volunteer application submitted in May 2026. Availability: Weekdays Evening & Weekend Drives. Profession: High School Science Educator.'
   }
 };
 
@@ -609,6 +734,43 @@ function setLocal<T>(key: string, val: T): void {
 export function initSeedDataIfEmpty(): void {
   if (!localStorage.getItem(STORAGE_KEYS.USERS)) {
     setLocal(STORAGE_KEYS.USERS, SEED_USERS);
+  } else {
+    // Self-healing: Ensure Executive Admin account is never demoted or duplicated
+    const currentUsers = getLocal<UserAccount[]>(STORAGE_KEYS.USERS, SEED_USERS);
+    let dirty = false;
+
+    // Check for corrupt admin accounts
+    const adminIdx = currentUsers.findIndex(u => u.email?.toLowerCase() === 'admin@gyf.org');
+    if (adminIdx !== -1) {
+      if (currentUsers[adminIdx].role !== 'admin' || currentUsers[adminIdx].membershipStatus !== 'Admin') {
+        currentUsers[adminIdx] = {
+          ...SEED_USERS[0],
+          ...currentUsers[adminIdx],
+          id: 'usr-gyf-admin-01',
+          role: 'admin',
+          membershipStatus: 'Admin',
+          roleTitle: 'Secretariat Director',
+          fullName: 'Executive Administrator',
+          isActive: true
+        };
+        dirty = true;
+      }
+    } else {
+      currentUsers.unshift(SEED_USERS[0]);
+      dirty = true;
+    }
+
+    // Clean up any rogue duplicate volunteer accounts using admin@gyf.org
+    for (let i = 0; i < currentUsers.length; i++) {
+      if (currentUsers[i].email?.toLowerCase() === 'admin@gyf.org' && currentUsers[i].id !== 'usr-gyf-admin-01') {
+        currentUsers[i].email = `applicant.${currentUsers[i].id}@volunteer.gyf.org`;
+        dirty = true;
+      }
+    }
+
+    if (dirty) {
+      setLocal(STORAGE_KEYS.USERS, currentUsers);
+    }
   }
   if (!localStorage.getItem(STORAGE_KEYS.VOLUNTEER_PERMS)) {
     setLocal(STORAGE_KEYS.VOLUNTEER_PERMS, SEED_VOLUNTEER_PERMS);
@@ -619,7 +781,8 @@ export function initSeedDataIfEmpty(): void {
   if (!localStorage.getItem(STORAGE_KEYS.DONATIONS)) {
     setLocal(STORAGE_KEYS.DONATIONS, SEED_DONATIONS);
   }
-  if (!localStorage.getItem(STORAGE_KEYS.GRIEVANCES)) {
+  const existingGrievances = getLocal<GrievanceRecord[]>(STORAGE_KEYS.GRIEVANCES, []);
+  if (!existingGrievances || existingGrievances.length === 0) {
     const initialWithVolunteer = INITIAL_COMPLAINTS.map(c => {
       if (c.id === 'GYF-2026-319042') {
         return {
@@ -633,6 +796,12 @@ export function initSeedDataIfEmpty(): void {
       return c;
     });
     setLocal(STORAGE_KEYS.GRIEVANCES, initialWithVolunteer);
+  } else {
+    const existingIds = new Set(existingGrievances.map(g => g.id));
+    const toAdd = INITIAL_COMPLAINTS.filter(c => !existingIds.has(c.id));
+    if (toAdd.length > 0) {
+      setLocal(STORAGE_KEYS.GRIEVANCES, [...existingGrievances, ...toAdd]);
+    }
   }
   if (!localStorage.getItem(STORAGE_KEYS.EVENTS)) {
     setLocal(STORAGE_KEYS.EVENTS, INITIAL_EVENTS.map(e => ({ ...e, isPublished: true })));
@@ -703,13 +872,81 @@ export const api = {
           }));
         }
       }
-      return getLocal<UserAccount[]>(STORAGE_KEYS.USERS, SEED_USERS);
+      let users = getLocal<UserAccount[]>(STORAGE_KEYS.USERS, SEED_USERS);
+      let mutated = false;
+
+      // Ensure the canonical Executive Administrator account exists and is an admin
+      const adminIdx = users.findIndex(u => u.id === 'usr-gyf-admin-01' || u.email?.toLowerCase() === 'admin@gyf.org');
+      if (adminIdx !== -1) {
+        if (users[adminIdx].role !== 'admin' || users[adminIdx].membershipStatus !== 'Admin') {
+          users[adminIdx] = {
+            ...SEED_USERS[0],
+            ...users[adminIdx],
+            id: 'usr-gyf-admin-01',
+            email: 'admin@gyf.org',
+            fullName: 'Executive Administrator',
+            role: 'admin',
+            membershipStatus: 'Admin',
+            roleTitle: 'Secretariat Director',
+            isActive: true
+          };
+          mutated = true;
+        }
+      } else {
+        users.unshift(SEED_USERS[0]);
+        mutated = true;
+      }
+
+      // Ensure any duplicate applicant records with email admin@gyf.org don't collide with admin
+      for (let i = 0; i < users.length; i++) {
+        if (users[i].email?.toLowerCase() === 'admin@gyf.org' && users[i].id !== 'usr-gyf-admin-01') {
+          users[i].email = `applicant.${users[i].id}@volunteer.gyf.org`;
+          mutated = true;
+        }
+      }
+
+      const existingIds = new Set(users.map(u => u.id));
+      for (const su of SEED_USERS) {
+        if (!existingIds.has(su.id)) {
+          users.push(su);
+          mutated = true;
+        }
+      }
+      if (mutated) {
+        setLocal(STORAGE_KEYS.USERS, users);
+      }
+      return users;
     },
 
     async create(user: UserAccount): Promise<UserAccount> {
       const users = getLocal<UserAccount[]>(STORAGE_KEYS.USERS, SEED_USERS);
+
+      // NEVER allow overwriting or demoting the Executive Administrator account
+      if (user.role !== 'admin' && (user.email?.toLowerCase() === 'admin@gyf.org' || user.id === 'usr-gyf-admin-01')) {
+        const safeVolunteerUser: UserAccount = {
+          ...user,
+          id: user.id && user.id !== 'usr-gyf-admin-01' ? user.id : `vol-${Date.now()}`,
+          email: `applicant.${Date.now()}@volunteer.gyf.org`
+        };
+        users.unshift(safeVolunteerUser);
+        setLocal(STORAGE_KEYS.USERS, users);
+        return safeVolunteerUser;
+      }
+
       const existingIdx = users.findIndex(u => u.id === user.id || (u.email && user.email && u.email.toLowerCase() === user.email.toLowerCase()));
       if (existingIdx !== -1) {
+        // If the existing user is an admin and the new user is not, do not demote
+        if (users[existingIdx].role === 'admin' && user.role !== 'admin') {
+          const safeVolunteerUser: UserAccount = {
+            ...user,
+            id: `vol-${Date.now()}`,
+            email: `applicant.${Date.now()}@volunteer.gyf.org`
+          };
+          users.unshift(safeVolunteerUser);
+          setLocal(STORAGE_KEYS.USERS, users);
+          return safeVolunteerUser;
+        }
+
         users[existingIdx] = { ...users[existingIdx], ...user };
         setLocal(STORAGE_KEYS.USERS, users);
         return users[existingIdx];
@@ -836,7 +1073,11 @@ export const api = {
   volunteers: {
     async getAll(): Promise<UserAccount[]> {
       const users = await api.users.getAll();
-      return users.filter(u => u.role === 'volunteer' || u.membershipStatus === 'Volunteer');
+      return users.filter(u => 
+        (u.role as string) === 'volunteer' || 
+        u.membershipStatus === 'Volunteer' ||
+        (u.roleTitle?.toLowerCase().includes('volunteer') ?? false)
+      );
     },
 
     async getPermissions(volunteerId: string): Promise<VolunteerPermissions> {
@@ -2554,5 +2795,54 @@ export const api = {
       setLocal(STORAGE_KEYS.VOLUNTEER_NOTIFICATIONS, all);
       return newNotif;
     }
+  },
+
+  websiteContent: {
+    get(): WebsiteContent {
+      const stored = getLocal<WebsiteContent>(STORAGE_KEYS.WEBSITE_CONTENT, DEFAULT_WEBSITE_CONTENT);
+      const isOldPlaceholder = stored?.announcementText && stored.announcementText.includes('Applications Are Now Live! Pro-Bono');
+      const announcementText = isOldPlaceholder ? 'GYF Youth Fellowship 2026' : (stored?.announcementText ?? DEFAULT_WEBSITE_CONTENT.announcementText);
+      return {
+        ...DEFAULT_WEBSITE_CONTENT,
+        ...stored,
+        announcementText,
+        leadershipTeam: (Array.isArray(stored?.leadershipTeam) && stored.leadershipTeam.length > 0)
+          ? stored.leadershipTeam
+          : DEFAULT_WEBSITE_CONTENT.leadershipTeam
+      };
+    },
+
+    async update(updates: Partial<WebsiteContent>): Promise<WebsiteContent> {
+      const current = api.websiteContent.get();
+      const updated: WebsiteContent = {
+        ...current,
+        ...updates,
+        updatedAt: new Date().toISOString()
+      };
+      setLocal(STORAGE_KEYS.WEBSITE_CONTENT, updated);
+
+      await api.activity.log(
+        'usr-gyf-admin-01',
+        'Admin',
+        'Website Content Updated',
+        'Content Management',
+        'Updated live website copy, announcement headline, and homepage content'
+      );
+
+      return updated;
+    },
+
+    async reset(): Promise<WebsiteContent> {
+      setLocal(STORAGE_KEYS.WEBSITE_CONTENT, DEFAULT_WEBSITE_CONTENT);
+      await api.activity.log(
+        'usr-gyf-admin-01',
+        'Admin',
+        'Website Content Reset',
+        'Content Management',
+        'Reset website content, announcement banner, and leadership council to defaults'
+      );
+      return DEFAULT_WEBSITE_CONTENT;
+    }
   }
 };
+

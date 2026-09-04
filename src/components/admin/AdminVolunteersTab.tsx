@@ -16,11 +16,13 @@ import {
   Mail,
   Phone,
   Check,
-  X
+  X,
+  AlertCircle
 } from 'lucide-react';
 import { UserAccount, VolunteerPermissions, Program, EventItem, GrievanceRecord } from '../../types';
 import { VolunteerDetailModal } from './VolunteerDetailModal';
 import { VolunteerAssignModal } from './VolunteerAssignModal';
+import { useApp } from '../../context/AppContext';
 
 interface AdminVolunteersTabProps {
   volunteers: UserAccount[];
@@ -47,8 +49,11 @@ export const AdminVolunteersTab: React.FC<AdminVolunteersTabProps> = ({
   onAssignGrievance,
   onEditVolunteer
 }) => {
+  const { user } = useApp();
+  const isAdmin = user?.role === 'admin';
+
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'pending' | 'inactive'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'active' | 'rejected' | 'inactive'>('all');
   const [chapterFilter, setChapterFilter] = useState('all');
 
   const [selectedVolunteerForDetail, setSelectedVolunteerForDetail] = useState<UserAccount | null>(null);
@@ -75,6 +80,7 @@ export const AdminVolunteersTab: React.FC<AdminVolunteersTabProps> = ({
       statusFilter === 'all' ||
       (statusFilter === 'active' && vol.isActive && vol.membershipStatus === 'Volunteer') ||
       (statusFilter === 'pending' && vol.membershipStatus === 'Applicant') ||
+      (statusFilter === 'rejected' && vol.membershipStatus === 'Rejected') ||
       (statusFilter === 'inactive' && (!vol.isActive || vol.membershipStatus === 'Guest'));
 
     const matchesChapter = chapterFilter === 'all' || vol.chapter === chapterFilter;
@@ -83,14 +89,24 @@ export const AdminVolunteersTab: React.FC<AdminVolunteersTabProps> = ({
   });
 
   const handleApprove = async (volunteerId: string, name: string) => {
+    if (!isAdmin) {
+      setActionSuccess('Permission Denied: Only administrators have permission to accept volunteer applications.');
+      setTimeout(() => setActionSuccess(null), 4000);
+      return;
+    }
     await onUpdateStatus(volunteerId, 'Approved');
-    setActionSuccess(`Volunteer application for "${name}" has been approved!`);
+    setActionSuccess(`Volunteer application for "${name}" has been approved and admitted to the Active Taskforce!`);
     setTimeout(() => setActionSuccess(null), 4000);
   };
 
   const handleReject = async (volunteerId: string, name: string) => {
+    if (!isAdmin) {
+      setActionSuccess('Permission Denied: Only administrators have permission to reject volunteer applications.');
+      setTimeout(() => setActionSuccess(null), 4000);
+      return;
+    }
     await onUpdateStatus(volunteerId, 'Rejected');
-    setActionSuccess(`Volunteer application for "${name}" rejected.`);
+    setActionSuccess(`Volunteer application for "${name}" has been rejected.`);
     setTimeout(() => setActionSuccess(null), 4000);
   };
 
@@ -160,6 +176,33 @@ export const AdminVolunteersTab: React.FC<AdminVolunteersTabProps> = ({
         </div>
       </div>
 
+      {/* Pending Volunteer Applications Review Notice */}
+      {pendingVolunteers > 0 && (
+        <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+              <AlertCircle className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-amber-950">
+                {pendingVolunteers} Volunteer Application{pendingVolunteers > 1 ? 's' : ''} Awaiting Review
+              </h4>
+              <p className="text-xs text-amber-800/80">
+                New candidate applications have been submitted. Review each applicant and select <strong>Accept</strong> or <strong>Reject</strong> below.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            id="filter-pending-volunteers-btn"
+            onClick={() => setStatusFilter('pending')}
+            className="px-3.5 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition-colors cursor-pointer shrink-0"
+          >
+            Review Pending ({pendingVolunteers})
+          </button>
+        </div>
+      )}
+
       {actionSuccess && (
         <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -168,7 +211,7 @@ export const AdminVolunteersTab: React.FC<AdminVolunteersTabProps> = ({
           </div>
           <button 
             onClick={() => setActionSuccess(null)}
-            className="text-emerald-600 hover:text-emerald-900 text-xs font-bold"
+            className="text-emerald-600 hover:text-emerald-900 text-xs font-bold cursor-pointer"
           >
             Dismiss
           </button>
@@ -190,18 +233,24 @@ export const AdminVolunteersTab: React.FC<AdminVolunteersTabProps> = ({
 
         <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
           <span className="text-xs font-bold text-slate-500 shrink-0">Status:</span>
-          {(['all', 'active', 'pending', 'inactive'] as const).map((st) => (
+          {[
+            { key: 'all', label: 'All Volunteers' },
+            { key: 'pending', label: `Pending (${pendingVolunteers})` },
+            { key: 'active', label: `Active (${activeVolunteers})` },
+            { key: 'rejected', label: 'Rejected' },
+            { key: 'inactive', label: 'Inactive' }
+          ].map((st) => (
             <button
-              key={st}
+              key={st.key}
               type="button"
-              onClick={() => setStatusFilter(st)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 capitalize ${
-                statusFilter === st
+              onClick={() => setStatusFilter(st.key as any)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 ${
+                statusFilter === st.key
                   ? 'bg-teal-800 text-white shadow-xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
-              {st === 'all' ? 'All Volunteers' : st}
+              {st.label}
             </button>
           ))}
         </div>
@@ -321,6 +370,10 @@ export const AdminVolunteersTab: React.FC<AdminVolunteersTabProps> = ({
                           <span className="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold">
                             Pending Screening
                           </span>
+                        ) : vol.membershipStatus === 'Rejected' ? (
+                          <span className="px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 text-[11px] font-bold">
+                            Rejected
+                          </span>
                         ) : vol.isActive ? (
                           <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold">
                             Active Taskforce
@@ -335,33 +388,54 @@ export const AdminVolunteersTab: React.FC<AdminVolunteersTabProps> = ({
                       <td className="py-3.5 px-4 sm:px-6 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           {isPending && (
-                            <>
+                            <div className="flex items-center gap-1.5 mr-1">
                               <button
                                 type="button"
+                                id={`accept-vol-row-${vol.id}`}
                                 onClick={() => handleApprove(vol.id, vol.fullName)}
-                                className="p-1.5 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-800 transition-colors"
-                                title="Approve Volunteer Application"
+                                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
+                                title="Accept Volunteer Application"
                               >
-                                <Check className="w-4 h-4" />
+                                <Check className="w-3.5 h-3.5" />
+                                <span>Accept</span>
                               </button>
                               <button
                                 type="button"
+                                id={`reject-vol-row-${vol.id}`}
                                 onClick={() => handleReject(vol.id, vol.fullName)}
-                                className="p-1.5 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-800 transition-colors"
+                                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
                                 title="Reject Application"
                               >
-                                <X className="w-4 h-4" />
+                                <X className="w-3.5 h-3.5" />
+                                <span>Reject</span>
                               </button>
-                            </>
+                            </div>
+                          )}
+
+                          {vol.membershipStatus === 'Rejected' && (
+                            <div className="flex items-center gap-1 mr-1">
+                              <button
+                                type="button"
+                                id={`reconsider-vol-row-${vol.id}`}
+                                onClick={() => handleApprove(vol.id, vol.fullName)}
+                                className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 text-slate-600 font-semibold text-xs border border-slate-200 transition-colors cursor-pointer"
+                                title="Re-evaluate & Accept Application"
+                              >
+                                <Check className="w-3 h-3 text-emerald-600" />
+                                <span>Re-evaluate</span>
+                              </button>
+                            </div>
                           )}
 
                           <button
                             type="button"
+                            id={`view-vol-dossier-${vol.id}`}
                             onClick={() => setSelectedVolunteerForDetail(vol)}
-                            className="p-1.5 rounded-lg text-slate-500 hover:text-teal-800 hover:bg-teal-50 transition-colors"
-                            title="View Volunteer Dossier"
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-teal-900 bg-teal-50 hover:bg-teal-100 text-xs font-bold transition-colors cursor-pointer"
+                            title="View Full Application Details as Submitted in Form"
                           >
-                            <Eye className="w-4 h-4" />
+                            <Eye className="w-3.5 h-3.5" />
+                            <span className="hidden xl:inline">{isPending ? 'Review Full Application' : 'View Dossier'}</span>
                           </button>
 
                           <button
@@ -398,6 +472,8 @@ export const AdminVolunteersTab: React.FC<AdminVolunteersTabProps> = ({
         onClose={() => setSelectedVolunteerForDetail(null)}
         volunteer={selectedVolunteerForDetail}
         permissions={selectedVolunteerForDetail ? volunteerPermissions[selectedVolunteerForDetail.id] : undefined}
+        onApprove={handleApprove}
+        onReject={handleReject}
         onAssign={(vol) => {
           setSelectedVolunteerForDetail(null);
           setSelectedVolunteerForAssign(vol);

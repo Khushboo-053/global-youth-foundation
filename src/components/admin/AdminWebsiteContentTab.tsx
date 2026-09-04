@@ -18,17 +18,16 @@ import {
   Plus,
   Trash2,
   Image as ImageIcon,
-  Edit3
+  Edit3,
+  Loader2,
+  ChevronRight,
+  Scale
 } from 'lucide-react';
 import { CouncilMemberModal } from './CouncilMemberModal';
+import { useApp } from '../../context/AppContext';
+import { LeadershipMember } from '../../types';
 
-export interface LeadershipMember {
-  id: string;
-  name: string;
-  role: string;
-  bio: string;
-  image: string;
-}
+export type { LeadershipMember };
 
 const DEFAULT_LEADERS: LeadershipMember[] = [
   {
@@ -66,9 +65,11 @@ export const AdminWebsiteContentTab: React.FC = () => {
 
   // Announcement Bar State
   const [announcementText, setAnnouncementText] = useState(
-    '🚀 GYF Youth Fellowship 2026 Applications Are Now Live! Pro-Bono Paralegal Legal Aid Clinic Open Mon-Sat.'
+    'GYF Youth Fellowship 2026'
   );
   const [announcementActive, setAnnouncementActive] = useState(true);
+  const [isSavingAnnouncement, setIsSavingAnnouncement] = useState(false);
+  const [announcementSavedSuccess, setAnnouncementSavedSuccess] = useState(false);
 
   // Hero Section
   const [heroTitle, setHeroTitle] = useState('Empowering Youth. Defending Human Rights. Resolving Grievances.');
@@ -91,6 +92,8 @@ export const AdminWebsiteContentTab: React.FC = () => {
   const [statCasesResolved, setStatCasesResolved] = useState('1,840+');
   const [statDistrictsCovered, setStatDistrictsCovered] = useState('10');
   const [statLegalAidProvided, setStatLegalAidProvided] = useState('3,200+');
+  const [isSavingImpact, setIsSavingImpact] = useState(false);
+  const [impactSavedSuccess, setImpactSavedSuccess] = useState(false);
 
   // Contact & Secretariat Info
   const [contactEmail, setContactEmail] = useState('contact@gyf.org');
@@ -109,39 +112,76 @@ export const AdminWebsiteContentTab: React.FC = () => {
   const [leadershipTeam, setLeadershipTeam] = useState<LeadershipMember[]>(DEFAULT_LEADERS);
   const [isCouncilModalOpen, setIsCouncilModalOpen] = useState(false);
   const [editingCouncilMember, setEditingCouncilMember] = useState<LeadershipMember | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
-  // Load from local storage if previously edited
+  const { websiteContent, updateWebsiteContent, resetWebsiteContent } = useApp();
+
+  // Load from context state whenever available
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('gyf_website_content');
-      if (saved) {
-        const data = JSON.parse(saved);
-        if (data.announcementText) setAnnouncementText(data.announcementText);
-        if (data.announcementActive !== undefined) setAnnouncementActive(data.announcementActive);
-        if (data.heroTitle) setHeroTitle(data.heroTitle);
-        if (data.heroSubtitle) setHeroSubtitle(data.heroSubtitle);
-        if (data.missionText) setMissionText(data.missionText);
-        if (data.visionText) setVisionText(data.visionText);
-        if (data.statYouthTrained) setStatYouthTrained(data.statYouthTrained);
-        if (data.statCasesResolved) setStatCasesResolved(data.statCasesResolved);
-        if (data.statDistrictsCovered) setStatDistrictsCovered(data.statDistrictsCovered);
-        if (data.statLegalAidProvided) setStatLegalAidProvided(data.statLegalAidProvided);
-        if (data.contactEmail) setContactEmail(data.contactEmail);
-        if (data.contactPhone) setContactPhone(data.contactPhone);
-        if (data.legalAidHotline) setLegalAidHotline(data.legalAidHotline);
-        if (data.hqAddress) setHqAddress(data.hqAddress);
-        if (data.bankAccountName) setBankAccountName(data.bankAccountName);
-        if (data.bankAccountNumber) setBankAccountNumber(data.bankAccountNumber);
-        if (data.bankIfsc) setBankIfsc(data.bankIfsc);
-        if (data.bankUpi) setBankUpi(data.bankUpi);
-        if (Array.isArray(data.leadershipTeam) && data.leadershipTeam.length > 0) {
-          setLeadershipTeam(data.leadershipTeam);
-        }
+    if (websiteContent) {
+      if (websiteContent.announcementText !== undefined) setAnnouncementText(websiteContent.announcementText);
+      if (websiteContent.announcementActive !== undefined) setAnnouncementActive(websiteContent.announcementActive);
+      if (websiteContent.heroTitle) setHeroTitle(websiteContent.heroTitle);
+      if (websiteContent.heroSubtitle) setHeroSubtitle(websiteContent.heroSubtitle);
+      if (websiteContent.primaryCtaText) setPrimaryCtaText(websiteContent.primaryCtaText);
+      if (websiteContent.secondaryCtaText) setSecondaryCtaText(websiteContent.secondaryCtaText);
+      if (websiteContent.missionText) setMissionText(websiteContent.missionText);
+      if (websiteContent.visionText) setVisionText(websiteContent.visionText);
+      if (websiteContent.statYouthTrained) setStatYouthTrained(websiteContent.statYouthTrained);
+      if (websiteContent.statCasesResolved) setStatCasesResolved(websiteContent.statCasesResolved);
+      if (websiteContent.statDistrictsCovered) setStatDistrictsCovered(websiteContent.statDistrictsCovered);
+      if (websiteContent.statLegalAidProvided) setStatLegalAidProvided(websiteContent.statLegalAidProvided);
+      if (websiteContent.contactEmail) setContactEmail(websiteContent.contactEmail);
+      if (websiteContent.contactPhone) setContactPhone(websiteContent.contactPhone);
+      if (websiteContent.legalAidHotline) setLegalAidHotline(websiteContent.legalAidHotline);
+      if (websiteContent.hqAddress) setHqAddress(websiteContent.hqAddress);
+      if (websiteContent.bankAccountName) setBankAccountName(websiteContent.bankAccountName);
+      if (websiteContent.bankName) setBankName(websiteContent.bankName);
+      if (websiteContent.bankAccountNumber) setBankAccountNumber(websiteContent.bankAccountNumber);
+      if (websiteContent.bankIfsc) setBankIfsc(websiteContent.bankIfsc);
+      if (websiteContent.bankUpi) setBankUpi(websiteContent.bankUpi);
+      if (Array.isArray(websiteContent.leadershipTeam) && websiteContent.leadershipTeam.length > 0) {
+        setLeadershipTeam(websiteContent.leadershipTeam);
       }
-    } catch (e) {
-      // ignore
     }
-  }, []);
+  }, [websiteContent]);
+
+  const handleQuickSaveAnnouncement = async () => {
+    setIsSavingAnnouncement(true);
+    try {
+      await updateWebsiteContent({
+        announcementText,
+        announcementActive
+      });
+      setAnnouncementSavedSuccess(true);
+      setTimeout(() => setAnnouncementSavedSuccess(false), 3000);
+    } finally {
+      setIsSavingAnnouncement(false);
+    }
+  };
+
+  const handleQuickSaveImpact = async () => {
+    setIsSavingImpact(true);
+    try {
+      await updateWebsiteContent({
+        statYouthTrained,
+        statCasesResolved,
+        statDistrictsCovered,
+        statLegalAidProvided
+      });
+      setImpactSavedSuccess(true);
+      setTimeout(() => setImpactSavedSuccess(false), 3500);
+    } finally {
+      setIsSavingImpact(false);
+    }
+  };
+
+  const handleResetImpactDefaults = () => {
+    setStatYouthTrained('25,000+');
+    setStatCasesResolved('1,840+');
+    setStatDistrictsCovered('10');
+    setStatLegalAidProvided('3,200+');
+  };
 
   const handleOpenAddCouncilModal = () => {
     setEditingCouncilMember(null);
@@ -153,32 +193,14 @@ export const AdminWebsiteContentTab: React.FC = () => {
     setIsCouncilModalOpen(true);
   };
 
-  const handleSaveCouncilMember = (member: LeadershipMember) => {
-    setLeadershipTeam(prev => {
-      const exists = prev.some(m => m.id === member.id);
-      let updated: LeadershipMember[];
-      if (exists) {
-        updated = prev.map(m => m.id === member.id ? member : m);
-      } else {
-        updated = [...prev, member];
-      }
-
-      // Auto-persist immediately to localStorage
-      try {
-        const saved = localStorage.getItem('gyf_website_content');
-        const existingData = saved ? JSON.parse(saved) : {};
-        localStorage.setItem('gyf_website_content', JSON.stringify({
-          ...existingData,
-          leadershipTeam: updated,
-          updatedAt: new Date().toISOString()
-        }));
-      } catch (e) {
-        // ignore
-      }
-
-      return updated;
-    });
-
+  const handleSaveCouncilMember = async (member: LeadershipMember) => {
+    const exists = leadershipTeam.some(m => m.id === member.id);
+    const updated = exists 
+      ? leadershipTeam.map(m => m.id === member.id ? member : m)
+      : [...leadershipTeam, member];
+    
+    setLeadershipTeam(updated);
+    await updateWebsiteContent({ leadershipTeam: updated });
     setSaveSuccess(true);
     setTimeout(() => setSaveSuccess(false), 4000);
   };
@@ -187,77 +209,89 @@ export const AdminWebsiteContentTab: React.FC = () => {
     setLeadershipTeam(prev => prev.map(m => m.id === id ? { ...m, [field]: value } : m));
   };
 
-  const handleRemoveLeader = (id: string) => {
+  const handleRemoveLeader = async (id: string) => {
     if (leadershipTeam.length <= 1) {
       alert('You must keep at least one leadership team member on the council.');
       return;
     }
     if (window.confirm('Are you sure you want to remove this member from the Leadership Council?')) {
-      setLeadershipTeam(prev => {
-        const updated = prev.filter(m => m.id !== id);
-        try {
-          const saved = localStorage.getItem('gyf_website_content');
-          const existingData = saved ? JSON.parse(saved) : {};
-          localStorage.setItem('gyf_website_content', JSON.stringify({
-            ...existingData,
-            leadershipTeam: updated,
-            updatedAt: new Date().toISOString()
-          }));
-        } catch (e) {
-          // ignore
-        }
-        return updated;
-      });
+      const updated = leadershipTeam.filter(m => m.id !== id);
+      setLeadershipTeam(updated);
+      await updateWebsiteContent({ leadershipTeam: updated });
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 4000);
     }
   };
 
-  const handleSaveAll = (e: React.FormEvent) => {
+  const handleSaveAll = async (e: React.FormEvent) => {
     e.preventDefault();
-    const content = {
-      announcementText,
-      announcementActive,
-      heroTitle,
-      heroSubtitle,
-      primaryCtaText,
-      secondaryCtaText,
-      missionText,
-      visionText,
-      statYouthTrained,
-      statCasesResolved,
-      statDistrictsCovered,
-      statLegalAidProvided,
-      contactEmail,
-      contactPhone,
-      legalAidHotline,
-      hqAddress,
-      bankAccountName,
-      bankName,
-      bankAccountNumber,
-      bankIfsc,
-      bankUpi,
-      leadershipTeam,
-      updatedAt: new Date().toISOString()
-    };
+    setIsSaving(true);
+    try {
+      const content = {
+        announcementText,
+        announcementActive,
+        heroTitle,
+        heroSubtitle,
+        primaryCtaText,
+        secondaryCtaText,
+        missionText,
+        visionText,
+        statYouthTrained,
+        statCasesResolved,
+        statDistrictsCovered,
+        statLegalAidProvided,
+        contactEmail,
+        contactPhone,
+        legalAidHotline,
+        hqAddress,
+        bankAccountName,
+        bankName,
+        bankAccountNumber,
+        bankIfsc,
+        bankUpi,
+        leadershipTeam
+      };
 
-    localStorage.setItem('gyf_website_content', JSON.stringify(content));
-    setSaveSuccess(true);
-    setTimeout(() => setSaveSuccess(false), 4000);
-  };
-
-  const handleResetDefaults = () => {
-    if (window.confirm('Reset all website content and leadership council back to factory defaults?')) {
-      localStorage.removeItem('gyf_website_content');
-      setAnnouncementText('🚀 GYF Youth Fellowship 2026 Applications Are Now Live! Pro-Bono Paralegal Legal Aid Clinic Open Mon-Sat.');
-      setAnnouncementActive(true);
-      setHeroTitle('Empowering Youth. Defending Human Rights. Resolving Grievances.');
-      setHeroSubtitle('Global Youth Foundation operates Kashmir’s leading youth ombudsman network, pro-bono paralegal aid desk, and civic advocacy coalitions for institutional accountability.');
-      setMissionText('To foster a just, inclusive, and accountable society by mobilizing youth as frontline human rights monitors, providing accessible legal redressal, and bridging citizen grievances with civic authorities.');
-      setVisionText('A democratic valley and nation where every young person is empowered with constitutional awareness, legal aid protection, and active civic participation.');
-      setLeadershipTeam(DEFAULT_LEADERS);
+      await updateWebsiteContent(content);
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 4000);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleResetDefaults = async () => {
+    if (window.confirm('Reset all website content and leadership council back to factory defaults?')) {
+      setIsSaving(true);
+      try {
+        const reset = await resetWebsiteContent();
+        setAnnouncementText(reset.announcementText);
+        setAnnouncementActive(reset.announcementActive);
+        setHeroTitle(reset.heroTitle);
+        setHeroSubtitle(reset.heroSubtitle);
+        setPrimaryCtaText(reset.primaryCtaText);
+        setSecondaryCtaText(reset.secondaryCtaText);
+        setMissionText(reset.missionText);
+        setVisionText(reset.visionText);
+        setStatYouthTrained(reset.statYouthTrained);
+        setStatCasesResolved(reset.statCasesResolved);
+        setStatDistrictsCovered(reset.statDistrictsCovered);
+        setStatLegalAidProvided(reset.statLegalAidProvided);
+        setContactEmail(reset.contactEmail);
+        setContactPhone(reset.contactPhone);
+        setLegalAidHotline(reset.legalAidHotline);
+        setHqAddress(reset.hqAddress);
+        setBankAccountName(reset.bankAccountName);
+        setBankName(reset.bankName);
+        setBankAccountNumber(reset.bankAccountNumber);
+        setBankIfsc(reset.bankIfsc);
+        setBankUpi(reset.bankUpi);
+        setLeadershipTeam(reset.leadershipTeam);
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 4000);
+      } finally {
+        setIsSaving(false);
+      }
     }
   };
 
@@ -308,39 +342,126 @@ export const AdminWebsiteContentTab: React.FC = () => {
         
         {/* SECTION 1: Top Announcement Bar */}
         <div className="p-5 sm:p-6 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-xl bg-teal-50 text-teal-800 flex items-center justify-center">
                 <Megaphone className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider">Top Banner Announcements</h3>
-                <p className="text-[11px] text-slate-400">Appears at the very top of the website header</p>
+                <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider">Top Banner Announcement Headline</h3>
+                <p className="text-[11px] text-slate-500">Appears at the very top of the website header as an animated headline ticker on all public pages</p>
               </div>
             </div>
 
-            <label className="flex items-center gap-2 cursor-pointer">
-              <span className="text-xs font-bold text-slate-600">Active Live:</span>
+            <label className="flex items-center gap-2 cursor-pointer bg-slate-50 hover:bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200 transition-colors w-fit">
+              <span className="text-xs font-bold text-slate-700">Display Active:</span>
               <input
                 type="checkbox"
                 checked={announcementActive}
                 onChange={(e) => setAnnouncementActive(e.target.checked)}
-                className="w-4 h-4 rounded text-teal-800 focus:ring-teal-800 border-slate-300"
+                className="w-4 h-4 rounded text-teal-800 focus:ring-teal-800 border-slate-300 cursor-pointer"
               />
             </label>
           </div>
 
-          <div className="space-y-1.5">
-            <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider block">
-              Announcement Message Text
-            </label>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-[11px] font-extrabold text-slate-700 uppercase tracking-wider block">
+                Announcement Headline Text
+              </label>
+              <span className="text-[11px] text-slate-400 font-medium">Click a quick preset or type your custom headline below</span>
+            </div>
+
+            {/* Quick Presets */}
+            <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-1">Presets:</span>
+              <button
+                type="button"
+                onClick={() => setAnnouncementText('GYF Youth Fellowship 2026')}
+                className="px-2.5 py-1 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-900 text-xs font-semibold border border-teal-200 transition-colors cursor-pointer"
+              >
+                GYF Youth Fellowship 2026
+              </button>
+              <button
+                type="button"
+                onClick={() => setAnnouncementText('GYF Youth Fellowship 2026: Applications Now Open for Cohort Fellows')}
+                className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200 transition-colors cursor-pointer"
+              >
+                Applications Now Open
+              </button>
+              <button
+                type="button"
+                onClick={() => setAnnouncementText('Pro-Bono Paralegal Legal Aid & Ombudsman Desk Active Mon–Sat')}
+                className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200 transition-colors cursor-pointer"
+              >
+                Paralegal Legal Aid
+              </button>
+            </div>
+
             <textarea
               rows={2}
               value={announcementText}
               onChange={(e) => setAnnouncementText(e.target.value)}
+              placeholder="e.g. GYF Youth Fellowship 2026"
               className="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-teal-800"
             />
+
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-1">
+              <div className="text-[11px] text-slate-500">
+                You can save this headline individually, or click <span className="font-semibold text-slate-700">Save & Publish All</span> at the bottom.
+              </div>
+              <div className="flex items-center gap-2">
+                {announcementSavedSuccess && (
+                  <span className="text-xs font-bold text-emerald-600 flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5" /> Headline updated live!
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={handleQuickSaveAnnouncement}
+                  disabled={isSavingAnnouncement}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-teal-800 hover:bg-teal-900 disabled:bg-teal-800/60 text-white text-xs font-bold transition-colors cursor-pointer disabled:cursor-not-allowed shadow-xs"
+                >
+                  {isSavingAnnouncement ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Saving Headline...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-3.5 h-3.5" />
+                      <span>Update Announcement Headline</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
+
+          {/* Live Preview Strip */}
+          {announcementActive && announcementText && (
+            <div className="pt-2">
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                <Eye className="w-3 h-3 text-teal-600" />
+                <span>Live Header Preview Simulation (No Live Bulletin Badge):</span>
+              </div>
+              <div className="rounded-xl bg-gradient-to-r from-slate-950 via-[#0e1335] to-slate-950 px-3 py-2 overflow-hidden border border-indigo-900/60 flex items-center">
+                <div className="overflow-hidden whitespace-nowrap flex-1">
+                  <div className="animate-news-ticker inline-flex items-center gap-8 text-xs font-medium text-slate-200">
+                    <span>{announcementText}</span>
+                    <span className="text-amber-400 font-bold">•</span>
+                    <span>{announcementText}</span>
+                    <span className="text-amber-400 font-bold">•</span>
+                    <span>{announcementText}</span>
+                  </div>
+                </div>
+                <div className="shrink-0 ml-3 pl-3 border-l border-slate-700/60 text-[11px] font-semibold text-amber-300 flex items-center gap-1 bg-white/5 px-2.5 py-0.5 rounded border border-amber-400/30">
+                  <span>Apply / Join</span>
+                  <ChevronRight className="w-3 h-3" />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* SECTION 2: Youth Leadership Council & Governance Team (About Page) */}
@@ -579,64 +700,263 @@ export const AdminWebsiteContentTab: React.FC = () => {
         </div>
 
         {/* SECTION 5: Live Impact Numbers */}
-        <div className="p-5 sm:p-6 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-          <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
-            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
-              <TrendingUp className="w-4 h-4" />
+        <div className="p-5 sm:p-6 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+                <TrendingUp className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider">Live Public Impact Metrics</h3>
+                <p className="text-[11px] text-slate-500">Audited statistics featured on homepage counters and reports</p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider">Live Public Impact Metrics</h3>
-              <p className="text-[11px] text-slate-400">Audited statistics featured on homepage counters and reports</p>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={handleResetImpactDefaults}
+                className="px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5"
+                title="Reset to 25,000+, 1,840+, 10, 3,200+"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Reset Numbers</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleQuickSaveImpact}
+                disabled={isSavingImpact}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 disabled:bg-emerald-700/60 text-white text-xs font-bold transition-colors cursor-pointer disabled:cursor-not-allowed shadow-xs"
+              >
+                {isSavingImpact ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Saving Metrics...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-3.5 h-3.5" />
+                    <span>Update Public Impact Metrics</span>
+                  </>
+                )}
+              </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider block">
-                Youth Trained
-              </label>
+          {impactSavedSuccess && (
+            <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800 flex items-center gap-2 animate-in fade-in">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <span>Public impact metrics updated successfully! Changes are live on the website front page.</span>
+            </div>
+          )}
+
+          {/* Metric Inputs Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* 1. Youth Trained */}
+            <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80 space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-[11px] font-extrabold text-slate-700 uppercase tracking-wider block flex items-center gap-1.5">
+                  <Users className="w-3.5 h-3.5 text-teal-700" />
+                  <span>Youth Trained</span>
+                </label>
+                <span className="text-[10px] text-slate-400 font-mono">Counter 1</span>
+              </div>
               <input
                 type="text"
                 value={statYouthTrained}
                 onChange={(e) => setStatYouthTrained(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-teal-800"
+                placeholder="25,000+"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-800 font-mono"
               />
+              <div className="flex items-center gap-1 pt-0.5">
+                <button
+                  type="button"
+                  onClick={() => setStatYouthTrained('25,000+')}
+                  className="text-[10px] px-2 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 font-semibold cursor-pointer"
+                >
+                  25,000+
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStatYouthTrained('30,000+')}
+                  className="text-[10px] px-2 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 font-semibold cursor-pointer"
+                >
+                  30,000+
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStatYouthTrained('50,000+')}
+                  className="text-[10px] px-2 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 font-semibold cursor-pointer"
+                >
+                  50,000+
+                </button>
+              </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider block">
-                Grievances Resolved
-              </label>
+            {/* 2. Grievances Resolved */}
+            <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80 space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-[11px] font-extrabold text-slate-700 uppercase tracking-wider block flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
+                  <span>Grievances Resolved</span>
+                </label>
+                <span className="text-[10px] text-slate-400 font-mono">Counter 2</span>
+              </div>
               <input
                 type="text"
                 value={statCasesResolved}
                 onChange={(e) => setStatCasesResolved(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-teal-800"
+                placeholder="1,840+"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-800 font-mono"
               />
+              <div className="flex items-center gap-1 pt-0.5">
+                <button
+                  type="button"
+                  onClick={() => setStatCasesResolved('1,840+')}
+                  className="text-[10px] px-2 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 font-semibold cursor-pointer"
+                >
+                  1,840+
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStatCasesResolved('2,000+')}
+                  className="text-[10px] px-2 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 font-semibold cursor-pointer"
+                >
+                  2,000+
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStatCasesResolved('2,500+')}
+                  className="text-[10px] px-2 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 font-semibold cursor-pointer"
+                >
+                  2,500+
+                </button>
+              </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider block">
-                Districts Covered
-              </label>
+            {/* 3. Districts Covered */}
+            <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80 space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-[11px] font-extrabold text-slate-700 uppercase tracking-wider block flex items-center gap-1.5">
+                  <Globe className="w-3.5 h-3.5 text-blue-700" />
+                  <span>Districts Covered</span>
+                </label>
+                <span className="text-[10px] text-slate-400 font-mono">Counter 3</span>
+              </div>
               <input
                 type="text"
                 value={statDistrictsCovered}
                 onChange={(e) => setStatDistrictsCovered(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-teal-800"
+                placeholder="10"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-800 font-mono"
               />
+              <div className="flex items-center gap-1 pt-0.5">
+                <button
+                  type="button"
+                  onClick={() => setStatDistrictsCovered('10')}
+                  className="text-[10px] px-2 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 font-semibold cursor-pointer"
+                >
+                  10 (All Valley)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStatDistrictsCovered('20')}
+                  className="text-[10px] px-2 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 font-semibold cursor-pointer"
+                >
+                  20 (All J&K)
+                </button>
+              </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider block">
-                Legal Aid Beneficiaries
-              </label>
+            {/* 4. Legal Aid Beneficiaries */}
+            <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80 space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-[11px] font-extrabold text-slate-700 uppercase tracking-wider block flex items-center gap-1.5">
+                  <Scale className="w-3.5 h-3.5 text-purple-700" />
+                  <span>Legal Aid Beneficiaries</span>
+                </label>
+                <span className="text-[10px] text-slate-400 font-mono">Counter 4</span>
+              </div>
               <input
                 type="text"
                 value={statLegalAidProvided}
                 onChange={(e) => setStatLegalAidProvided(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-teal-800"
+                placeholder="3,200+"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-800 font-mono"
               />
+              <div className="flex items-center gap-1 pt-0.5">
+                <button
+                  type="button"
+                  onClick={() => setStatLegalAidProvided('3,200+')}
+                  className="text-[10px] px-2 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 font-semibold cursor-pointer"
+                >
+                  3,200+
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStatLegalAidProvided('4,500+')}
+                  className="text-[10px] px-2 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 font-semibold cursor-pointer"
+                >
+                  4,500+
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStatLegalAidProvided('6,000+')}
+                  className="text-[10px] px-2 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 font-semibold cursor-pointer"
+                >
+                  6,000+
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Live Preview on Front Page */}
+          <div className="pt-2 border-t border-slate-100 space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <Eye className="w-3 h-3 text-emerald-600" />
+                <span>Live Front Page Counters Simulation:</span>
+              </div>
+              <span className="text-[11px] text-slate-400">Updates in real time as you edit above</span>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3.5 bg-slate-900 rounded-xl text-white">
+              <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[11px] text-teal-300 font-semibold">Youth Trained</span>
+                  <Users className="w-3.5 h-3.5 text-teal-400" />
+                </div>
+                <div className="text-xl font-extrabold font-mono text-white tracking-tight">{statYouthTrained}</div>
+                <div className="text-[10px] text-slate-400 mt-1 line-clamp-1">Fellows & changemakers</div>
+              </div>
+
+              <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[11px] text-emerald-300 font-semibold">Grievances Resolved</span>
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                </div>
+                <div className="text-xl font-extrabold font-mono text-white tracking-tight">{statCasesResolved}</div>
+                <div className="text-[10px] text-slate-400 mt-1 line-clamp-1">Redressed with authorities</div>
+              </div>
+
+              <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[11px] text-blue-300 font-semibold">Districts Covered</span>
+                  <Globe className="w-3.5 h-3.5 text-blue-400" />
+                </div>
+                <div className="text-xl font-extrabold font-mono text-white tracking-tight">{statDistrictsCovered}</div>
+                <div className="text-[10px] text-slate-400 mt-1 line-clamp-1">Active regional units</div>
+              </div>
+
+              <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[11px] text-purple-300 font-semibold">Legal Aid</span>
+                  <Scale className="w-3.5 h-3.5 text-purple-400" />
+                </div>
+                <div className="text-xl font-extrabold font-mono text-white tracking-tight">{statLegalAidProvided}</div>
+                <div className="text-[10px] text-slate-400 mt-1 line-clamp-1">Pro-bono beneficiaries</div>
+              </div>
             </div>
           </div>
         </div>
@@ -763,10 +1083,20 @@ export const AdminWebsiteContentTab: React.FC = () => {
         <div className="flex justify-end pt-2">
           <button
             type="submit"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-teal-800 hover:bg-teal-900 text-white text-xs font-extrabold shadow-sm transition-all cursor-pointer"
+            disabled={isSaving}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-teal-800 hover:bg-teal-900 disabled:bg-teal-800/60 text-white text-xs font-extrabold shadow-sm transition-all cursor-pointer disabled:cursor-not-allowed"
           >
-            <Save className="w-4 h-4" />
-            <span>Save & Publish All Website Updates</span>
+            {isSaving ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Publishing Updates...</span>
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4" />
+                <span>Save & Publish All Website Updates</span>
+              </>
+            )}
           </button>
         </div>
       </form>

@@ -493,7 +493,8 @@ export const INITIAL_COMPLAINTS: GrievanceRecord[] = [
     description: 'Submitted an appeal regarding administrative processing delays affecting 18 underprivileged college students in District Srinagar.',
     location: 'Bemina, Srinagar',
     isAnonymous: false,
-    complainantEmail: 'student.liaison@example.org',
+    complainantEmail: 'user@gyf.org',
+    fullName: 'Tariq Manzoor',
     submittedAt: '2026-02-14 10:30 AM',
     currentStatus: 'Resolved',
     priority: 'High',
@@ -538,6 +539,7 @@ export const INITIAL_COMPLAINTS: GrievanceRecord[] = [
     description: 'Reported continuous dumping of commercial construction and plastic debris threatening local bird sanctuary area.',
     location: 'Dal Foreshore Basin, Srinagar',
     isAnonymous: true,
+    complainantEmail: 'peerzada.nabi@gmail.com',
     submittedAt: '2026-02-22 09:15 AM',
     currentStatus: 'In Progress',
     priority: 'Urgent',
@@ -575,7 +577,9 @@ export const INITIAL_COMPLAINTS: GrievanceRecord[] = [
     subject: 'Malfunctioning street illumination on girls school access route',
     description: 'Pedestrian lights non-functional over 400m stretch causing safety distress for morning and evening students.',
     location: 'Qamarwari Main Corridor',
-    isAnonymous: true,
+    isAnonymous: false,
+    complainantEmail: 'user@gyf.org',
+    fullName: 'Tariq Manzoor',
     submittedAt: '2026-02-26 04:40 PM',
     currentStatus: 'Under Review',
     priority: 'Medium',
@@ -592,6 +596,62 @@ export const INITIAL_COMPLAINTS: GrievanceRecord[] = [
         date: 'Feb 27, 2026 • 10:00 AM',
         description: 'Reviewing safety report with neighborhood ward representative.',
         updatedBy: 'Civic Coordinator'
+      }
+    ]
+  },
+  {
+    id: 'GYF-2026-918234',
+    category: 'Other Public Interest Matter',
+    subject: 'Commercial lease disagreement between private shopping complex vendors',
+    description: 'Complaint seeking ombudsman arbitration in a private shopfront rent escalation dispute.',
+    location: 'Residency Road, Srinagar',
+    isAnonymous: false,
+    complainantEmail: 'user@gyf.org',
+    fullName: 'Tariq Manzoor',
+    submittedAt: '2026-02-28 11:15 AM',
+    currentStatus: 'Rejected',
+    priority: 'Low',
+    assignedDepartment: 'Ombudsman Legal Screening Desk',
+    timeline: [
+      {
+        status: 'Submitted',
+        date: 'Feb 28, 2026 • 11:15 AM',
+        description: 'Grievance received through citizen portal.',
+        updatedBy: 'Automated System'
+      },
+      {
+        status: 'Under Review',
+        date: 'Mar 01, 2026 • 09:30 AM',
+        description: 'Subject jurisdiction examined by Ombudsman Screening Officer.',
+        updatedBy: 'Legal Ombudsman'
+      },
+      {
+        status: 'Rejected',
+        date: 'Mar 01, 2026 • 02:00 PM',
+        description: 'Case dismissed: Private commercial disputes fall outside the Youth Foundation public welfare remit. Complainant advised on civil forum recourse.',
+        updatedBy: 'Ombudsman Committee'
+      }
+    ]
+  },
+  {
+    id: 'GYF-2026-483775',
+    category: 'Human Rights & Civic Liberties',
+    subject: 'Unauthorized obstruction of public pedestrian walkway near community hall',
+    description: 'Notice served regarding unauthorized barricading obstructing elderly and student access.',
+    location: 'Civil Lines, Srinagar',
+    isAnonymous: false,
+    complainantEmail: 'user@gyf.org',
+    fullName: 'Tariq Manzoor',
+    submittedAt: '2026-03-02 03:20 PM',
+    currentStatus: 'Submitted',
+    priority: 'Medium',
+    assignedDepartment: 'Civic Rights Cell',
+    timeline: [
+      {
+        status: 'Submitted',
+        date: 'Mar 02, 2026 • 03:20 PM',
+        description: 'Docket registered and pending initial ombudsman review.',
+        updatedBy: 'Automated System'
       }
     ]
   }

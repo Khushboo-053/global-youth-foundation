@@ -56,11 +56,25 @@ const ALL_STATUS_STEPS: { status: ComplaintStatus; label: string; icon: any; des
 ];
 
 export const ComplaintTimeline: React.FC<ComplaintTimelineProps> = ({ currentStatus, events = [] }) => {
+  const isRejected = currentStatus === 'Rejected';
   const currentIndex = ALL_STATUS_STEPS.findIndex(s => s.status === currentStatus);
-  const effectiveIndex = currentIndex === -1 ? 0 : currentIndex;
+  const effectiveIndex = currentIndex === -1 ? (isRejected ? 1 : 0) : currentIndex;
 
   return (
     <div className="space-y-8">
+      {/* Rejected Status Notification */}
+      {isRejected && (
+        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-3">
+          <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
+          <div>
+            <span className="font-bold block text-sm text-rose-900">Case Docket Rejected / Dismissed</span>
+            <span className="text-xs text-rose-700 leading-relaxed">
+              This grievance was formally reviewed by the Ombudsman Screening Committee and found to be outside the foundation's public welfare charter or deemed ineligible. See timeline notes below for legal advisor guidance.
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Visual Step Progress Bar */}
       <div className="relative">
         {/* Desktop / Tablet horizontal progression */}

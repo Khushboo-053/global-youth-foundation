@@ -89,7 +89,7 @@ export function App() {
           <Route 
             path="/dashboard" 
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['user']}>
                 <DashboardPage />
               </ProtectedRoute>
             } 

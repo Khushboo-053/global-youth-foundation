@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   UserCheck, 
@@ -41,11 +41,15 @@ import {
   Users,
   Award,
   BookOpen,
-  ClipboardList
+  ClipboardList,
+  Camera,
+  CreditCard
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { GyfLogo } from '../components/GyfLogo';
 import { EvidenceAttachmentCard } from '../components/common/EvidenceAttachmentCard';
+import { DigitalIdCard } from '../components/DigitalIdCard';
+import { ChangeProfilePhotoModal } from '../components/ChangeProfilePhotoModal';
 import { 
   VolunteerProgramAssignment, 
   VolunteerEventAssignment, 
@@ -151,6 +155,7 @@ export const VolunteerDashboardPage: React.FC = () => {
   const [showLogHoursModal, setShowLogHoursModal] = useState(false);
   const [hoursToAdd, setHoursToAdd] = useState(3);
   const [hoursDescription, setHoursDescription] = useState('Community outreach and grassroots engagement');
+  const [showPhotoModal, setShowPhotoModal] = useState(false);
 
   // 7. Profile Edit State
   const [profileForm, setProfileForm] = useState({
@@ -171,6 +176,22 @@ export const VolunteerDashboardPage: React.FC = () => {
   });
   const [passwordSuccess, setPasswordSuccess] = useState(false);
   const [passwordError, setPasswordError] = useState('');
+
+  // Sync profile form if user data updates
+  useEffect(() => {
+    if (user) {
+      setProfileForm(prev => ({
+        ...prev,
+        fullName: user.fullName || prev.fullName,
+        phone: user.phone || prev.phone,
+        city: user.city || prev.city,
+        bloodGroup: user.bloodGroup || prev.bloodGroup,
+        emergencyContact: user.emergencyContact || prev.emergencyContact,
+        avatar: user.avatar || prev.avatar,
+        bio: user.bio || prev.bio
+      }));
+    }
+  }, [user]);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -466,13 +487,20 @@ export const VolunteerDashboardPage: React.FC = () => {
           {/* Volunteer Mini Profile in Sidebar */}
           <div className="p-4 mx-3.5 my-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs space-y-3">
             <div className="flex items-center gap-3">
-              <div className="relative">
+              <div 
+                onClick={() => setShowPhotoModal(true)}
+                className="relative cursor-pointer group"
+                title="Click to change profile photo"
+              >
                 <img 
                   src={user?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'} 
                   alt={user?.fullName || 'Volunteer'} 
                   referrerPolicy="no-referrer"
-                  className="w-10 h-10 rounded-xl object-cover border border-teal-600/60"
+                  className="w-10 h-10 rounded-xl object-cover border border-teal-600/60 group-hover:border-teal-300 transition-colors"
                 />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white rounded-xl">
+                  <Camera className="w-3.5 h-3.5" />
+                </div>
                 <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-[#1b205a]" />
               </div>
               <div className="flex-1 min-w-0">
@@ -1724,20 +1752,43 @@ export const VolunteerDashboardPage: React.FC = () => {
           {activeTab === 'profile' && (
             <div id="tab-content-profile" className="space-y-6 animate-in fade-in duration-300">
               <div className="p-6 md:p-8 rounded-3xl bg-white border border-slate-200 shadow-xs flex flex-col md:flex-row items-center gap-6">
-                <img 
-                  src={profileForm.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'} 
-                  alt="Profile Avatar"
-                  className="w-24 h-24 rounded-3xl object-cover ring-4 ring-teal-600/30 shadow-md shrink-0" 
-                />
-                <div className="flex-1 text-center md:text-left space-y-2 min-w-0">
-                  <div className="flex flex-col md:flex-row md:items-center gap-2">
-                    <h3 className="text-xl font-black text-slate-900">{profileForm.fullName || user?.fullName}</h3>
-                    <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-blue-900 border border-blue-200 w-fit mx-auto md:mx-0">
-                      Certified Youth Volunteer
-                    </span>
+                <div 
+                  onClick={() => setShowPhotoModal(true)}
+                  className="relative cursor-pointer group shrink-0"
+                  title="Click to change profile photo"
+                >
+                  <img 
+                    src={user?.avatar || profileForm.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'} 
+                    alt="Profile Avatar"
+                    referrerPolicy="no-referrer"
+                    className="w-24 h-24 rounded-3xl object-cover ring-4 ring-teal-600/30 shadow-md group-hover:ring-teal-500 transition-all" 
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white transition-opacity rounded-3xl text-[10px] font-bold">
+                    <Camera className="w-5 h-5 mb-0.5" />
+                    <span>Change</span>
                   </div>
+                </div>
+                <div className="flex-1 text-center md:text-left space-y-2 min-w-0">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                    <div>
+                      <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
+                        <h3 className="text-xl font-black text-slate-900">{profileForm.fullName || user?.fullName}</h3>
+                        <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-blue-900 border border-blue-200">
+                          Certified Youth Volunteer
+                        </span>
+                      </div>
+                      <p className="text-xs text-teal-800 font-semibold mt-1">{user?.email}</p>
+                    </div>
 
-                  <p className="text-xs text-teal-800 font-semibold">{user?.email}</p>
+                    <button
+                      type="button"
+                      onClick={() => setShowPhotoModal(true)}
+                      className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold shadow-xs transition-all cursor-pointer self-center md:self-auto"
+                    >
+                      <Camera className="w-3.5 h-3.5" />
+                      <span>Change Profile Photo</span>
+                    </button>
+                  </div>
                   
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
                     <div className="p-2.5 rounded-2xl bg-slate-50 text-left border border-slate-200">
@@ -1760,113 +1811,137 @@ export const VolunteerDashboardPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Two Column Grid: Edit Personal Information & Change Password */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Two Column Grid: Official Volunteer ID Card & Volunteer Settings */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 
-                {/* Left: Edit Basic Personal Info */}
-                <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-4">
-                  <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-                    <User className="w-4 h-4 text-teal-800" />
-                    <h4 className="text-sm font-black text-slate-900">Edit Personal Information</h4>
-                  </div>
-
-                  <form onSubmit={handleSaveProfile} className="space-y-4">
-                    <div>
-                      <label className="text-[11px] font-semibold text-slate-700 block mb-1">Full Name</label>
-                      <input 
-                        type="text"
-                        value={profileForm.fullName}
-                        onChange={(e) => setProfileForm({ ...profileForm, fullName: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-teal-600"
-                        required
-                      />
+                {/* Left: Official Volunteer Digital ID Credential */}
+                <div className="lg:col-span-5 space-y-4">
+                  <div className="p-6 md:p-7 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-4">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                      <div>
+                        <h4 className="text-sm font-black text-slate-900">
+                          Official Volunteer Digital ID
+                        </h4>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          Verified delegate credential for ground deployment and field missions
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setShowPhotoModal(true)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 text-xs font-bold transition-colors cursor-pointer"
+                      >
+                        <Camera className="w-3.5 h-3.5" />
+                        <span>Change Photo</span>
+                      </button>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
+                    {user && (
+                      <DigitalIdCard
+                        user={user}
+                        onChangePhoto={() => setShowPhotoModal(true)}
+                      />
+                    )}
+                  </div>
+                </div>
+
+                {/* Right: Edit Basic Personal Info & Password */}
+                <div className="lg:col-span-7 space-y-6">
+                  
+                  {/* Edit Basic Personal Info */}
+                  <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-4">
+                    <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+                      <User className="w-4 h-4 text-teal-800" />
+                      <h4 className="text-sm font-black text-slate-900">Edit Personal Information</h4>
+                    </div>
+
+                    <form onSubmit={handleSaveProfile} className="space-y-4">
                       <div>
-                        <label className="text-[11px] font-semibold text-slate-700 block mb-1">Phone Number</label>
-                        <input 
-                          type="tel"
-                          value={profileForm.phone}
-                          onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
-                          className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-teal-600"
-                          placeholder="+91 97970 88219"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[11px] font-semibold text-slate-700 block mb-1">City / District</label>
+                        <label className="text-[11px] font-semibold text-slate-700 block mb-1">Full Name</label>
                         <input 
                           type="text"
-                          value={profileForm.city}
-                          onChange={(e) => setProfileForm({ ...profileForm, city: e.target.value })}
+                          value={profileForm.fullName}
+                          onChange={(e) => setProfileForm({ ...profileForm, fullName: e.target.value })}
                           className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-teal-600"
+                          required
                         />
                       </div>
-                    </div>
 
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="text-[11px] font-semibold text-slate-700 block mb-1">Blood Group</label>
-                        <select 
-                          value={profileForm.bloodGroup}
-                          onChange={(e) => setProfileForm({ ...profileForm, bloodGroup: e.target.value })}
-                          className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-teal-600"
-                        >
-                          <option value="A+">A+</option>
-                          <option value="A-">A-</option>
-                          <option value="B+">B+</option>
-                          <option value="B-">B-</option>
-                          <option value="O+">O+</option>
-                          <option value="O-">O-</option>
-                          <option value="AB+">AB+</option>
-                          <option value="AB-">AB-</option>
-                        </select>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="text-[11px] font-semibold text-slate-700 block mb-1">Phone Number</label>
+                          <input 
+                            type="tel"
+                            value={profileForm.phone}
+                            onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
+                            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-teal-600"
+                            placeholder="+91 97970 88219"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-semibold text-slate-700 block mb-1">City / District</label>
+                          <input 
+                            type="text"
+                            value={profileForm.city}
+                            onChange={(e) => setProfileForm({ ...profileForm, city: e.target.value })}
+                            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-teal-600"
+                          />
+                        </div>
                       </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="text-[11px] font-semibold text-slate-700 block mb-1">Blood Group</label>
+                          <select 
+                            value={profileForm.bloodGroup}
+                            onChange={(e) => setProfileForm({ ...profileForm, bloodGroup: e.target.value })}
+                            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-teal-600"
+                          >
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-semibold text-slate-700 block mb-1">Emergency Contact</label>
+                          <input 
+                            type="tel"
+                            value={profileForm.emergencyContact}
+                            onChange={(e) => setProfileForm({ ...profileForm, emergencyContact: e.target.value })}
+                            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-teal-600"
+                          />
+                        </div>
+                      </div>
+
                       <div>
-                        <label className="text-[11px] font-semibold text-slate-700 block mb-1">Emergency Contact</label>
-                        <input 
-                          type="tel"
-                          value={profileForm.emergencyContact}
-                          onChange={(e) => setProfileForm({ ...profileForm, emergencyContact: e.target.value })}
-                          className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-teal-600"
+                        <label className="text-[11px] font-semibold text-slate-700 block mb-1">Volunteer Bio & Skills</label>
+                        <textarea 
+                          rows={3}
+                          value={profileForm.bio}
+                          onChange={(e) => setProfileForm({ ...profileForm, bio: e.target.value })}
+                          className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-teal-600 resize-none"
                         />
                       </div>
-                    </div>
 
-                    <div>
-                      <label className="text-[11px] font-semibold text-slate-700 block mb-1">Avatar URL</label>
-                      <input 
-                        type="url"
-                        value={profileForm.avatar}
-                        onChange={(e) => setProfileForm({ ...profileForm, avatar: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-teal-600"
-                      />
-                    </div>
+                      <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-[11px] text-slate-600 space-y-1">
+                        <p className="text-teal-800 font-bold">Strict Role Safeguard Notice:</p>
+                        <p>Volunteers cannot alter administrative permissions, delete programs, or modify user accounts. All systemic roles are governed by Central Administration.</p>
+                      </div>
 
-                    <div>
-                      <label className="text-[11px] font-semibold text-slate-700 block mb-1">Volunteer Bio & Skills</label>
-                      <textarea 
-                        rows={3}
-                        value={profileForm.bio}
-                        onChange={(e) => setProfileForm({ ...profileForm, bio: e.target.value })}
-                        className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-teal-600 resize-none"
-                      />
-                    </div>
-
-                    <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-[11px] text-slate-600 space-y-1">
-                      <p className="text-teal-800 font-bold">Strict Role Safeguard Notice:</p>
-                      <p>Volunteers cannot alter administrative permissions, delete programs, or modify user accounts. All systemic roles are governed by Central Administration.</p>
-                    </div>
-
-                    <button 
-                      id="save-volunteer-profile-btn"
-                      type="submit" 
-                      className="w-full py-2.5 rounded-xl bg-teal-800 hover:bg-teal-700 text-white text-xs font-bold transition-colors shadow-xs"
-                    >
-                      Save Profile Changes
-                    </button>
-                  </form>
-                </div>
+                      <button 
+                        id="save-volunteer-profile-btn"
+                        type="submit" 
+                        className="w-full py-2.5 rounded-xl bg-teal-800 hover:bg-teal-700 text-white text-xs font-bold transition-colors shadow-xs"
+                      >
+                        Save Profile Changes
+                      </button>
+                    </form>
+                  </div>
 
                 {/* Right: Change Password */}
                 <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-4">
@@ -1936,7 +2011,8 @@ export const VolunteerDashboardPage: React.FC = () => {
                 </div>
               </div>
             </div>
-          )}
+          </div>
+        )}
 
         </div>
       </main>
@@ -2443,6 +2519,16 @@ export const VolunteerDashboardPage: React.FC = () => {
             </form>
           </div>
         </div>
+      )}
+
+      {/* Change Profile Photo Modal */}
+      {user && (
+        <ChangeProfilePhotoModal
+          isOpen={showPhotoModal}
+          onClose={() => setShowPhotoModal(false)}
+          currentAvatar={user.avatar || profileForm.avatar}
+          userName={user.fullName}
+        />
       )}
 
     </div>

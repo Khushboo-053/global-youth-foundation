@@ -41,3 +41,24 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+/* News Headline Marquee / Ticker */
+@keyframes newsTicker {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-news-ticker {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: newsTicker 28s linear infinite;
+  will-change: transform;
+}
+
+.animate-news-ticker:hover {
+  animation-play-state: paused;
+}

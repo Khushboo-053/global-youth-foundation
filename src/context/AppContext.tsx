@@ -19,7 +19,9 @@ import {
   VolunteerEventAssignment,
   VolunteerTaskItem,
   VolunteerNotificationItem,
-  VolunteerActivityReport
+  VolunteerActivityReport,
+  WebsiteContent,
+  VolunteerApplicationInput
 } from '../types';
 import { api, initSeedDataIfEmpty, SEED_USERS } from '../services/api';
 import { supabase, isSupabaseConfigured } from '../services/supabase';
@@ -73,6 +75,7 @@ interface AppContextType {
   
   // Users & Volunteers Management
   createUser: (userData: Omit<UserAccount, 'id'> & { id?: string }) => Promise<UserAccount>;
+  applyAsVolunteer: (data: VolunteerApplicationInput) => Promise<UserAccount>;
   updateUser: (userId: string, data: Partial<UserAccount>) => Promise<void>;
   updateUserRole: (userId: string, role: UserRole, roleTitle?: string) => Promise<{ success: boolean; error?: string }>;
   toggleUserStatus: (userId: string) => Promise<void>;
@@ -143,6 +146,11 @@ interface AppContextType {
   // Notifications
   broadcastNotification: (notif: { title: string; message: string; type: 'info' | 'complaint' | 'membership' | 'event'; actionUrl?: string }) => Promise<void>;
   deleteNotification: (id: string) => Promise<void>;
+
+  // Website Content Management
+  websiteContent: WebsiteContent;
+  updateWebsiteContent: (updates: Partial<WebsiteContent>) => Promise<WebsiteContent>;
+  resetWebsiteContent: () => Promise<WebsiteContent>;
 
   // Other utilities
   bookLegalAidAppointment: (data: Omit<LegalAidAppointment, 'id' | 'status' | 'createdAt'>) => LegalAidAppointment;
@@ -216,7 +224,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [user, setUser] = useState<UserAccount | null>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.USER_SESSION);
-      return saved ? JSON.parse(saved) : null;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Self-heal: If an admin account was corrupted or demoted by a volunteer test submission
+        if (parsed.email?.toLowerCase() === 'admin@gyf.org' || parsed.id === 'usr-gyf-admin-01') {
+          const healedAdmin: UserAccount = {
+            ...SEED_USERS[0],
+            ...parsed,
+            id: 'usr-gyf-admin-01',
+            email: 'admin@gyf.org',
+            fullName: 'Executive Administrator',
+            role: 'admin',
+            membershipStatus: 'Admin',
+            roleTitle: 'Secretariat Director',
+            isActive: true
+          };
+          localStorage.setItem(STORAGE_KEYS.USER_SESSION, JSON.stringify(healedAdmin));
+          return healedAdmin;
+        }
+        return parsed;
+      }
+      return null;
     } catch {
       return null;
     }
@@ -270,6 +298,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   });
 
+  const [websiteContent, setWebsiteContent] = useState<WebsiteContent>(() => {
+    return api.websiteContent.get();
+  });
+
+  const updateWebsiteContent = async (updates: Partial<WebsiteContent>): Promise<WebsiteContent> => {
+    const updated = await api.websiteContent.update(updates);
+    setWebsiteContent(updated);
+    return updated;
+  };
+
+  const resetWebsiteContent = async (): Promise<WebsiteContent> => {
+    const reset = await api.websiteContent.reset();
+    setWebsiteContent(reset);
+    return reset;
+  };
+
   // Sync state to local storage
   useEffect(() => {
     if (user) {
@@ -322,7 +366,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       ]);
 
       setUsers(fetchedUsers);
-      const vols = fetchedUsers.filter(u => u.role === 'volunteer' || u.membershipStatus === 'Volunteer');
+      const vols = fetchedUsers.filter(u => 
+        (u.role as string) === 'volunteer' || 
+        u.membershipStatus === 'Volunteer' ||
+        (u.roleTitle?.toLowerCase().includes('volunteer') ?? false)
+      );
       setVolunteers(vols);
 
       // Load permissions for each volunteer
@@ -341,6 +389,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setChatbotFaqs(fetchedFaqs);
       setActivityLogs(fetchedLogs);
       setContactMessages(fetchedContactMessages);
+      setWebsiteContent(api.websiteContent.get());
       if (fetchedNotifs && fetchedNotifs.length > 0) {
         setNotifications(fetchedNotifs);
       }
@@ -415,13 +464,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     // 2. Direct user matching from database/seed users
     const allUsers = await api.users.getAll();
-    const matched = allUsers.find(u => u.email.toLowerCase() === cleanEmail);
+    let matched = allUsers.find(u => u.email.toLowerCase() === cleanEmail);
+
+    if (cleanEmail === 'admin@gyf.org') {
+      if (!matched || matched.role !== 'admin') {
+        matched = {
+          ...SEED_USERS[0],
+          id: 'usr-gyf-admin-01',
+          email: 'admin@gyf.org',
+          fullName: 'Executive Administrator',
+          role: 'admin',
+          membershipStatus: 'Admin',
+          roleTitle: 'Secretariat Director',
+          isActive: true
+        };
+      }
+    }
 
     if (matched) {
       if (!matched.isActive) {
         return { success: false, error: 'This account has been deactivated by administrator.' };
       }
       setUser(matched);
+      localStorage.setItem(STORAGE_KEYS.USER_SESSION, JSON.stringify(matched));
       await api.activity.log(matched.id, matched.fullName, 'User Sign In', 'Authentication', `${matched.fullName} logged in with role ${matched.role}.`);
       return { success: true, user: matched };
     }
@@ -433,7 +498,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       email: cleanEmail,
       phone: '+91 91035 00000',
       joinedDate: 'March 2026',
-      membershipStatus: 'Member',
+      membershipStatus: cleanEmail.includes('admin') ? 'Admin' : 'Member',
       membershipId: `GYF-MEM-2026-${Math.floor(100 + Math.random() * 900)}`,
       role: cleanEmail.includes('admin') ? 'admin' : cleanEmail.includes('vol') ? 'volunteer' : 'user',
       roleTitle: cleanEmail.includes('admin') ? 'Administrator' : cleanEmail.includes('vol') ? 'Youth Volunteer' : 'Member',
@@ -443,19 +508,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
 
     setUser(newDemoUser);
+    localStorage.setItem(STORAGE_KEYS.USER_SESSION, JSON.stringify(newDemoUser));
     return { success: true, user: newDemoUser };
   };
 
   const loginAsDemo = (roleType: 'admin' | 'volunteer' | 'user' | 'member' | 'officer') => {
     let demoAcc: UserAccount;
     if (roleType === 'admin') {
-      demoAcc = SEED_USERS[0];
+      demoAcc = { ...SEED_USERS[0], role: 'admin', membershipStatus: 'Admin' };
     } else if (roleType === 'volunteer' || roleType === 'officer') {
-      demoAcc = SEED_USERS[1];
+      demoAcc = { ...SEED_USERS[1], role: 'volunteer', membershipStatus: 'Volunteer' };
     } else {
-      demoAcc = SEED_USERS[2];
+      demoAcc = { ...SEED_USERS[2], role: 'user', membershipStatus: 'Member' };
     }
     setUser(demoAcc);
+    localStorage.setItem(STORAGE_KEYS.USER_SESSION, JSON.stringify(demoAcc));
     api.activity.log(demoAcc.id, demoAcc.fullName, 'Demo Switch', 'Authentication', `Switched to demo role: ${roleType}`);
   };
 
@@ -610,6 +677,60 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return { success: true };
   };
 
+  const applyAsVolunteer = async (data: VolunteerApplicationInput): Promise<UserAccount> => {
+    const memId = `GYF-VOL-${Math.floor(1000 + Math.random() * 9000)}`;
+    const newId = `vol-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const newVolunteer = await api.users.create({
+      id: newId,
+      fullName: data.fullName.trim(),
+      email: data.email.trim().toLowerCase(),
+      phone: data.phone.trim(),
+      chapter: data.chapter || 'Central Kashmir Hub (Srinagar)',
+      skills: data.skills.length > 0 ? data.skills : ['Youth Mobilization', 'General Support'],
+      bio: data.bio.trim(),
+      bloodGroup: data.bloodGroup || 'O+',
+      emergencyContact: data.emergencyContact || '',
+      availability: data.availability || 'Flexible / On-Call for Emergencies',
+      professionOrEducation: data.professionOrEducation || 'Not specified',
+      role: 'volunteer',
+      roleTitle: 'Youth Volunteer Applicant',
+      membershipStatus: 'Applicant',
+      isActive: false,
+      volunteerHours: 0,
+      membershipId: memId,
+      joinedDate: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+    });
+
+    await api.volunteers.updatePermissions(newVolunteer.id, {
+      volunteerId: newVolunteer.id,
+      canManageGrievances: false,
+      canManageEvents: false,
+      canManagePrograms: false,
+      canViewMembers: true,
+      assignedChapter: data.chapter || 'Central Kashmir Hub (Srinagar)',
+      notes: `Volunteer application submitted on ${new Date().toLocaleDateString()}. Availability: ${data.availability || 'Flexible'}. Profession/Education: ${data.professionOrEducation || 'Not provided'}.`
+    });
+
+    await api.activity.log(
+      newVolunteer.id,
+      newVolunteer.fullName,
+      'Submitted Volunteer Application',
+      'Volunteer Taskforce',
+      `Volunteer application submitted by ${newVolunteer.fullName} (${newVolunteer.chapter}) [ID: ${memId}]`
+    );
+
+    await api.notifications.broadcast({
+      title: 'New Volunteer Application',
+      message: `${newVolunteer.fullName} applied to join the Volunteer Taskforce for ${newVolunteer.chapter}. Review candidate in Admin -> Volunteers.`,
+      type: 'info',
+      audience: 'admin',
+      actionUrl: '/admin'
+    });
+
+    await refreshAllData();
+    return newVolunteer;
+  };
+
   const updateVolunteerPermissions = async (volunteerId: string, perms: Partial<VolunteerPermissions>) => {
     await api.volunteers.updatePermissions(volunteerId, perms);
     await api.activity.log(user?.id || 'admin', user?.fullName || 'Admin', 'Updated Volunteer Permissions', 'Volunteer Management', `Permissions updated for volunteer ${volunteerId}`);
@@ -617,12 +738,34 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const updateVolunteerStatus = async (volunteerId: string, status: 'Active' | 'Inactive' | 'Approved' | 'Rejected') => {
+    if (user?.role !== 'admin') {
+      throw new Error('Permission denied: Only system administrators have authorization to accept or reject volunteer applications.');
+    }
+
     const isApproved = status === 'Approved' || status === 'Active';
+    const isRejected = status === 'Rejected';
     await api.users.update(volunteerId, {
-      membershipStatus: isApproved ? 'Volunteer' : 'Applicant',
-      isActive: status !== 'Inactive' && status !== 'Rejected'
+      membershipStatus: isApproved ? 'Volunteer' : isRejected ? 'Rejected' : 'Applicant',
+      isActive: isApproved,
+      roleTitle: isApproved ? 'Youth Volunteer' : isRejected ? 'Rejected Applicant' : 'Youth Volunteer Applicant'
     });
-    await api.activity.log(user?.id || 'admin', user?.fullName || 'Admin', 'Updated Volunteer Status', 'Volunteer Desk', `Volunteer status set to ${status} for ${volunteerId}`);
+
+    if (isApproved) {
+      await api.volunteers.updatePermissions(volunteerId, {
+        canManageGrievances: true,
+        canManageEvents: true,
+        canManagePrograms: false,
+        canViewMembers: true
+      });
+    }
+
+    await api.activity.log(
+      user?.id || 'admin', 
+      user?.fullName || 'Admin', 
+      isApproved ? 'Approved Volunteer Application' : isRejected ? 'Rejected Volunteer Application' : 'Updated Volunteer Status', 
+      'Volunteer Desk', 
+      `Volunteer application status set to "${status}" for volunteer ID ${volunteerId}`
+    );
     await refreshAllData();
   };
 
@@ -1166,6 +1309,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         logout,
         updateProfile,
         createUser,
+        applyAsVolunteer,
         updateUser,
         updateUserRole,
         toggleUserStatus,
@@ -1208,6 +1352,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         deleteNotification,
         markNotificationRead,
         clearAllNotifications,
+        websiteContent,
+        updateWebsiteContent,
+        resetWebsiteContent,
         refreshAllData
       }}
     >

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Target, 
@@ -14,14 +14,8 @@ import {
   UserPlus 
 } from 'lucide-react';
 import { ORG_INFO } from '../data/mockData';
-
-interface LeadershipMember {
-  id?: string;
-  name: string;
-  role: string;
-  bio: string;
-  image: string;
-}
+import { useApp } from '../context/AppContext';
+import { LeadershipMember } from '../types';
 
 const DEFAULT_LEADERS: LeadershipMember[] = [
   {
@@ -55,29 +49,17 @@ const DEFAULT_LEADERS: LeadershipMember[] = [
 ];
 
 export const AboutPage: React.FC = () => {
-  const [leadershipTeam, setLeadershipTeam] = useState<LeadershipMember[]>(DEFAULT_LEADERS);
-  const [missionText, setMissionText] = useState(
-    'To mobilize, educate, and empower young generations to champion human rights, bridge societal divisions, protect ecological balance, and deliver responsive, community-driven civic solutions.'
-  );
-  const [visionText, setVisionText] = useState(
-    'A just, peaceful, and equitable world where young leaders actively guide democratic institutions, uphold social harmony, and guarantee fundamental dignity for all human beings.'
-  );
+  const { websiteContent } = useApp();
 
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('gyf_website_content');
-      if (saved) {
-        const data = JSON.parse(saved);
-        if (Array.isArray(data.leadershipTeam) && data.leadershipTeam.length > 0) {
-          setLeadershipTeam(data.leadershipTeam);
-        }
-        if (data.missionText) setMissionText(data.missionText);
-        if (data.visionText) setVisionText(data.visionText);
-      }
-    } catch (e) {
-      // ignore
-    }
-  }, []);
+  const leadershipTeam = (websiteContent?.leadershipTeam && websiteContent.leadershipTeam.length > 0)
+    ? websiteContent.leadershipTeam
+    : DEFAULT_LEADERS;
+
+  const missionText = websiteContent?.missionText || 
+    'To mobilize, educate, and empower young generations to champion human rights, bridge societal divisions, protect ecological balance, and deliver responsive, community-driven civic solutions.';
+
+  const visionText = websiteContent?.visionText || 
+    'A just, peaceful, and equitable world where young leaders actively guide democratic institutions, uphold social harmony, and guarantee fundamental dignity for all human beings.';
 
   const values = [
     {

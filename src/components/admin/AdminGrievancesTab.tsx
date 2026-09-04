@@ -42,6 +42,7 @@ export const AdminGrievancesTab: React.FC<AdminGrievancesTabProps> = ({
   const pendingCount = complaints.filter(c => c.currentStatus === 'Submitted' || c.currentStatus === 'Under Review').length;
   const inProgressCount = complaints.filter(c => c.currentStatus === 'Assigned' || c.currentStatus === 'In Progress').length;
   const resolvedCount = complaints.filter(c => c.currentStatus === 'Resolved' || c.currentStatus === 'Closed').length;
+  const rejectedCount = complaints.filter(c => c.currentStatus === 'Rejected').length;
 
   const filteredComplaints = complaints.filter(c => {
     const matchesSearch = 
@@ -73,7 +74,7 @@ export const AdminGrievancesTab: React.FC<AdminGrievancesTabProps> = ({
       </div>
 
       {/* Metric Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs">
           <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
             Total Grievance Dockets
@@ -121,6 +122,18 @@ export const AdminGrievancesTab: React.FC<AdminGrievancesTabProps> = ({
             Case closed with order
           </span>
         </div>
+
+        <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs">
+          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+            Cases Rejected
+          </span>
+          <div className="text-2xl font-black text-rose-600 mt-1">
+            {rejectedCount}
+          </div>
+          <span className="text-[11px] text-rose-700 font-semibold mt-0.5 block">
+            Ineligible or dismissed
+          </span>
+        </div>
       </div>
 
       {/* Search & Filter Bar */}
@@ -139,7 +152,7 @@ export const AdminGrievancesTab: React.FC<AdminGrievancesTabProps> = ({
         {/* Status filters */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 shrink-0">
           <span className="text-xs font-bold text-slate-500 shrink-0">Status:</span>
-          {(['all', 'Submitted', 'Under Review', 'Assigned', 'In Progress', 'Resolved', 'Closed'] as const).map((st) => (
+          {(['all', 'Submitted', 'Under Review', 'Assigned', 'In Progress', 'Resolved', 'Closed', 'Rejected'] as const).map((st) => (
             <button
               key={st}
               type="button"
@@ -253,6 +266,7 @@ export const AdminGrievancesTab: React.FC<AdminGrievancesTabProps> = ({
                         c.currentStatus === 'In Progress' ? 'bg-sky-100 text-sky-800' :
                         c.currentStatus === 'Assigned' ? 'bg-indigo-100 text-indigo-800' :
                         c.currentStatus === 'Under Review' ? 'bg-amber-100 text-amber-800' :
+                        c.currentStatus === 'Rejected' ? 'bg-rose-100 text-rose-800' :
                         'bg-slate-100 text-slate-700'
                       }`}>
                         {c.currentStatus}

@@ -223,7 +223,8 @@ export const AdminDashboardPage: React.FC = () => {
   const unreadContactCount = contactMessages.filter(m => !m.isRead).length;
   const pendingGrievanceCount = complaints.filter(c => c.currentStatus === 'Submitted' || c.currentStatus === 'Under Review').length;
   const pendingDonationsCount = donations.filter(d => d.paymentStatus === 'Pending Verification').length;
-  const pendingMembershipCount = users.filter(u => u.membershipStatus === 'Applicant').length;
+  const pendingMembershipCount = users.filter(u => u.membershipStatus === 'Applicant' && u.role !== 'volunteer').length;
+  const pendingVolunteersCount = volunteers.filter(v => v.membershipStatus === 'Applicant').length;
 
   interface NavItem {
     id: AdminTab;
@@ -236,7 +237,7 @@ export const AdminDashboardPage: React.FC = () => {
   const primaryNavItems: NavItem[] = [
     { id: 'overview', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'users', label: 'Users', icon: Users, count: users.length },
-    { id: 'volunteers', label: 'Volunteers', icon: UserCheck, count: volunteers.length },
+    { id: 'volunteers', label: 'Volunteers', icon: UserCheck, count: volunteers.length, unreadCount: pendingVolunteersCount },
     { id: 'blogs', label: 'Blogs', icon: FileText, count: blogs.length },
     { id: 'donations', label: 'Donations', icon: Heart, unreadCount: pendingDonationsCount },
     { id: 'grievances', label: 'Grievances', icon: ShieldCheck, unreadCount: pendingGrievanceCount },
@@ -340,10 +341,21 @@ export const AdminDashboardPage: React.FC = () => {
                             : 'text-blue-100 hover:bg-white/10 hover:text-white'
                         }`}
                       >
-                        <div className="flex items-center gap-2.5">
-                          <Icon className={`w-4 h-4 ${isActive ? 'text-teal-200' : 'text-blue-200'}`} />
-                          <span>{item.label}</span>
-                        </div>
+                          <div className="flex items-center justify-between w-full">
+                            <div className="flex items-center gap-2.5">
+                              <Icon className={`w-4 h-4 ${isActive ? 'text-teal-200' : 'text-blue-200'}`} />
+                              <span className="truncate">{item.label}</span>
+                            </div>
+                            {item.unreadCount !== undefined && item.unreadCount > 0 && (
+                              <span 
+                                id={`admin-nav-${item.id}-badge`}
+                                className="ml-auto px-2 py-0.5 rounded-full text-[11px] font-black bg-amber-400 text-slate-950 shrink-0 shadow-xs ring-1 ring-amber-300 min-w-[20px] text-center"
+                                title={`${item.unreadCount} pending application${item.unreadCount > 1 ? 's' : ''} awaiting review`}
+                              >
+                                {item.unreadCount}
+                              </span>
+                            )}
+                          </div>
                       </button>
                     );
                   })}
@@ -441,9 +453,15 @@ export const AdminDashboardPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
+                className="lg:hidden p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors relative"
+                title="Open Administration Menu"
               >
                 <Menu className="w-5 h-5" />
+                {pendingVolunteersCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-amber-400 text-slate-950 text-[10px] font-black flex items-center justify-center ring-2 ring-white">
+                    {pendingVolunteersCount}
+                  </span>
+                )}
               </button>
 
               <div className="space-y-0.5">
