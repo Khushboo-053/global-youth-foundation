@@ -17,7 +17,8 @@ export const ORG_INFO = {
   phone: '9103599292',
   email: 'contact.gyfoffice@gmail.com',
   addressDisplay: 'Bemina, Srinagar, Jammu & Kashmir (Headquarter Regional Hub)',
-  establishedYear: '2020',
+  establishedYear: '2010',
+  founder: 'Mr. Touseef Mehraj Raina',
   socialLinks: {
     facebook: 'https://facebook.com',
     instagram: 'https://instagram.com',
@@ -277,40 +278,87 @@ export const NEWS_ITEMS: NewsItem[] = [
   {
     id: 'news-1',
     title: 'GYF Launches 2026 Youth Fellowship for Human Rights & Civic Leadership',
-    category: 'Announcements',
+    category: 'Youth Empowerment',
     date: 'February 20, 2026',
     shortDescription: 'Applications are now open for our flagship 6-month fellowship program empowering 50 young leaders across the region.',
-    content: 'Global Youth Foundation is delighted to inaugurate the 2026 Youth Fellowship Cohort. This initiative will provide comprehensive training, direct community project seed grants, and executive mentorship from distinguished human rights advocates and policy researchers.',
+    content: `Global Youth Foundation is delighted to inaugurate the 2026 Youth Fellowship Cohort. This initiative will provide comprehensive training, direct community project seed grants, and executive mentorship from distinguished human rights advocates and policy researchers.
+
+### Cohort Orientation & Inaugural Assembly
+Selected candidates from across the valley assembled for an intensive 3-day civic orientation focusing on local dispute mediation, RTI applications, and environmental stewardship.
+
+![Youth Fellowship Orientation Assembly](https://images.unsplash.com/photo-1531497865144-0464ef8fb9a9?auto=format&fit=crop&w=1000&q=80)
+
+> "When young citizens are equipped with constitutional knowledge and institutional literacy, peaceful resolution of community issues transforms from an aspiration into everyday reality."
+
+### Grassroots Field Projects
+During the second half of the program, fellows will establish decentralized helpdesks and environmental clubs in their respective sub-districts. Applications remain open through late March.`,
     image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1000&q=80',
     author: 'GYF Communications Directorate',
-    readTime: '3 min read'
+    readTime: '3 min read',
+    articleImages: [
+      {
+        id: 'img-seed-1',
+        url: 'https://images.unsplash.com/photo-1531497865144-0464ef8fb9a9?auto=format&fit=crop&w=1000&q=80',
+        caption: 'Youth Fellowship delegates participating in the constitutional rights workshop'
+      },
+      {
+        id: 'img-seed-2',
+        url: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1000&q=80',
+        caption: 'Interactive policy debate and mediation simulations led by senior advocates'
+      }
+    ]
   },
   {
     id: 'news-2',
     title: 'Over 980 Citizen Grievances Successfully Mediated and Resolved',
-    category: 'Impact Report',
+    category: 'Legal Aid & Rights',
     date: 'January 15, 2026',
     shortDescription: 'Our transparent grievance desk reached a crucial milestone, providing swift, confidential assistance to affected youth and citizens.',
-    content: 'Through dedicated paralegal volunteers and collaborative dialogue with institutional authorities, Global Youth Foundation has resolved over 980 individual and collective community grievances since our portal inception, ranging from educational scholarship access to community amenities.',
+    content: `Through dedicated paralegal volunteers and collaborative dialogue with institutional authorities, Global Youth Foundation has resolved over 980 individual and collective community grievances since our portal inception, ranging from educational scholarship access to community amenities.
+
+### Community Ombudsman Clinics in Rural Districts
+Our travelling paralegal team conducted 24 in-person grievance intake camps across remote tehsils, allowing elderly residents and students to track submissions in real time.
+
+![Field Legal Consultation and Grievance Intake Camp](https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=1000&q=80)
+
+The digital complaint tracking system has cut the average resolution time by 60%, fostering greater accountability and citizen trust.`,
     image: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=1000&q=80',
     author: 'Grievance Redressal Committee',
-    readTime: '4 min read'
+    readTime: '4 min read',
+    articleImages: [
+      {
+        id: 'img-seed-3',
+        url: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=1000&q=80',
+        caption: 'Field paralegal consultation and citizen intake camp'
+      }
+    ]
   },
   {
     id: 'news-3',
     title: 'Planting Hope: 10,000 Saplings Planted Across Degraded Valley Slopes',
-    category: 'Environment',
+    category: 'Environmental Action',
     date: 'November 18, 2025',
     shortDescription: 'Youth volunteers and local schools joined hands to restore indigenous green cover in an ambitious seasonal ecological initiative.',
-    content: 'Demonstrating the immense power of youth-driven climate action, over 300 volunteers participated across 8 plantation locations. The species chosen included deodar, walnut, and native pine to prevent soil erosion and promote biodiversity.',
+    content: `Demonstrating the immense power of youth-driven climate action, over 300 volunteers participated across 8 plantation locations. The species chosen included deodar, walnut, and native pine to prevent soil erosion and promote biodiversity.
+
+![Green Wings Youth Plantation Volunteers](https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1000&q=80)
+
+Each sapling has been geo-tagged by volunteer teams to monitor survival rates throughout the winter thaw.`,
     image: 'https://images.unsplash.com/photo-1576085898323-218337e3e43c?auto=format&fit=crop&w=1000&q=80',
     author: 'GYF Green Wings Initiative',
-    readTime: '3 min read'
+    readTime: '3 min read',
+    articleImages: [
+      {
+        id: 'img-seed-4',
+        url: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1000&q=80',
+        caption: 'Youth volunteers preparing indigenous saplings for valley slope afforestation'
+      }
+    ]
   },
   {
     id: 'news-4',
     title: 'Community Micro-Libraries Established in 5 Remote Village Centers',
-    category: 'Education',
+    category: 'Education & Fellowships',
     date: 'October 10, 2025',
     shortDescription: 'Supplying over 3,000 books, competitive exam guides, and quiet reading spaces for high-school students in rural zones.',
     content: 'Education is the fundamental pillar of socio-economic elevation. With generous support from book donors and community elders, GYF turned unused community halls into vibrant, solar-powered study hubs.',

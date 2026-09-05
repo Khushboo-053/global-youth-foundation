@@ -12,7 +12,8 @@ import {
   Tag, 
   FileText,
   User,
-  Trash2
+  Trash2,
+  ChevronDown
 } from 'lucide-react';
 import { GrievanceRecord, ComplaintStatus, UserAccount } from '../../types';
 import { GrievanceOmbudsmanModal } from './GrievanceOmbudsmanModal';
@@ -21,6 +22,7 @@ interface AdminGrievancesTabProps {
   complaints: GrievanceRecord[];
   volunteers: UserAccount[];
   onUpdateStatus: (id: string, newStatus: ComplaintStatus, officerNote?: string) => Promise<void>;
+  onUpdatePriority?: (id: string, newPriority: 'Low' | 'Medium' | 'High' | 'Urgent') => Promise<void>;
   onAssignVolunteer: (id: string, volunteerId: string, volunteerName: string, department?: string) => Promise<void>;
   onDeleteComplaint: (id: string) => Promise<void>;
 }
@@ -29,6 +31,7 @@ export const AdminGrievancesTab: React.FC<AdminGrievancesTabProps> = ({
   complaints,
   volunteers,
   onUpdateStatus,
+  onUpdatePriority,
   onAssignVolunteer,
   onDeleteComplaint
 }) => {
@@ -240,14 +243,31 @@ export const AdminGrievancesTab: React.FC<AdminGrievancesTabProps> = ({
                     </td>
 
                     <td className="py-3.5 px-4">
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
-                        c.priority === 'Urgent' ? 'bg-rose-100 text-rose-800' :
-                        c.priority === 'High' ? 'bg-amber-100 text-amber-800' :
-                        c.priority === 'Medium' ? 'bg-sky-100 text-sky-800' :
-                        'bg-slate-100 text-slate-700'
-                      }`}>
-                        {c.priority}
-                      </span>
+                      <div className="relative inline-block">
+                        <select
+                          id={`priority-select-${c.id}`}
+                          aria-label={`Change priority for docket ${c.id}`}
+                          value={c.priority || 'Medium'}
+                          onChange={async (e) => {
+                            const newP = e.target.value as 'Low' | 'Medium' | 'High' | 'Urgent';
+                            if (onUpdatePriority) {
+                              await onUpdatePriority(c.id, newP);
+                            }
+                          }}
+                          className={`appearance-none cursor-pointer pl-2.5 pr-6 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border shadow-2xs transition-all focus:outline-none focus:ring-2 focus:ring-offset-1 ${
+                            c.priority === 'Urgent' ? 'bg-rose-100 text-rose-800 border-rose-300 focus:ring-rose-400' :
+                            c.priority === 'High' ? 'bg-amber-100 text-amber-800 border-amber-300 focus:ring-amber-400' :
+                            c.priority === 'Medium' ? 'bg-sky-100 text-sky-800 border-sky-300 focus:ring-sky-400' :
+                            'bg-slate-100 text-slate-700 border-slate-300 focus:ring-slate-400'
+                          }`}
+                        >
+                          <option value="Low" className="bg-white text-slate-800 font-bold">LOW</option>
+                          <option value="Medium" className="bg-white text-sky-800 font-bold">MEDIUM</option>
+                          <option value="High" className="bg-white text-amber-800 font-bold">HIGH</option>
+                          <option value="Urgent" className="bg-white text-rose-800 font-bold">URGENT</option>
+                        </select>
+                        <ChevronDown className="w-3 h-3 absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none opacity-60" />
+                      </div>
                     </td>
 
                     <td className="py-3.5 px-4">
@@ -300,6 +320,7 @@ export const AdminGrievancesTab: React.FC<AdminGrievancesTabProps> = ({
         grievance={selectedGrievance}
         volunteers={volunteers}
         onUpdateStatus={onUpdateStatus}
+        onUpdatePriority={onUpdatePriority}
         onAssignVolunteer={onAssignVolunteer}
         onDeleteComplaint={onDeleteComplaint}
       />

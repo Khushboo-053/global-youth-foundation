@@ -17,7 +17,10 @@ import {
 } from 'lucide-react';
 import { NewsItem } from '../../types';
 import { BlogModal } from './BlogModal';
+import { Modal } from '../Modal';
+import { ArticleContentRenderer } from '../ArticleContentRenderer';
 import { Link } from 'react-router-dom';
+import { Image as ImageIcon } from 'lucide-react';
 
 interface AdminBlogsTabProps {
   blogs: NewsItem[];
@@ -39,6 +42,7 @@ export const AdminBlogsTab: React.FC<AdminBlogsTabProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBlog, setEditingBlog] = useState<NewsItem | null>(null);
   const [blogToDelete, setBlogToDelete] = useState<NewsItem | null>(null);
+  const [blogToPreview, setBlogToPreview] = useState<NewsItem | null>(null);
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
 
   const categories = Array.from(new Set(blogs.map(b => b.category).filter(Boolean)));
@@ -216,8 +220,14 @@ export const AdminBlogsTab: React.FC<AdminBlogsTabProps> = ({
                       {blog.shortDescription}
                     </p>
 
-                    <div className="text-[11px] text-slate-400 font-medium">
-                      By {blog.author}
+                    <div className="flex items-center justify-between text-[11px] text-slate-400 font-medium">
+                      <span>By {blog.author}</span>
+                      {blog.articleImages && blog.articleImages.length > 0 && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-teal-50 text-teal-800 font-bold text-[10px] border border-teal-200">
+                          <ImageIcon className="w-3 h-3 text-teal-700" />
+                          <span>{blog.articleImages.length} inside photo{blog.articleImages.length > 1 ? 's' : ''}</span>
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -234,10 +244,20 @@ export const AdminBlogsTab: React.FC<AdminBlogsTabProps> = ({
                   </Link>
 
                   <div className="flex items-center gap-1.5">
+                    {/* Preview Article Button */}
+                    <button
+                      type="button"
+                      onClick={() => setBlogToPreview(blog)}
+                      className="p-2 rounded-xl text-slate-600 hover:text-teal-800 hover:bg-teal-50 transition-colors cursor-pointer"
+                      title="Preview formatted article with inside photos"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+
                     <button
                       type="button"
                       onClick={() => handleOpenEdit(blog)}
-                      className="p-2 rounded-xl text-slate-600 hover:text-sky-800 hover:bg-sky-50 transition-colors"
+                      className="p-2 rounded-xl text-slate-600 hover:text-sky-800 hover:bg-sky-50 transition-colors cursor-pointer"
                       title="Edit Article"
                     >
                       <Edit3 className="w-4 h-4" />
@@ -246,7 +266,7 @@ export const AdminBlogsTab: React.FC<AdminBlogsTabProps> = ({
                     <button
                       type="button"
                       onClick={() => setBlogToDelete(blog)}
-                      className="p-2 rounded-xl text-slate-400 hover:text-rose-700 hover:bg-rose-50 transition-colors"
+                      className="p-2 rounded-xl text-slate-400 hover:text-rose-700 hover:bg-rose-50 transition-colors cursor-pointer"
                       title="Delete Article"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -266,6 +286,44 @@ export const AdminBlogsTab: React.FC<AdminBlogsTabProps> = ({
         blog={editingBlog}
         onSave={handleSave}
       />
+
+      {/* Article Live Preview Modal */}
+      <Modal
+        isOpen={blogToPreview !== null}
+        onClose={() => setBlogToPreview(null)}
+        title={blogToPreview?.title || 'Article Reader Preview'}
+        maxWidth="2xl"
+      >
+        {blogToPreview && (
+          <div className="space-y-4">
+            <img
+              src={blogToPreview.image}
+              alt={blogToPreview.title}
+              className="w-full h-64 object-cover rounded-2xl shadow-xs"
+              referrerPolicy="no-referrer"
+            />
+            <div className="flex items-center justify-between text-xs text-slate-500 pb-2 border-b border-slate-100">
+              <span className="font-extrabold text-teal-800 uppercase tracking-wider">{blogToPreview.category}</span>
+              <span>{blogToPreview.date} • By {blogToPreview.author} • {blogToPreview.readTime}</span>
+            </div>
+            
+            <ArticleContentRenderer 
+              content={blogToPreview.content}
+              articleImages={blogToPreview.articleImages}
+            />
+
+            <div className="pt-4 border-t border-slate-100 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setBlogToPreview(null)}
+                className="px-5 py-2 text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white rounded-xl cursor-pointer"
+              >
+                Close Preview
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
 
       {/* Delete Confirmation Modal */}
       {blogToDelete && (

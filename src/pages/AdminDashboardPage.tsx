@@ -38,7 +38,8 @@ import {
   Bell,
   CreditCard,
   Globe,
-  KeyRound
+  KeyRound,
+  ClipboardList
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { Program, EventItem, ContactMessage, NewsItem, FAQItem, GrievanceRecord, UserAccount } from '../types';
@@ -78,6 +79,7 @@ export type AdminTab =
   | 'contact' 
   | 'website-content' 
   | 'volunteer-assignments'
+  | 'volunteer-reports'
   | 'notifications'
   | 'profile';
 
@@ -88,6 +90,7 @@ export const AdminDashboardPage: React.FC = () => {
     users, 
     volunteers, 
     volunteerPermissions,
+    volunteerActivityReports,
     blogs, 
     donations, 
     complaints, 
@@ -112,6 +115,7 @@ export const AdminDashboardPage: React.FC = () => {
     toggleBlogPublish,
     updateDonationStatus,
     updateComplaintStatus,
+    updateComplaintPriority,
     assignGrievance,
     deleteComplaint,
     createUser,
@@ -225,6 +229,7 @@ export const AdminDashboardPage: React.FC = () => {
   const pendingDonationsCount = donations.filter(d => d.paymentStatus === 'Pending Verification').length;
   const pendingMembershipCount = users.filter(u => u.membershipStatus === 'Applicant' && u.role !== 'volunteer').length;
   const pendingVolunteersCount = volunteers.filter(v => v.membershipStatus === 'Applicant').length;
+  const pendingReportsCount = (volunteerActivityReports || []).filter(r => r.status === 'Submitted').length;
 
   interface NavItem {
     id: AdminTab;
@@ -248,6 +253,7 @@ export const AdminDashboardPage: React.FC = () => {
     { id: 'contact', label: 'Contact Messages', icon: Mail, unreadCount: unreadContactCount },
     { id: 'website-content', label: 'Website content', icon: Globe },
     { id: 'volunteer-assignments', label: 'Volunteer assignments & permissions', icon: KeyRound, count: volunteers.filter(v => v.isActive).length },
+    { id: 'volunteer-reports', label: 'Volunteer Field Reports', icon: ClipboardList, count: (volunteerActivityReports || []).length, unreadCount: pendingReportsCount },
   ];
 
   const secondaryNavItems: NavItem[] = [
@@ -486,6 +492,7 @@ export const AdminDashboardPage: React.FC = () => {
                   {activeTab === 'contact' && 'Public Inquiries & Messages'}
                   {activeTab === 'website-content' && 'Website Content & Copy Management'}
                   {activeTab === 'volunteer-assignments' && 'Volunteer Assignments & Permissions Matrix'}
+                  {activeTab === 'volunteer-reports' && 'Volunteer Field Activity Reports & Evidence Proofs'}
                   {activeTab === 'notifications' && 'System Broadcast Dispatcher'}
                   {activeTab === 'profile' && 'Administrator Security & Profile'}
                 </h1>
@@ -578,6 +585,7 @@ export const AdminDashboardPage: React.FC = () => {
                 onLogHours={logVolunteerHours}
                 onAssignGrievance={assignGrievance}
                 onEditVolunteer={(vol) => setSelectedUserForEdit(vol)}
+                onNavigateTab={setActiveTab}
               />
             )}
 
@@ -587,6 +595,7 @@ export const AdminDashboardPage: React.FC = () => {
                 complaints={complaints}
                 volunteers={volunteers}
                 onUpdateStatus={updateComplaintStatus}
+                onUpdatePriority={updateComplaintPriority}
                 onAssignVolunteer={assignGrievance}
                 onDeleteComplaint={deleteComplaint}
               />
@@ -668,6 +677,22 @@ export const AdminDashboardPage: React.FC = () => {
                 onUpdatePermissions={updateVolunteerPermissions}
                 onAssignGrievance={assignGrievance}
                 onLogHours={logVolunteerHours}
+                initialSubTab="roster"
+              />
+            )}
+
+            {/* TAB 12B: DIRECT VOLUNTEER FIELD REPORTS & EVIDENCE */}
+            {activeTab === 'volunteer-reports' && (
+              <AdminVolunteerAssignmentsTab
+                volunteers={volunteers}
+                volunteerPermissions={volunteerPermissions}
+                programs={programs}
+                events={events}
+                complaints={complaints}
+                onUpdatePermissions={updateVolunteerPermissions}
+                onAssignGrievance={assignGrievance}
+                onLogHours={logVolunteerHours}
+                initialSubTab="reports"
               />
             )}
 

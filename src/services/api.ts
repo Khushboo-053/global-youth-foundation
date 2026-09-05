@@ -59,9 +59,9 @@ const STORAGE_KEYS = {
 export const DEFAULT_LEADERSHIP_COUNCIL: LeadershipMember[] = [
   {
     id: 'lead-1',
-    name: 'Adil Farooq',
-    role: 'Executive Director & Founder',
-    bio: 'Grassroots human rights advocate with 8+ years experience in youth development and community mediation.',
+    name: 'Mr. Touseef Mehraj Raina',
+    role: 'Founder',
+    bio: 'Established GYF in 2010 to promote social change, community development, youth empowerment, and humanitarian causes across Jammu, Kashmir, and Ladakh.',
     image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'
   },
   {
@@ -94,8 +94,8 @@ export const DEFAULT_WEBSITE_CONTENT: WebsiteContent = {
   heroSubtitle: 'Global Youth Foundation operates Kashmir’s leading youth ombudsman network, pro-bono paralegal aid desk, and civic advocacy coalitions for institutional accountability.',
   primaryCtaText: 'Submit a Grievance',
   secondaryCtaText: 'Become a Member',
-  missionText: 'To foster a just, inclusive, and accountable society by mobilizing youth as frontline human rights monitors, providing accessible legal redressal, and bridging citizen grievances with civic authorities.',
-  visionText: 'A democratic valley and nation where every young person is empowered with constitutional awareness, legal aid protection, and active civic participation.',
+  missionText: 'To empower youth, strengthen communities, and promote a peaceful, just, inclusive, and harmonious society.',
+  visionText: 'To build a more inclusive, liberal, secular, peaceful, and empowered society where every individual is treated with dignity and has equal opportunities to participate, contribute, and grow.',
   statYouthTrained: '25,000+',
   statCasesResolved: '1,840+',
   statDistrictsCovered: '10',
@@ -109,6 +109,7 @@ export const DEFAULT_WEBSITE_CONTENT: WebsiteContent = {
   bankAccountNumber: '0012010100009842',
   bankIfsc: 'JAKA0MACOMS',
   bankUpi: 'gyf.ombudsman@jkb',
+  bankQrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=upi%3A%2F%2Fpay%3Fpa%3Dgyf.ombudsman%40jkb%26pn%3DGlobal%2520Youth%2520Foundation%2520Trust%26cu%3DINR',
   leadershipTeam: DEFAULT_LEADERSHIP_COUNCIL,
   updatedAt: new Date().toISOString()
 };
@@ -688,6 +689,11 @@ const SEED_VOLUNTEER_REPORTS: VolunteerActivityReport[] = [
     summary: 'Visited the site alongside village elders and documented 4 dumping points. Conducted community dialogue regarding proper waste segregation.',
     accomplishments: 'Obtained written agreement from local dairy units to cease nocturnal dumping; submitted GPS-tagged photographic evidence to municipal authority.',
     challenges: 'Resistance from unauthorized landfill operators; requested administrative backing.',
+    photos: [
+      'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1618477461853-cf6ed80faba5?w=800&auto=format&fit=crop&q=80'
+    ],
+    attachmentName: 'Wular_Catchment_Inspection.jpg',
     status: 'Reviewed by Admin',
     adminFeedback: 'Excellent grassroots investigation. Field evidence forwarded to Divisional Commissioner Office.',
     createdAt: '2026-03-02T16:45:00Z'
@@ -706,6 +712,10 @@ const SEED_VOLUNTEER_REPORTS: VolunteerActivityReport[] = [
     location: 'Government Higher Secondary School, Baramulla',
     summary: 'Delivered interactive presentation to 85 high school students regarding tree stewardship and climate resilience.',
     accomplishments: 'Enrolled 40 youth eco-cadets and distributed 120 deodar and chinar saplings with care guides.',
+    photos: [
+      'https://images.unsplash.com/photo-1576085898323-218337e3e43c?w=800&auto=format&fit=crop&q=80'
+    ],
+    attachmentName: 'Sapling_Distribution_Drive.jpg',
     status: 'Submitted',
     createdAt: '2026-02-27T14:30:00Z'
   }
@@ -1155,7 +1165,15 @@ export const api = {
           }));
         }
       }
-      return getLocal<NewsItem[]>(STORAGE_KEYS.BLOGS, INITIAL_BLOGS);
+      const local = getLocal<NewsItem[]>(STORAGE_KEYS.BLOGS, INITIAL_BLOGS);
+      const updated = local.map(b => {
+        const seed = INITIAL_BLOGS.find(s => s.id === b.id);
+        if (seed && (!b.articleImages || b.articleImages.length === 0) && seed.articleImages) {
+          return { ...b, articleImages: seed.articleImages, content: b.content.includes('![') ? b.content : seed.content };
+        }
+        return b;
+      });
+      return updated;
     },
 
     async getPublished(): Promise<NewsItem[]> {
@@ -1457,6 +1475,57 @@ export const api = {
         await supabase.from('grievance_timeline').insert({
           grievance_id: id,
           status: newStatus,
+          date: stamp,
+          description: timelineItem.description,
+          updated_by: timelineItem.updatedBy
+        });
+      }
+      return true;
+    },
+
+    async updatePriority(id: string, newPriority: 'Low' | 'Medium' | 'High' | 'Urgent', officerName?: string): Promise<boolean> {
+      const list = getLocal<GrievanceRecord[]>(STORAGE_KEYS.GRIEVANCES, INITIAL_COMPLAINTS);
+      const record = list.find(g => g.id === id);
+      if (!record) return false;
+
+      record.priority = newPriority;
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+      const stamp = `${dateStr} • ${timeStr}`;
+
+      const timelineItem: ComplaintTimelineEvent = {
+        status: record.currentStatus,
+        date: stamp,
+        description: `Priority updated to ${newPriority}`,
+        updatedBy: officerName || 'Central Secretariat'
+      };
+
+      record.timeline.push(timelineItem);
+      setLocal(STORAGE_KEYS.GRIEVANCES, list);
+
+      // Also update any linked volunteer tasks if they exist
+      try {
+        const tasks = getLocal<VolunteerTaskItem[]>(STORAGE_KEYS.VOLUNTEER_TASKS, SEED_VOLUNTEER_TASKS);
+        let tasksUpdated = false;
+        tasks.forEach(t => {
+          if (t.relatedId === id || t.title.includes(id) || (t.description && t.description.includes(id))) {
+            t.priority = newPriority;
+            tasksUpdated = true;
+          }
+        });
+        if (tasksUpdated) {
+          setLocal(STORAGE_KEYS.VOLUNTEER_TASKS, tasks);
+        }
+      } catch {
+        // Safe fallback
+      }
+
+      if (isSupabaseConfigured && supabase) {
+        await supabase.from('grievances').update({ priority: newPriority, updated_at: new Date().toISOString() }).eq('id', id);
+        await supabase.from('grievance_timeline').insert({
+          grievance_id: id,
+          status: record.currentStatus,
           date: stamp,
           description: timelineItem.description,
           updated_by: timelineItem.updatedBy
@@ -2225,6 +2294,12 @@ export const api = {
     async markAsRead(id: string): Promise<void> {
       const notifs = getLocal<any[]>(STORAGE_KEYS.NOTIFICATIONS, SEED_NOTIFICATIONS);
       const updated = notifs.map(n => n.id === id ? { ...n, isRead: true } : n);
+      setLocal(STORAGE_KEYS.NOTIFICATIONS, updated);
+    },
+
+    async markAllAsRead(): Promise<void> {
+      const notifs = getLocal<any[]>(STORAGE_KEYS.NOTIFICATIONS, SEED_NOTIFICATIONS);
+      const updated = notifs.map(n => ({ ...n, isRead: true }));
       setLocal(STORAGE_KEYS.NOTIFICATIONS, updated);
     },
 

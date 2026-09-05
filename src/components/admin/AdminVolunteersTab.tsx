@@ -17,7 +17,9 @@ import {
   Phone,
   Check,
   X,
-  AlertCircle
+  AlertCircle,
+  ClipboardList,
+  Camera
 } from 'lucide-react';
 import { UserAccount, VolunteerPermissions, Program, EventItem, GrievanceRecord } from '../../types';
 import { VolunteerDetailModal } from './VolunteerDetailModal';
@@ -35,6 +37,7 @@ interface AdminVolunteersTabProps {
   onLogHours: (volunteerId: string, hours: number) => Promise<void>;
   onAssignGrievance: (complaintId: string, volunteerId: string, volunteerName: string, department?: string) => Promise<void>;
   onEditVolunteer: (volunteer: UserAccount) => void;
+  onNavigateTab?: (tab: any) => void;
 }
 
 export const AdminVolunteersTab: React.FC<AdminVolunteersTabProps> = ({
@@ -47,10 +50,12 @@ export const AdminVolunteersTab: React.FC<AdminVolunteersTabProps> = ({
   onUpdatePermissions,
   onLogHours,
   onAssignGrievance,
-  onEditVolunteer
+  onEditVolunteer,
+  onNavigateTab
 }) => {
-  const { user } = useApp();
+  const { user, volunteerActivityReports } = useApp();
   const isAdmin = user?.role === 'admin';
+  const pendingReportsCount = (volunteerActivityReports || []).filter(r => r.status === 'Submitted').length;
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'active' | 'rejected' | 'inactive'>('all');
@@ -123,6 +128,22 @@ export const AdminVolunteersTab: React.FC<AdminVolunteersTabProps> = ({
             Manage grassroots youth volunteers, delegate grievance dockets, and record field service hours.
           </p>
         </div>
+
+        {onNavigateTab && (
+          <button
+            type="button"
+            onClick={() => onNavigateTab('volunteer-reports')}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-teal-50 hover:bg-teal-100 text-teal-900 text-xs font-bold border border-teal-200 shadow-xs transition-colors shrink-0"
+          >
+            <Camera className="w-4 h-4 text-teal-800" />
+            <span>Field Activity Reports ({volunteerActivityReports?.length || 0})</span>
+            {pendingReportsCount > 0 && (
+              <span className="px-2 py-0.5 rounded-full bg-amber-500 text-white text-[10px] font-black animate-pulse">
+                {pendingReportsCount} New
+              </span>
+            )}
+          </button>
+        )}
       </div>
 
       {/* KPI Cards Grid */}

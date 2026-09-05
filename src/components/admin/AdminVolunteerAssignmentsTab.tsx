@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   UserCheck, 
   ShieldCheck, 
@@ -21,7 +21,12 @@ import {
   ListTodo,
   ClipboardList,
   MessageSquare,
-  Briefcase
+  Briefcase,
+  Camera,
+  ZoomIn,
+  Eye,
+  ExternalLink,
+  Image as ImageIcon
 } from 'lucide-react';
 import { 
   UserAccount, 
@@ -46,6 +51,7 @@ interface AdminVolunteerAssignmentsTabProps {
   onUpdatePermissions: (volunteerId: string, perms: Partial<VolunteerPermissions>) => Promise<void>;
   onAssignGrievance: (complaintId: string, volunteerId: string, volunteerName: string, department?: string) => Promise<void>;
   onLogHours: (volunteerId: string, hours: number) => Promise<void>;
+  initialSubTab?: AdminVolunteerSubTab;
 }
 
 type AdminVolunteerSubTab = 'roster' | 'programs' | 'events' | 'tasks' | 'reports';
@@ -58,7 +64,8 @@ export const AdminVolunteerAssignmentsTab: React.FC<AdminVolunteerAssignmentsTab
   complaints,
   onUpdatePermissions,
   onAssignGrievance,
-  onLogHours
+  onLogHours,
+  initialSubTab
 }) => {
   const {
     volunteerPrograms,
@@ -71,7 +78,15 @@ export const AdminVolunteerAssignmentsTab: React.FC<AdminVolunteerAssignmentsTab
     reviewVolunteerActivityReport
   } = useApp();
 
-  const [activeSubTab, setActiveSubTab] = useState<AdminVolunteerSubTab>('roster');
+  const [activeSubTab, setActiveSubTab] = useState<AdminVolunteerSubTab>(initialSubTab || 'roster');
+
+  useEffect(() => {
+    if (initialSubTab) {
+      setActiveSubTab(initialSubTab);
+    }
+  }, [initialSubTab]);
+
+  const pendingReportsCount = volunteerActivityReports.filter(r => r.status === 'Submitted').length;
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedVolunteer, setSelectedVolunteer] = useState<UserAccount | null>(null);
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
@@ -85,6 +100,14 @@ export const AdminVolunteerAssignmentsTab: React.FC<AdminVolunteerAssignmentsTab
   const [showAssignTaskModal, setShowAssignTaskModal] = useState(false);
   const [selectedReportForReview, setSelectedReportForReview] = useState<VolunteerActivityReport | null>(null);
   const [adminFeedbackInput, setAdminFeedbackInput] = useState('');
+  const [viewingPhoto, setViewingPhoto] = useState<{
+    url: string;
+    title: string;
+    volunteer: string;
+    date: string;
+  } | null>(null);
+  const [reportFilter, setReportFilter] = useState<'All' | 'Submitted' | 'Reviewed by Admin'>('All');
+  const [reportSearch, setReportSearch] = useState('');
 
   // 1. Grievance Assignment Modal Form
   const [targetVolunteerId, setTargetVolunteerId] = useState('');
@@ -431,6 +454,11 @@ export const AdminVolunteerAssignmentsTab: React.FC<AdminVolunteerAssignmentsTab
         >
           <ClipboardList className="w-4 h-4" />
           <span>Field Activity Reports ({volunteerActivityReports.length})</span>
+          {pendingReportsCount > 0 && (
+            <span className="px-2 py-0.5 rounded-full bg-amber-500 text-white text-[10px] font-black animate-pulse">
+              {pendingReportsCount} New
+            </span>
+          )}
         </button>
       </div>
 
@@ -759,21 +787,64 @@ export const AdminVolunteerAssignmentsTab: React.FC<AdminVolunteerAssignmentsTab
       {/* ========================================================================= */}
       {activeSubTab === 'reports' && (
         <div className="space-y-4">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h3 className="text-sm font-bold text-slate-800">Volunteer Grassroots Activity Reports</h3>
-              <p className="text-xs text-slate-500">Review on-ground inspections submitted by volunteers and provide official feedback.</p>
+              <p className="text-xs text-slate-500">Review on-ground inspections, photographic proofs submitted by volunteers, and provide official feedback.</p>
+            </div>
+
+            {/* Quick Filter Pill Buttons */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <div className="relative">
+                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={reportSearch}
+                  onChange={(e) => setReportSearch(e.target.value)}
+                  placeholder="Search reports or photos..."
+                  className="pl-8 pr-3 py-1.5 text-xs rounded-xl bg-white border border-slate-200 text-slate-800 focus:outline-none focus:border-teal-700"
+                />
+              </div>
+              <select
+                value={reportFilter}
+                onChange={(e) => setReportFilter(e.target.value as any)}
+                className="px-3 py-1.5 text-xs rounded-xl bg-white border border-slate-200 text-slate-800 focus:outline-none focus:border-teal-700 font-semibold"
+              >
+                <option value="All">All Reports ({volunteerActivityReports.length})</option>
+                <option value="Submitted">Pending Review ({volunteerActivityReports.filter(r => r.status === 'Submitted').length})</option>
+                <option value="Reviewed by Admin">Approved & Reviewed ({volunteerActivityReports.filter(r => r.status === 'Reviewed by Admin').length})</option>
+              </select>
             </div>
           </div>
 
           <div className="space-y-4">
-            {volunteerActivityReports.length === 0 ? (
+            {volunteerActivityReports
+              .filter(r => {
+                const matchFilter = reportFilter === 'All' || r.status === reportFilter;
+                const matchSearch = !reportSearch ||
+                  r.title.toLowerCase().includes(reportSearch.toLowerCase()) ||
+                  r.volunteerName.toLowerCase().includes(reportSearch.toLowerCase()) ||
+                  r.location.toLowerCase().includes(reportSearch.toLowerCase()) ||
+                  r.summary.toLowerCase().includes(reportSearch.toLowerCase());
+                return matchFilter && matchSearch;
+              })
+              .length === 0 ? (
               <div className="p-12 text-center bg-white rounded-2xl border border-slate-200 text-slate-400 text-xs font-bold">
-                No activity reports submitted by volunteers yet.
+                No activity reports matching the selected filter.
               </div>
             ) : (
-              volunteerActivityReports.map(report => (
-                <div key={report.id} className="p-6 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-3">
+              volunteerActivityReports
+                .filter(r => {
+                  const matchFilter = reportFilter === 'All' || r.status === reportFilter;
+                  const matchSearch = !reportSearch ||
+                    r.title.toLowerCase().includes(reportSearch.toLowerCase()) ||
+                    r.volunteerName.toLowerCase().includes(reportSearch.toLowerCase()) ||
+                    r.location.toLowerCase().includes(reportSearch.toLowerCase()) ||
+                    r.summary.toLowerCase().includes(reportSearch.toLowerCase());
+                  return matchFilter && matchSearch;
+                })
+                .map(report => (
+                <div key={report.id} className="p-6 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-3.5">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
@@ -782,6 +853,12 @@ export const AdminVolunteerAssignmentsTab: React.FC<AdminVolunteerAssignmentsTab
                         </span>
                         <span className="text-xs font-bold text-slate-700">By: {report.volunteerName}</span>
                         <span className="text-xs text-slate-400">• {report.date} • {report.hoursSpent} hrs</span>
+                        {((report.photos && report.photos.length > 0) || report.attachmentUrl) && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
+                            <Camera className="w-3 h-3" />
+                            <span>{(report.photos?.length) || 1} Photo(s) Attached</span>
+                          </span>
+                        )}
                       </div>
                       <h4 className="text-sm font-bold text-slate-900 mt-1">{report.title}</h4>
                     </div>
@@ -812,6 +889,48 @@ export const AdminVolunteerAssignmentsTab: React.FC<AdminVolunteerAssignmentsTab
                       <p className="text-amber-800"><strong>Reported Challenges:</strong> {report.challenges}</p>
                     )}
                   </div>
+
+                  {/* Photo Evidence Gallery for Admin */}
+                  {((report.photos && report.photos.length > 0) || report.attachmentUrl) && (
+                    <div className="space-y-2 p-3.5 rounded-xl bg-teal-50/40 border border-teal-200/70">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-teal-950 flex items-center gap-1.5">
+                          <Camera className="w-3.5 h-3.5 text-teal-800" />
+                          <span>Submitted Field Photographic Proof</span>
+                        </span>
+                        <span className="text-[10px] font-bold text-teal-800 bg-white px-2 py-0.5 rounded border border-teal-200">
+                          {(report.photos?.length) || 1} image(s) attached
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
+                        {(report.photos && report.photos.length > 0 ? report.photos : [report.attachmentUrl!]).map((photoUrl, pIdx) => (
+                          <div
+                            key={pIdx}
+                            onClick={() => setViewingPhoto({
+                              url: photoUrl,
+                              title: `${report.title} - Photo #${pIdx + 1}`,
+                              volunteer: report.volunteerName,
+                              date: report.date
+                            })}
+                            className="relative group rounded-xl overflow-hidden border border-slate-200 bg-white aspect-video cursor-pointer hover:border-teal-700 hover:shadow-md transition-all"
+                          >
+                            <img
+                              src={photoUrl}
+                              alt={`Field Evidence ${pIdx + 1}`}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                            <div className="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-white">
+                              <ZoomIn className="w-4 h-4" />
+                              <span className="text-[11px] font-bold">Enlarge</span>
+                            </div>
+                            <div className="absolute bottom-1 right-1 bg-black/70 text-white text-[9px] font-semibold px-1.5 py-0.5 rounded">
+                              #{pIdx + 1}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {report.adminFeedback && (
                     <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900">
@@ -1307,6 +1426,48 @@ export const AdminVolunteerAssignmentsTab: React.FC<AdminVolunteerAssignmentsTab
               )}
             </div>
 
+            {/* Photos in Review Modal */}
+            {((selectedReportForReview.photos && selectedReportForReview.photos.length > 0) || selectedReportForReview.attachmentUrl) && (
+              <div className="space-y-2 p-3.5 rounded-xl bg-teal-50/60 border border-teal-200/80">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-teal-950 flex items-center gap-1.5">
+                    <Camera className="w-3.5 h-3.5 text-teal-800" />
+                    <span>Submitted Photographic Proof</span>
+                  </span>
+                  <span className="text-[10px] font-bold text-teal-800 bg-white px-2 py-0.5 rounded border border-teal-200">
+                    {(selectedReportForReview.photos?.length) || 1} Attached
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {(selectedReportForReview.photos && selectedReportForReview.photos.length > 0 
+                    ? selectedReportForReview.photos 
+                    : [selectedReportForReview.attachmentUrl!]
+                  ).map((photoUrl, pIdx) => (
+                    <div 
+                      key={pIdx}
+                      onClick={() => setViewingPhoto({
+                        url: photoUrl,
+                        title: `${selectedReportForReview.title} - Photo #${pIdx + 1}`,
+                        volunteer: selectedReportForReview.volunteerName,
+                        date: selectedReportForReview.date
+                      })}
+                      className="relative group rounded-lg overflow-hidden border border-slate-200 bg-white aspect-video cursor-pointer hover:border-teal-700 transition-all shadow-2xs"
+                    >
+                      <img 
+                        src={photoUrl} 
+                        alt={`Photo #${pIdx + 1}`}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                      />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[10px] font-bold gap-1">
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>Inspect</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="space-y-1.5">
               <label className="text-[11px] uppercase tracking-wider text-slate-500">Central Secretariat Official Feedback / Remarks</label>
               <textarea
@@ -1336,6 +1497,48 @@ export const AdminVolunteerAssignmentsTab: React.FC<AdminVolunteerAssignmentsTab
             </div>
           </form>
         </Modal>
+      )}
+
+      {/* Lightbox / High-Res Photo Inspection Modal */}
+      {viewingPhoto && (
+        <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="relative max-w-4xl w-full bg-slate-900 border border-slate-700 rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95">
+            <div className="p-4 flex items-center justify-between border-b border-slate-800 text-white">
+              <div className="flex items-center gap-2.5">
+                <Camera className="w-4 h-4 text-teal-400" />
+                <div>
+                  <h4 className="text-sm font-bold truncate max-w-md">{viewingPhoto.title}</h4>
+                  <p className="text-xs text-slate-400">Captured by {viewingPhoto.volunteer} • {viewingPhoto.date}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <a 
+                  href={viewingPhoto.url} 
+                  download="field-photo.jpg" 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold inline-flex items-center gap-1.5"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>Open Full</span>
+                </a>
+                <button 
+                  onClick={() => setViewingPhoto(null)}
+                  className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+            <div className="p-4 flex items-center justify-center bg-black/60 max-h-[75vh] overflow-auto">
+              <img 
+                src={viewingPhoto.url} 
+                alt={viewingPhoto.title}
+                className="max-h-[70vh] w-auto max-w-full object-contain rounded-xl shadow-lg"
+              />
+            </div>
+          </div>
+        </div>
       )}
 
     </div>

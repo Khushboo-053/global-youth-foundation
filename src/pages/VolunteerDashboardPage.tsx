@@ -43,7 +43,10 @@ import {
   BookOpen,
   ClipboardList,
   Camera,
-  CreditCard
+  CreditCard,
+  ZoomIn,
+  UploadCloud,
+  Image as ImageIcon
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { GyfLogo } from '../components/GyfLogo';
@@ -138,6 +141,17 @@ export const VolunteerDashboardPage: React.FC = () => {
 
   // 5. Submit Activity Report modal
   const [showSubmitReportModal, setShowSubmitReportModal] = useState(false);
+  
+  interface UploadedActivityPhoto {
+    id: string;
+    name: string;
+    size: string;
+    dataUrl: string;
+  }
+  const [uploadedPhotos, setUploadedPhotos] = useState<UploadedActivityPhoto[]>([]);
+  const [isPhotoDragging, setIsPhotoDragging] = useState(false);
+  const [selectedPhotoPreview, setSelectedPhotoPreview] = useState<{ url: string; title: string; subtitle?: string } | null>(null);
+
   const [reportFormData, setReportFormData] = useState({
     title: '',
     category: 'Field Inspection' as VolunteerActivityReport['category'],
@@ -355,6 +369,51 @@ export const VolunteerDashboardPage: React.FC = () => {
     }
   };
 
+  // Activity Report photo handler
+  const handlePhotoFiles = (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const maxFiles = 6;
+    if (uploadedPhotos.length + files.length > maxFiles) {
+      showToast(`Maximum ${maxFiles} photos allowed per report.`);
+    }
+    const availableSlots = maxFiles - uploadedPhotos.length;
+    if (availableSlots <= 0) return;
+
+    Array.from(files).slice(0, availableSlots).forEach((file) => {
+      if (!file.type.startsWith('image/')) {
+        showToast(`"${file.name}" is not an image file.`);
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        showToast(`"${file.name}" exceeds 5MB size limit.`);
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target?.result as string;
+        if (dataUrl) {
+          const sizeStr = file.size > 1024 * 1024
+            ? `${(file.size / (1024 * 1024)).toFixed(1)} MB`
+            : `${Math.round(file.size / 1024)} KB`;
+          setUploadedPhotos(prev => [
+            ...prev,
+            {
+              id: `photo-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+              name: file.name,
+              size: sizeStr,
+              dataUrl
+            }
+          ]);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removeUploadedPhoto = (id: string) => {
+    setUploadedPhotos(prev => prev.filter(p => p.id !== id));
+  };
+
   // Activity Report submission handler
   const handleSubmitActivityReport = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -364,6 +423,7 @@ export const VolunteerDashboardPage: React.FC = () => {
       return;
     }
     try {
+      const photoUrls = uploadedPhotos.map(p => p.dataUrl);
       await submitVolunteerActivityReport({
         volunteerId: user.id,
         volunteerName: user.fullName,
@@ -376,10 +436,18 @@ export const VolunteerDashboardPage: React.FC = () => {
         location: reportFormData.location,
         summary: reportFormData.summary,
         accomplishments: reportFormData.accomplishments,
-        challenges: reportFormData.challenges || undefined
+        challenges: reportFormData.challenges || undefined,
+        photos: photoUrls.length > 0 ? photoUrls : undefined,
+        attachmentUrl: photoUrls.length > 0 ? photoUrls[0] : undefined,
+        attachmentName: uploadedPhotos.length > 0 ? uploadedPhotos[0].name : undefined,
+        attachmentSize: uploadedPhotos.length > 0 ? uploadedPhotos[0].size : undefined
       });
-      showToast('Field activity report submitted to Admin successfully!');
+      showToast(photoUrls.length > 0 
+        ? `Field activity report with ${photoUrls.length} photo(s) submitted to Admin successfully!` 
+        : 'Field activity report submitted to Admin successfully!'
+      );
       setShowSubmitReportModal(false);
+      setUploadedPhotos([]);
       setReportFormData({
         title: '',
         category: 'Field Inspection',
@@ -988,6 +1056,14 @@ export const VolunteerDashboardPage: React.FC = () => {
                               <span className="font-mono text-[10px] font-bold text-blue-900 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
                                 {grv.id}
                               </span>
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${
+                                grv.priority === 'Urgent' ? 'bg-rose-100 text-rose-800 border border-rose-200' :
+                                grv.priority === 'High' ? 'bg-amber-100 text-amber-800 border border-amber-200' :
+                                grv.priority === 'Medium' ? 'bg-sky-100 text-sky-800 border border-sky-200' :
+                                'bg-slate-100 text-slate-700 border border-slate-200'
+                              }`}>
+                                {grv.priority || 'Medium'}
+                              </span>
                               <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                                 grv.currentStatus === 'Resolved' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' :
                                 grv.currentStatus === 'In Progress' ? 'bg-amber-50 text-amber-800 border border-amber-200' :
@@ -1333,6 +1409,14 @@ export const VolunteerDashboardPage: React.FC = () => {
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
                               {grv.category}
                             </span>
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                              grv.priority === 'Urgent' ? 'bg-rose-100 text-rose-800 border border-rose-200' :
+                              grv.priority === 'High' ? 'bg-amber-100 text-amber-800 border border-amber-200' :
+                              grv.priority === 'Medium' ? 'bg-sky-100 text-sky-800 border border-sky-200' :
+                              'bg-slate-100 text-slate-700 border border-slate-200'
+                            }`}>
+                              {grv.priority || 'Medium'} Priority
+                            </span>
                           </div>
                           <h4 className="text-sm font-black text-slate-900 mt-2">{grv.subject}</h4>
                         </div>
@@ -1573,6 +1657,44 @@ export const VolunteerDashboardPage: React.FC = () => {
                         )}
                       </div>
 
+                      {/* Display Uploaded Photos in Report Card */}
+                      {((report.photos && report.photos.length > 0) || report.attachmentUrl) && (
+                        <div className="space-y-2 p-3 rounded-2xl bg-teal-50/50 border border-teal-100">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-teal-950 flex items-center gap-1.5">
+                              <Camera className="w-3.5 h-3.5 text-teal-800" />
+                              <span>Attached Field Photos & Evidence</span>
+                            </span>
+                            <span className="text-[10px] font-bold text-teal-800 bg-white px-2 py-0.5 rounded-full border border-teal-200">
+                              {(report.photos?.length) || 1} photo(s)
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                            {(report.photos && report.photos.length > 0 ? report.photos : [report.attachmentUrl!]).map((photoUrl, pIdx) => (
+                              <div
+                                key={pIdx}
+                                onClick={() => setSelectedPhotoPreview({
+                                  url: photoUrl,
+                                  title: `${report.title} - Photo #${pIdx + 1}`,
+                                  subtitle: `${report.date} • ${report.location}`
+                                })}
+                                className="relative group rounded-xl overflow-hidden border border-slate-200 bg-slate-100 aspect-video cursor-pointer hover:border-teal-600 transition-all shadow-2xs"
+                              >
+                                <img
+                                  src={photoUrl}
+                                  alt={`Field photo ${pIdx + 1}`}
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                />
+                                <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[10px] font-bold gap-1">
+                                  <ZoomIn className="w-3.5 h-3.5" />
+                                  <span>Enlarge</span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
                       {report.adminFeedback && (
                         <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 space-y-1">
                           <div className="flex items-center gap-1.5 font-bold text-emerald-800">
@@ -1679,8 +1801,11 @@ export const VolunteerDashboardPage: React.FC = () => {
 
                   {unreadNotifsCount > 0 && (
                     <button
-                      onClick={markAllVolunteerNotificationsRead}
-                      className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-teal-800 border border-slate-200 text-xs font-bold transition-all shadow-xs"
+                      onClick={() => {
+                        markAllVolunteerNotificationsRead();
+                        setNotifFilter('All');
+                      }}
+                      className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-teal-800 border border-slate-200 text-xs font-bold transition-all shadow-xs cursor-pointer"
                     >
                       Mark All as Read
                     </button>
@@ -2178,10 +2303,23 @@ export const VolunteerDashboardPage: React.FC = () => {
 
             <div className="space-y-4">
               <div>
-                <span className="font-mono text-[11px] font-bold text-blue-900 px-2 py-0.5 rounded bg-blue-50 border border-blue-200">
-                  {selectedGrievance.id}
-                </span>
-                <p className="text-xs font-black text-slate-900 mt-1">{selectedGrievance.subject}</p>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-[11px] font-bold text-blue-900 px-2 py-0.5 rounded bg-blue-50 border border-blue-200">
+                    {selectedGrievance.id}
+                  </span>
+                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                    selectedGrievance.priority === 'Urgent' ? 'bg-rose-100 text-rose-800 border border-rose-200' :
+                    selectedGrievance.priority === 'High' ? 'bg-amber-100 text-amber-800 border border-amber-200' :
+                    selectedGrievance.priority === 'Medium' ? 'bg-sky-100 text-sky-800 border border-sky-200' :
+                    'bg-slate-100 text-slate-700 border border-slate-200'
+                  }`}>
+                    {selectedGrievance.priority || 'Medium'} Priority
+                  </span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                    {selectedGrievance.category}
+                  </span>
+                </div>
+                <p className="text-xs font-black text-slate-900 mt-2">{selectedGrievance.subject}</p>
                 <p className="text-[11px] text-slate-500">{selectedGrievance.location}</p>
               </div>
 
@@ -2435,6 +2573,110 @@ export const VolunteerDashboardPage: React.FC = () => {
                 />
               </div>
 
+              {/* Upload Photos Section */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-[11px] font-bold text-slate-800 flex items-center gap-1.5">
+                    <Camera className="w-3.5 h-3.5 text-teal-800" />
+                    <span>Upload Field Photos / Evidence</span>
+                    <span className="text-[10px] font-normal text-slate-500">(Optional, up to 6 photos)</span>
+                  </label>
+                  {uploadedPhotos.length > 0 && (
+                    <span className="text-[10px] font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200">
+                      {uploadedPhotos.length} {uploadedPhotos.length === 1 ? 'photo' : 'photos'} attached
+                    </span>
+                  )}
+                </div>
+
+                {/* Dropzone */}
+                <div
+                  onDragOver={(e) => { e.preventDefault(); setIsPhotoDragging(true); }}
+                  onDragLeave={(e) => { e.preventDefault(); setIsPhotoDragging(false); }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setIsPhotoDragging(false);
+                    handlePhotoFiles(e.dataTransfer.files);
+                  }}
+                  className={`relative border-2 border-dashed rounded-2xl p-4 text-center transition-all ${
+                    isPhotoDragging 
+                      ? 'border-teal-700 bg-teal-50/60 ring-2 ring-teal-700/20' 
+                      : 'border-slate-200 hover:border-teal-600 bg-slate-50/70'
+                  }`}
+                >
+                  <input
+                    id="volunteer-report-photo-input"
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={(e) => handlePhotoFiles(e.target.files)}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    title="Click or drag photos here"
+                  />
+                  <div className="flex flex-col items-center justify-center gap-1.5 pointer-events-none">
+                    <div className="w-9 h-9 rounded-xl bg-teal-100/80 text-teal-800 flex items-center justify-center shadow-2xs">
+                      <ImageIcon className="w-4 h-4" />
+                    </div>
+                    <p className="text-xs font-bold text-slate-800">
+                      <span className="text-teal-800 underline">Click to upload photos</span> or drag & drop here
+                    </p>
+                    <p className="text-[10px] text-slate-500">
+                      PNG, JPG, WebP up to 5MB each • Visible directly in Admin Command Desk
+                    </p>
+                  </div>
+                </div>
+
+                {/* Uploaded Photo Preview Gallery */}
+                {uploadedPhotos.length > 0 && (
+                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 pt-1">
+                    {uploadedPhotos.map((photo) => (
+                      <div 
+                        key={photo.id} 
+                        className="relative group rounded-xl overflow-hidden border border-slate-200 bg-slate-100 aspect-video shadow-2xs"
+                      >
+                        <img 
+                          src={photo.dataUrl} 
+                          alt={photo.name}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-slate-950/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-1">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedPhotoPreview({
+                                url: photo.dataUrl,
+                                title: photo.name,
+                                subtitle: `${photo.size} • Pending submission`
+                              });
+                            }}
+                            className="p-1 rounded-full bg-white/90 text-slate-900 hover:bg-white shadow-xs"
+                            title="Preview photo"
+                          >
+                            <ZoomIn className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeUploadedPhoto(photo.id);
+                            }}
+                            className="p-1 rounded-full bg-rose-600 hover:bg-rose-700 text-white shadow-xs"
+                            title="Remove photo"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                        <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-1">
+                          <p className="text-[9px] font-medium text-white truncate text-center">
+                            {photo.name}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
                 <button 
                   type="button"
@@ -2529,6 +2771,38 @@ export const VolunteerDashboardPage: React.FC = () => {
           currentAvatar={user.avatar || profileForm.avatar}
           userName={user.fullName}
         />
+      )}
+
+      {/* Lightbox / Photo Inspection Modal */}
+      {selectedPhotoPreview && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="relative max-w-4xl w-full bg-slate-900 border border-slate-700 rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95">
+            <div className="p-4 flex items-center justify-between border-b border-slate-800 text-white">
+              <div className="flex items-center gap-2.5">
+                <Camera className="w-4 h-4 text-teal-400" />
+                <div>
+                  <h4 className="text-sm font-bold truncate max-w-md">{selectedPhotoPreview.title}</h4>
+                  {selectedPhotoPreview.subtitle && (
+                    <p className="text-xs text-slate-400">{selectedPhotoPreview.subtitle}</p>
+                  )}
+                </div>
+              </div>
+              <button 
+                onClick={() => setSelectedPhotoPreview(null)}
+                className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-4 flex items-center justify-center bg-black/60 max-h-[75vh] overflow-auto">
+              <img 
+                src={selectedPhotoPreview.url} 
+                alt={selectedPhotoPreview.title}
+                className="max-h-[70vh] w-auto max-w-full object-contain rounded-xl shadow-lg"
+              />
+            </div>
+          </div>
+        </div>
       )}
 
     </div>

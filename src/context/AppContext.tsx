@@ -129,6 +129,7 @@ interface AppContextType {
   }) => Promise<GrievanceRecord>;
   getComplaintById: (id: string) => GrievanceRecord | undefined;
   updateComplaintStatus: (id: string, newStatus: ComplaintStatus, officerNote?: string) => Promise<void>;
+  updateComplaintPriority: (id: string, newPriority: 'Low' | 'Medium' | 'High' | 'Urgent') => Promise<void>;
   assignGrievance: (id: string, volunteerId: string, volunteerName: string, department?: string) => Promise<void>;
   deleteComplaint: (id: string) => Promise<void>;
 
@@ -155,7 +156,9 @@ interface AppContextType {
   // Other utilities
   bookLegalAidAppointment: (data: Omit<LegalAidAppointment, 'id' | 'status' | 'createdAt'>) => LegalAidAppointment;
   markNotificationRead: (id: string) => void;
+  markAllNotificationsRead: () => void;
   clearAllNotifications: () => void;
+  restoreDefaultNotifications: () => void;
   refreshAllData: () => Promise<void>;
 }
 
@@ -274,7 +277,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [notifications, setNotifications] = useState<NotificationItem[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.NOTIFICATIONS);
-      return saved ? JSON.parse(saved) : INITIAL_NOTIFICATIONS;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+      return INITIAL_NOTIFICATIONS;
     } catch {
       return INITIAL_NOTIFICATIONS;
     }
@@ -978,6 +987,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     await refreshAllData();
   };
 
+  const updateComplaintPriority = async (id: string, newPriority: 'Low' | 'Medium' | 'High' | 'Urgent') => {
+    await api.grievances.updatePriority(id, newPriority, user?.fullName);
+    await api.activity.log(user?.id || 'staff', user?.fullName || 'Staff', 'Updated Grievance Priority', 'Grievance System', `Docket ${id} priority set to ${newPriority}`);
+    await refreshAllData();
+  };
+
   const assignGrievance = async (id: string, volunteerId: string, volunteerName: string, department?: string) => {
     await api.grievances.assignVolunteer(id, volunteerId, volunteerName, department);
     await api.activity.log(user?.id || 'admin', user?.fullName || 'Admin', 'Assigned Grievance', 'Grievance System', `Docket ${id} assigned to ${volunteerName}`);
@@ -1129,11 +1144,48 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const markNotificationRead = (id: string) => {
-    setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n));
+    setNotifications(prev => {
+      const updated = prev.map(n => n.id === id ? { ...n, isRead: true } : n);
+      try {
+        localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+      return updated;
+    });
+    api.notifications.markAsRead(id).catch(console.error);
+  };
+
+  const markAllNotificationsRead = () => {
+    setNotifications(prev => {
+      const source = prev && prev.length > 0 ? prev : INITIAL_NOTIFICATIONS;
+      const updated = source.map(n => ({ ...n, isRead: true }));
+      try {
+        localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+      return updated;
+    });
+    api.notifications.markAllAsRead().catch(console.error);
   };
 
   const clearAllNotifications = () => {
     setNotifications([]);
+    try {
+      localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify([]));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const restoreDefaultNotifications = () => {
+    setNotifications(INITIAL_NOTIFICATIONS);
+    try {
+      localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(INITIAL_NOTIFICATIONS));
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   // --------------------------------------------------------------------------
@@ -1338,6 +1390,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         submitGrievance,
         getComplaintById,
         updateComplaintStatus,
+        updateComplaintPriority,
         assignGrievance,
         deleteComplaint,
         submitMembership,
@@ -1351,7 +1404,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         broadcastNotification,
         deleteNotification,
         markNotificationRead,
+        markAllNotificationsRead,
         clearAllNotifications,
+        restoreDefaultNotifications,
         websiteContent,
         updateWebsiteContent,
         resetWebsiteContent,

@@ -25,6 +25,7 @@ interface GrievanceOmbudsmanModalProps {
   grievance: GrievanceRecord | null;
   volunteers: UserAccount[];
   onUpdateStatus: (id: string, newStatus: ComplaintStatus, officerNote?: string) => Promise<void>;
+  onUpdatePriority?: (id: string, newPriority: 'Low' | 'Medium' | 'High' | 'Urgent') => Promise<void>;
   onAssignVolunteer: (id: string, volunteerId: string, volunteerName: string, department?: string) => Promise<void>;
   onDeleteComplaint?: (id: string) => Promise<void>;
 }
@@ -35,6 +36,7 @@ export const GrievanceOmbudsmanModal: React.FC<GrievanceOmbudsmanModalProps> = (
   grievance,
   volunteers,
   onUpdateStatus,
+  onUpdatePriority,
   onAssignVolunteer,
   onDeleteComplaint
 }) => {
@@ -87,13 +89,27 @@ export const GrievanceOmbudsmanModal: React.FC<GrievanceOmbudsmanModalProps> = (
               Tracking Token: {grievance.id}
             </span>
             <div className="flex items-center gap-2">
-              <span className={`px-2.5 py-0.5 rounded-full text-xs font-black uppercase tracking-wider ${
-                grievance.priority === 'Urgent' ? 'bg-rose-600 text-white' :
-                grievance.priority === 'High' ? 'bg-amber-600 text-white' :
-                'bg-slate-700 text-slate-200'
-              }`}>
-                {grievance.priority} Priority
-              </span>
+              <select
+                value={grievance.priority || 'Medium'}
+                onChange={async (e) => {
+                  const newP = e.target.value as 'Low' | 'Medium' | 'High' | 'Urgent';
+                  if (onUpdatePriority) {
+                    await onUpdatePriority(grievance.id, newP);
+                  }
+                }}
+                className={`px-2.5 py-1 rounded-full text-xs font-black uppercase tracking-wider cursor-pointer border focus:outline-none focus:ring-2 ${
+                  grievance.priority === 'Urgent' ? 'bg-rose-600 text-white border-rose-400 focus:ring-rose-400' :
+                  grievance.priority === 'High' ? 'bg-amber-600 text-white border-amber-400 focus:ring-amber-400' :
+                  grievance.priority === 'Medium' ? 'bg-sky-600 text-white border-sky-400 focus:ring-sky-400' :
+                  'bg-slate-700 text-slate-200 border-slate-600 focus:ring-slate-400'
+                }`}
+                title="Change Grievance Priority"
+              >
+                <option value="Low" className="bg-slate-900 text-white">LOW PRIORITY</option>
+                <option value="Medium" className="bg-slate-900 text-white">MEDIUM PRIORITY</option>
+                <option value="High" className="bg-slate-900 text-white">HIGH PRIORITY</option>
+                <option value="Urgent" className="bg-slate-900 text-white">URGENT PRIORITY</option>
+              </select>
               <span className="px-2.5 py-0.5 rounded-full bg-teal-800 text-teal-100 text-xs font-bold">
                 {grievance.currentStatus}
               </span>

@@ -38,6 +38,7 @@ import { TestimonialCard } from '../components/TestimonialCard';
 import { GalleryGrid } from '../components/GalleryGrid';
 import { Modal } from '../components/Modal';
 import { VolunteerRegistrationModal } from '../components/VolunteerRegistrationModal';
+import { ArticleContentRenderer } from '../components/ArticleContentRenderer';
 import { EventItem, NewsItem, ImpactStat } from '../types';
 import { useApp } from '../context/AppContext';
 
@@ -722,28 +723,32 @@ export const HomePage: React.FC = () => {
         isOpen={selectedNews !== null}
         onClose={() => setSelectedNews(null)}
         title={selectedNews?.title || 'Announcement'}
-        maxWidth="lg"
+        maxWidth="2xl"
       >
         {selectedNews && (
           <div className="space-y-4">
             <img
               src={selectedNews.image}
               alt={selectedNews.title}
-              className="w-full h-56 object-cover rounded-xl"
+              className="w-full h-64 object-cover rounded-2xl shadow-xs"
               referrerPolicy="no-referrer"
             />
-            <div className="flex items-center justify-between text-xs text-slate-500">
-              <span className="font-bold text-teal-700">{selectedNews.category}</span>
-              <span>{selectedNews.date} • By {selectedNews.author}</span>
+            <div className="flex items-center justify-between text-xs text-slate-500 pb-2 border-b border-slate-100">
+              <span className="font-extrabold text-teal-800 uppercase tracking-wider">{selectedNews.category}</span>
+              <span>{selectedNews.date} • By {selectedNews.author} • {selectedNews.readTime || '3 min read'}</span>
             </div>
-            <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
-              {selectedNews.content}
-            </p>
-            <div className="pt-3 border-t border-slate-100 flex justify-end">
+            
+            {/* Formatted Article Content with Inline Images & Lightbox */}
+            <ArticleContentRenderer 
+              content={selectedNews.content} 
+              articleImages={selectedNews.articleImages}
+            />
+
+            <div className="pt-4 border-t border-slate-100 flex justify-end">
               <button
                 type="button"
                 onClick={() => setSelectedNews(null)}
-                className="px-4 py-2 text-xs font-semibold bg-slate-900 text-white rounded-lg"
+                className="px-5 py-2 text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white rounded-xl cursor-pointer transition-colors"
               >
                 Close
               </button>

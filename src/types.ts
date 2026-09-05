@@ -140,6 +140,9 @@ export interface VolunteerActivityReport {
   accomplishments: string;
   challenges?: string;
   attachmentUrl?: string;
+  photos?: string[];
+  attachmentName?: string;
+  attachmentSize?: string;
   status: 'Submitted' | 'Reviewed by Admin';
   adminFeedback?: string;
   createdAt: string;
@@ -187,6 +190,14 @@ export interface EventRegistration {
   registeredAt: string;
 }
 
+export interface BlogArticleImage {
+  id: string;
+  url: string;
+  caption?: string;
+  altText?: string;
+  insertedAt?: string;
+}
+
 export interface NewsItem {
   id: string;
   title: string;
@@ -198,6 +209,7 @@ export interface NewsItem {
   author: string;
   readTime: string;
   isPublished?: boolean;
+  articleImages?: BlogArticleImage[];
   createdAt?: string;
   updatedAt?: string;
 }
@@ -416,6 +428,7 @@ export interface WebsiteContent {
   bankAccountNumber: string;
   bankIfsc: string;
   bankUpi: string;
+  bankQrCodeUrl?: string;
   leadershipTeam: LeadershipMember[];
   updatedAt?: string;
 }

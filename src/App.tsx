@@ -17,6 +17,7 @@ import { SignupPage } from './pages/SignupPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { VolunteerDashboardPage } from './pages/VolunteerDashboardPage';
+import { BlogsPage } from './pages/BlogsPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { ArrowLeft, Compass } from 'lucide-react';
 
@@ -77,6 +78,8 @@ export function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/programs" element={<ProgramsPage />} />
           <Route path="/events" element={<EventsPage />} />
+          <Route path="/blogs" element={<BlogsPage />} />
+          <Route path="/news" element={<BlogsPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/donate" element={<DonatePage />} />
           <Route path="/membership" element={<MembershipPage />} />
