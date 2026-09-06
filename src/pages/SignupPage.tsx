@@ -136,21 +136,6 @@ export const SignupPage: React.FC = () => {
 
             <div className="space-y-1.5">
               <label className="font-bold text-slate-700 uppercase tracking-wider">
-                Account Role
-              </label>
-              <select
-                value={formData.role}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value as UserRole })}
-                className="w-full p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold focus:ring-2 focus:ring-[#2C3292]"
-              >
-                <option value="user">Normal User (Website User)</option>
-                <option value="volunteer">Youth Volunteer / Field Worker</option>
-                <option value="admin">Foundation Admin</option>
-              </select>
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="font-bold text-slate-700 uppercase tracking-wider">
                 Phone Number (Optional)
               </label>
               <div className="relative">

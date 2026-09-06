@@ -39,7 +39,7 @@ const STORAGE_KEYS = {
   BLOGS: 'gyf_db_blogs_v2',
   DONATIONS: 'gyf_db_donations_v2',
   GRIEVANCES: 'gyf_db_grievances_v2',
-  EVENTS: 'gyf_db_events_v2',
+  EVENTS: 'gyf_db_events_v3',
   EVENT_REGISTRATIONS: 'gyf_db_event_registrations_v2',
   PROGRAMS: 'gyf_db_programs_v2',
   MEMBERSHIPS: 'gyf_db_memberships_v2',
@@ -813,10 +813,12 @@ export function initSeedDataIfEmpty(): void {
       setLocal(STORAGE_KEYS.GRIEVANCES, [...existingGrievances, ...toAdd]);
     }
   }
-  if (!localStorage.getItem(STORAGE_KEYS.EVENTS)) {
+  const existingEvents = getLocal<EventItem[]>(STORAGE_KEYS.EVENTS, []);
+  if (!existingEvents || existingEvents.length < INITIAL_EVENTS.length || existingEvents.some(e => e.id.startsWith('ev-0'))) {
     setLocal(STORAGE_KEYS.EVENTS, INITIAL_EVENTS.map(e => ({ ...e, isPublished: true })));
   }
-  if (!localStorage.getItem(STORAGE_KEYS.PROGRAMS)) {
+  const existingPrograms = getLocal<Program[]>(STORAGE_KEYS.PROGRAMS, []);
+  if (!existingPrograms || existingPrograms.length < INITIAL_PROGRAMS.length || existingPrograms.some(p => p.id === 'youth-empowerment')) {
     setLocal(STORAGE_KEYS.PROGRAMS, INITIAL_PROGRAMS.map(p => ({ ...p, isPublished: true })));
   }
   if (!localStorage.getItem(STORAGE_KEYS.MEMBERSHIPS)) {

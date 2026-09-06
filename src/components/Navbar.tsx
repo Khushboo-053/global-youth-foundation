@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Menu, 
   X, 
@@ -8,17 +8,30 @@ import {
   ChevronRight, 
   Phone, 
   Mail,
-  Megaphone
+  Megaphone,
+  LogOut
 } from 'lucide-react';
 import { ORG_INFO } from '../data/mockData';
 import { GyfLogo } from './GyfLogo';
 import { useApp } from '../context/AppContext';
 
 export const Navbar: React.FC = () => {
-  const { websiteContent, user } = useApp();
+  const { websiteContent, user, logout } = useApp();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    if (
+      location.pathname.startsWith('/dashboard') ||
+      location.pathname.startsWith('/admin') ||
+      location.pathname.startsWith('/volunteer')
+    ) {
+      navigate('/login');
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -126,15 +139,23 @@ export const Navbar: React.FC = () => {
             </Link>
             <span>•</span>
             {user ? (
+              <button
+                type="button"
+                onClick={handleLogout}
+                id="nav-auth-toggle-btn"
+                className="hover:text-rose-300 font-bold text-teal-300 transition-colors cursor-pointer flex items-center gap-1"
+                title="Logout"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Logout</span>
+              </button>
+            ) : (
               <Link 
-                to={user.role === 'admin' ? '/admin' : user.role === 'volunteer' ? '/volunteer' : '/dashboard'} 
+                to="/login" 
+                id="nav-auth-toggle-btn"
                 className="hover:text-white font-bold text-teal-300 transition-colors"
               >
-                {user.role === 'admin' ? 'Admin Desk' : user.role === 'volunteer' ? 'Volunteer Desk' : 'My Portal'}
-              </Link>
-            ) : (
-              <Link to="/login" className="hover:text-white font-bold text-teal-300 transition-colors">
-                Portal Login
+                Login
               </Link>
             )}
           </div>
@@ -262,6 +283,45 @@ export const Navbar: React.FC = () => {
                 <div className="w-4 h-4 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-700">#</div>
                 <span>Track Complaint</span>
               </Link>
+            </div>
+
+            {/* Mobile Authentication & Portal */}
+            <div className="pt-3 border-t border-slate-100 space-y-1.5">
+              <div className="text-xs font-semibold text-slate-400 px-3 uppercase tracking-wider">
+                Account & Portal
+              </div>
+              {user ? (
+                <>
+                  <Link
+                    to={user.role === 'admin' ? '/admin' : user.role === 'volunteer' ? '/volunteer' : '/dashboard'}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm font-semibold text-teal-700 bg-teal-50 hover:bg-teal-100/70 transition-colors"
+                  >
+                    <span>{user.role === 'admin' ? 'Admin Desk' : user.role === 'volunteer' ? 'Volunteer Desk' : 'My Portal'}</span>
+                    <ChevronRight className="w-4 h-4 text-teal-600" />
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      handleLogout();
+                    }}
+                    className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm font-semibold text-rose-600 hover:bg-rose-50 transition-colors text-left cursor-pointer"
+                  >
+                    <span>Logout</span>
+                    <LogOut className="w-4 h-4 text-rose-500" />
+                  </button>
+                </>
+              ) : (
+                <Link
+                  to="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm font-semibold text-[#2C3292] bg-[#f0f2fc] hover:bg-[#e6e9f8] transition-colors"
+                >
+                  <span>Login</span>
+                  <ChevronRight className="w-4 h-4 text-[#2C3292]" />
+                </Link>
+              )}
             </div>
 
             <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">

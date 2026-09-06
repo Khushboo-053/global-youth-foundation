@@ -6,6 +6,7 @@ interface EventModalProps {
   isOpen: boolean;
   onClose: () => void;
   event: EventItem | null;
+  defaultCategory?: string;
   onSave: (data: any) => Promise<any>;
 }
 
@@ -13,18 +14,21 @@ export const EventModal: React.FC<EventModalProps> = ({
   isOpen,
   onClose,
   event,
+  defaultCategory,
   onSave
 }) => {
   const [formData, setFormData] = useState({
     title: '',
+    subheading: '',
     date: 'Oct 24, 2026',
     time: '10:00 AM - 04:00 PM IST',
     location: 'SKICC Convention Centre, Srinagar',
-    category: 'Youth Summit & Leadership',
+    category: defaultCategory || 'Peace, Justice & Social Harmony',
     attendees: '400+ Delegates',
     status: 'Upcoming' as 'Upcoming' | 'Completed' | 'Ongoing',
     description: '',
-    image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800'
+    image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800',
+    documentPage: undefined as number | undefined
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -33,31 +37,35 @@ export const EventModal: React.FC<EventModalProps> = ({
     if (event) {
       setFormData({
         title: event.title || '',
+        subheading: (event as any).subheading || '',
         date: event.date || 'Oct 24, 2026',
         time: event.time || '10:00 AM - 04:00 PM IST',
         location: event.location || 'SKICC Convention Centre, Srinagar',
-        category: event.category || 'Youth Summit & Leadership',
+        category: event.category || defaultCategory || 'Peace, Justice & Social Harmony',
         attendees: event.attendees || '400+ Delegates',
         status: (event.status as any) || 'Upcoming',
         description: event.description || '',
-        image: event.image || 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800'
+        image: event.image || 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800',
+        documentPage: event.documentPage
       });
       setErrorMsg('');
     } else {
       setFormData({
         title: '',
+        subheading: '',
         date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
         time: '10:00 AM - 04:00 PM IST',
         location: 'SKICC Auditorium, Srinagar',
-        category: 'Youth Summit & Leadership',
+        category: defaultCategory || 'Peace, Justice & Social Harmony',
         attendees: '250+ Registered',
         status: 'Upcoming',
         description: '',
-        image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800'
+        image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800',
+        documentPage: undefined
       });
       setErrorMsg('');
     }
-  }, [event, isOpen]);
+  }, [event, isOpen, defaultCategory]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,6 +113,19 @@ export const EventModal: React.FC<EventModalProps> = ({
             placeholder="e.g. Annual J&K Youth Conclave & Legal Rights Convention"
             value={formData.title}
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-teal-700 focus:outline-hidden"
+          />
+        </div>
+
+        <div>
+          <label className="block text-xs font-bold text-slate-700 mb-1">
+            Event Subtitle / Initiative Theme (Optional)
+          </label>
+          <input
+            type="text"
+            placeholder="e.g. Civic Harmony & Youth Leadership Outreach"
+            value={formData.subheading}
+            onChange={(e) => setFormData({ ...formData, subheading: e.target.value })}
             className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-teal-700 focus:outline-hidden"
           />
         </div>
@@ -170,28 +191,52 @@ export const EventModal: React.FC<EventModalProps> = ({
 
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1">
-              Category
+              Category / Pillar *
             </label>
-            <input
-              type="text"
-              placeholder="e.g. Youth Summit, Workshop, Legal Camp"
+            <select
               value={formData.category}
               onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-teal-700 focus:outline-hidden"
-            />
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-teal-700 focus:outline-hidden bg-white"
+            >
+              <option value="Peace, Justice & Social Harmony">Peace, Justice & Social Harmony</option>
+              <option value="Disaster Relief & Healthcare Outreach">Disaster Relief & Healthcare Outreach</option>
+              <option value="Substance Abuse Prevention & De-Addiction">Substance Abuse Prevention & De-Addiction</option>
+              <option value="Women & Girl Child Empowerment">Women & Girl Child Empowerment</option>
+              <option value="Youth Leadership, Sports & Culture">Youth Leadership, Sports & Culture</option>
+              <option value="Environmental Stewardship & Climate Action">Environmental Stewardship & Climate Action</option>
+            </select>
           </div>
         </div>
 
-        <div>
-          <label className="block text-xs font-bold text-slate-700 mb-1">
-            Banner Image URL
-          </label>
-          <input
-            type="url"
-            value={formData.image}
-            onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-teal-700 focus:outline-hidden"
-          />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="sm:col-span-2">
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              Banner Image URL
+            </label>
+            <input
+              type="url"
+              value={formData.image}
+              onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-teal-700 focus:outline-hidden"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              Archival Page # (Optional)
+            </label>
+            <input
+              type="number"
+              min={1}
+              max={30}
+              placeholder="e.g. 2"
+              value={formData.documentPage !== undefined ? formData.documentPage : ''}
+              onChange={(e) => setFormData({ 
+                ...formData, 
+                documentPage: e.target.value ? parseInt(e.target.value, 10) : undefined 
+              })}
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-teal-700 focus:outline-hidden"
+            />
+          </div>
         </div>
 
         <div>

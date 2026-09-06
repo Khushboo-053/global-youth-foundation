@@ -171,10 +171,13 @@ export interface EventItem {
   date: string;
   time?: string;
   location: string;
-  category: 'Workshop' | 'Campaign' | 'Peacebuilding' | 'Environment' | 'Outreach' | 'Leadership';
+  category: string;
   description: string;
   fullDetails?: string;
   image: string;
+  galleryImages?: string[];
+  documentPage?: number;
+  subheading?: string;
   status: 'Upcoming' | 'Completed' | 'Draft';
   attendeesCount?: number;
   isPublished?: boolean;

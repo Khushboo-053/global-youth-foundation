@@ -2,6 +2,8 @@ import express, { Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
+import { ARCHIVAL_EVENTS } from './src/data/archivalEvents';
+import { PROGRAMS } from './src/data/mockData';
 
 const app = express();
 const PORT = 3000;
@@ -19,205 +21,17 @@ if (!fs.existsSync(DATA_DIR)) {
 
 // Initial default seed database
 const DEFAULT_DB = {
-  programs: [
-    {
-      id: 'youth-empowerment',
-      title: 'Youth Empowerment',
-      shortDescription: 'Developing leadership, confidence, skills and opportunities for young people.',
-      fullDescription: 'Our Youth Empowerment program equips young individuals with practical leadership training, public speaking acumen, emotional intelligence, and digital skills. Through structured fellowships and mentorship circles, we bridge the gap between academic education and real-world civic impact.',
-      objectives: [
-        'Conduct grassroots leadership incubators for underrepresented youth.',
-        'Provide career counseling, mentorship, and digital literacy workshops.',
-        'Create student representation councils in universities and local communities.'
-      ],
-      impactStats: '3,200+ Young Leaders Trained',
-      iconName: 'Zap',
-      image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80',
-      category: 'Leadership & Skills',
-      beneficiariesTarget: 'Youth aged 15–29, students, young entrepreneurs',
-      date: '2026-01-15',
-      status: 'Active',
-      isPublished: true,
-      createdAt: '2026-01-15T10:00:00.000Z'
-    },
-    {
-      id: 'human-rights',
-      title: 'Human Rights',
-      shortDescription: 'Promoting dignity, equality and awareness of fundamental rights.',
-      fullDescription: 'We advocate for human dignity, legal literacy, non-discrimination, and fundamental freedoms. GYF conducts rights-awareness clinics, provides free paralegal guidance for vulnerable families, and works alongside civil rights practitioners to protect individual and community rights.',
-      objectives: [
-        'Disseminate accessible legal literacy guides in local languages.',
-        'Host free civic grievance clinics and legal awareness seminars.',
-        'Advocate for the eradication of discrimination, gender bias, and youth exploitation.'
-      ],
-      impactStats: '1,400+ Citizens Supported in Legal Literacy',
-      iconName: 'ShieldAlert',
-      image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&q=80',
-      category: 'Advocacy & Justice',
-      beneficiariesTarget: 'Vulnerable citizens, marginalized youth, students',
-      date: '2026-01-20',
-      status: 'Active',
-      isPublished: true,
-      createdAt: '2026-01-20T10:00:00.000Z'
-    },
-    {
-      id: 'peace-justice',
-      title: 'Peace & Justice',
-      shortDescription: 'Supporting peacebuilding, dialogue, justice and social harmony.',
-      fullDescription: 'Fostering cohesive communities through youth-led intercommunity dialogues, conflict de-escalation workshops, and collaborative art and cultural forums. We believe lasting peace is anchored in restorative justice and mutual empathy.',
-      objectives: [
-        'Organize Youth Peace Circles and restorative mediation forums.',
-        'Train youth ambassadors in conflict resolution and empathetic communication.',
-        'Publish policy briefs and youth perspectives on local peacebuilding.'
-      ],
-      impactStats: '45+ Peace Dialogues Facilitated',
-      iconName: 'Scale',
-      image: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&w=1200&q=80',
-      category: 'Peace & Harmony',
-      beneficiariesTarget: 'Community leaders, grassroots youth, students',
-      date: '2026-02-01',
-      status: 'Active',
-      isPublished: true,
-      createdAt: '2026-02-01T10:00:00.000Z'
-    },
-    {
-      id: 'environment-sustainability',
-      title: 'Environment & Sustainability',
-      shortDescription: 'Green initiatives, climate action, afforestation and clean communities.',
-      fullDescription: 'Under our “Green Wings” banner, we organize mass afforestation drives, wetland restoration brigades, zero-waste neighborhood initiatives, and renewable energy literacy campaigns across Himalayan and urban ecosystems.',
-      objectives: [
-        'Plant 25,000+ native saplings in ecologically fragile zones.',
-        'Facilitate community plastic cleanup drives across lakes and riversides.',
-        'Train student eco-clubs in climate mitigation and waste segregation.'
-      ],
-      impactStats: '15,000+ Saplings Planted & 12 Waterways Cleaned',
-      iconName: 'Leaf',
-      image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1200&q=80',
-      category: 'Climate & Ecology',
-      beneficiariesTarget: 'Local communities, schools, environmental advocates',
-      date: '2026-02-10',
-      status: 'Active',
-      isPublished: true,
-      createdAt: '2026-02-10T10:00:00.000Z'
-    },
-    {
-      id: 'community-development',
-      title: 'Community Development',
-      shortDescription: 'Grassroots upliftment, rural outreach, social support and infrastructure aid.',
-      fullDescription: 'Addressing acute grassroots socio-economic bottlenecks by providing emergency winter relief, solar study lamps for remote villages, sanitary health kits, and community skill learning centers.',
-      objectives: [
-        'Deliver winter warmth kits and dry rations to remote alpine settlements.',
-        'Equip rural schools with clean water filtration and solar backup units.',
-        'Support self-help groups with micro-vocational equipment.'
-      ],
-      impactStats: '25+ Villages & Hamlets Supported',
-      iconName: 'Building2',
-      image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1200&q=80',
-      category: 'Grassroots Upliftment',
-      beneficiariesTarget: 'Underprivileged families, rural schools, elders',
-      date: '2026-02-15',
-      status: 'Active',
-      isPublished: true,
-      createdAt: '2026-02-15T10:00:00.000Z'
-    },
-    {
-      id: 'education-learning',
-      title: 'Education & Learning',
-      shortDescription: 'Skill training, scholarships, literacy, digital access and book drives.',
-      fullDescription: 'Empowering children and youth from humble backgrounds through scholarship mentorship, free library corners, digital computer literacy labs, and peer-to-peer tutoring circles.',
-      objectives: [
-        'Establish 10+ free community library and study hubs.',
-        'Mentor first-generation college applicants on scholarship discovery.',
-        'Distribute textbooks, digital tablets, and school supplies to deserving students.'
-      ],
-      impactStats: '2,800+ Students Empowered in Learning',
-      iconName: 'GraduationCap',
-      image: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80',
-      category: 'Education & Learning',
-      beneficiariesTarget: 'School children, university aspirants, first-generation learners',
-      date: '2026-02-20',
-      status: 'Active',
-      isPublished: true,
-      createdAt: '2026-02-20T10:00:00.000Z'
-    }
-  ],
-  events: [
-    {
-      id: 'ev-01',
-      title: 'Youth Leadership & Social Innovation Summit 2026',
-      date: 'April 18, 2026',
-      time: '09:30 AM - 05:00 PM IST',
-      location: 'SKICC Convention Centre, Srinagar',
-      category: 'Leadership',
-      description: 'Annual gathering of 400+ youth changemakers, civic leaders, innovators, and policy experts deliberating sustainable grassroots solutions.',
-      fullDetails: 'Keynotes by civil society leaders, workshops on AI for social good, community dispute mediation, and grant pitches for youth ventures.',
-      image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1000&q=80',
-      status: 'Upcoming',
-      attendeesCount: 420,
-      isPublished: true,
-      createdAt: '2026-02-01T10:00:00.000Z'
-    },
-    {
-      id: 'ev-02',
-      title: 'Himalayan Green Wings Afforestation Drive',
-      date: 'April 26, 2026',
-      time: '08:00 AM - 02:00 PM IST',
-      location: 'Dara Eco-Zone, Harwan Foothills',
-      category: 'Environment',
-      description: 'Community afforestation camp planting 3,000 native pine and deodar saplings with youth volunteer teams.',
-      fullDetails: 'All saplings, tree guards, and tool kits provided. Includes ecological awareness briefing and zero-waste community lunch.',
-      image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1000&q=80',
-      status: 'Upcoming',
-      attendeesCount: 150,
-      isPublished: true,
-      createdAt: '2026-02-05T10:00:00.000Z'
-    },
-    {
-      id: 'ev-03',
-      title: 'Free Community Legal Literacy & Paralegal Helpdesk',
-      date: 'May 04, 2026',
-      time: '10:00 AM - 04:00 PM IST',
-      location: 'Town Hall Auditorium, Baramulla',
-      category: 'Outreach',
-      description: 'Free legal aid clinic addressing civil grievances, consumer rights, RTI filing procedures, and government welfare scheme enrollment.',
-      fullDetails: 'Senior advocates and paralegal volunteers available for 1-on-1 confidential consultations.',
-      image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1000&q=80',
-      status: 'Upcoming',
-      attendeesCount: 200,
-      isPublished: true,
-      createdAt: '2026-02-10T10:00:00.000Z'
-    },
-    {
-      id: 'ev-04',
-      title: 'Winter Warmth & Relief Distribution 2025–26',
-      date: 'January 14, 2026',
-      time: 'Completed',
-      location: 'Gurez & Bandipora Highland Hamlets',
-      category: 'Outreach',
-      description: 'Distribution of thermal blankets, winter boots, and heating kits to 500+ vulnerable families in snowbound hamlets.',
-      fullDetails: 'Conducted successfully in coordination with local district administration and volunteer teams.',
-      image: 'https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?auto=format&fit=crop&w=1000&q=80',
-      status: 'Completed',
-      attendeesCount: 520,
-      isPublished: true,
-      createdAt: '2026-01-14T10:00:00.000Z'
-    },
-    {
-      id: 'ev-05',
-      title: 'Youth Peace & Inter-Faith Harmony Circle',
-      date: 'December 20, 2025',
-      time: 'Completed',
-      location: 'Heritage Complex, Srinagar',
-      category: 'Peacebuilding',
-      description: 'Dialogue sessions and cultural exchange promoting shared heritage and youth harmony across diverse backgrounds.',
-      fullDetails: 'Featured spoken word poetry, art installations, and joint youth resolutions.',
-      image: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1000&q=80',
-      status: 'Completed',
-      attendeesCount: 180,
-      isPublished: true,
-      createdAt: '2025-12-20T10:00:00.000Z'
-    }
-  ],
+  programs: PROGRAMS.map(p => ({
+    ...p,
+    status: 'Active',
+    isPublished: true,
+    createdAt: '2026-01-15T10:00:00.000Z'
+  })),
+  events: ARCHIVAL_EVENTS.map(e => ({
+    ...e,
+    isPublished: true,
+    createdAt: e.createdAt || '2026-01-15T10:00:00.000Z'
+  })),
   contactMessages: [
     {
       id: 'msg-01',
@@ -280,7 +94,30 @@ function loadDatabase() {
   try {
     if (fs.existsSync(DB_FILE)) {
       const data = fs.readFileSync(DB_FILE, 'utf-8');
-      return JSON.parse(data);
+      const parsed = JSON.parse(data);
+      // Auto-migrate to official 17 archival reports and 6 thematic pillars if outdated
+      const needsMigration = 
+        !parsed.events || 
+        parsed.events.length < ARCHIVAL_EVENTS.length || 
+        parsed.events.some((e: any) => e.id.startsWith('ev-0')) ||
+        !parsed.programs ||
+        parsed.programs.some((p: any) => p.id === 'youth-empowerment');
+
+      if (needsMigration) {
+        parsed.events = ARCHIVAL_EVENTS.map(e => ({
+          ...e,
+          isPublished: true,
+          createdAt: e.createdAt || '2026-01-15T10:00:00.000Z'
+        }));
+        parsed.programs = PROGRAMS.map(p => ({
+          ...p,
+          status: 'Active',
+          isPublished: true,
+          createdAt: '2026-01-15T10:00:00.000Z'
+        }));
+        saveDatabase(parsed);
+      }
+      return parsed;
     }
   } catch (err) {
     console.error('Error reading database file, using default seed:', err);

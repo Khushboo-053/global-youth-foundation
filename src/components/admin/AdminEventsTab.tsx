@@ -10,11 +10,16 @@ import {
   Clock, 
   Users,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  FolderPlus,
+  Layers,
+  Tag,
+  BookOpen
 } from 'lucide-react';
 import { EventItem } from '../../types';
 import { EventModal } from './EventModal';
 import { Link } from 'react-router-dom';
+import { GYF_CATEGORIES } from '../../data/categoryPillars';
 
 interface AdminEventsTabProps {
   events: EventItem[];
@@ -31,8 +36,11 @@ export const AdminEventsTab: React.FC<AdminEventsTabProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'Upcoming' | 'Completed' | 'Ongoing'>('all');
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [viewMode, setViewMode] = useState<'byCategory' | 'flat'>('byCategory');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<EventItem | null>(null);
+  const [presetCategory, setPresetCategory] = useState<string | undefined>(undefined);
   const [eventToDelete, setEventToDelete] = useState<EventItem | null>(null);
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
 
@@ -41,20 +49,23 @@ export const AdminEventsTab: React.FC<AdminEventsTabProps> = ({
       ev.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       ev.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
       ev.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      ev.category.toLowerCase().includes(searchTerm.toLowerCase());
+      (ev.category && ev.category.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const matchesStatus = statusFilter === 'all' || ev.status === statusFilter;
+    const matchesCategory = categoryFilter === 'all' || ev.category === categoryFilter;
 
-    return matchesSearch && matchesStatus;
+    return matchesSearch && matchesStatus && matchesCategory;
   });
 
-  const handleOpenAdd = () => {
+  const handleOpenAdd = (category?: string) => {
     setEditingEvent(null);
+    setPresetCategory(category);
     setIsModalOpen(true);
   };
 
   const handleOpenEdit = (ev: EventItem) => {
     setEditingEvent(ev);
+    setPresetCategory(ev.category);
     setIsModalOpen(true);
   };
 
@@ -64,7 +75,7 @@ export const AdminEventsTab: React.FC<AdminEventsTabProps> = ({
       setActionSuccess('Event details updated successfully.');
     } else {
       await onCreateEvent(data);
-      setActionSuccess('New event scheduled successfully.');
+      setActionSuccess(`New event published under "${data.category || 'Category'}" successfully.`);
     }
     setTimeout(() => setActionSuccess(null), 4000);
   };
@@ -91,14 +102,44 @@ export const AdminEventsTab: React.FC<AdminEventsTabProps> = ({
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={handleOpenAdd}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-teal-800 hover:bg-teal-900 text-white text-xs font-bold shadow-xs transition-colors shrink-0"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Schedule New Event</span>
-        </button>
+        <div className="flex items-center gap-2.5">
+          {/* View Toggle */}
+          <div className="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200">
+            <button
+              type="button"
+              onClick={() => setViewMode('byCategory')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                viewMode === 'byCategory'
+                  ? 'bg-teal-800 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Layers className="w-3.5 h-3.5" />
+              <span>By Category</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('flat')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                viewMode === 'flat'
+                  ? 'bg-teal-800 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Tag className="w-3.5 h-3.5" />
+              <span>All Events</span>
+            </button>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => handleOpenAdd()}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-teal-800 hover:bg-teal-900 text-white text-xs font-bold shadow-xs transition-colors shrink-0"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Upload New Event</span>
+          </button>
+        </div>
       </div>
 
       {actionSuccess && (
@@ -148,108 +189,296 @@ export const AdminEventsTab: React.FC<AdminEventsTabProps> = ({
         </div>
       </div>
 
-      {/* Events Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredEvents.length === 0 ? (
-          <div className="col-span-full py-16 text-center bg-white rounded-3xl border border-dashed border-slate-200 text-slate-400 text-xs">
-            No events found matching your search.
-          </div>
-        ) : (
-          filteredEvents.map((ev) => (
-            <div
-              key={ev.id}
-              className="bg-white rounded-3xl border border-slate-200/90 overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
+      {/* Category Quick Filter Pills */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 p-3 bg-white rounded-2xl border border-slate-200/90 shadow-xs">
+        <span className="text-xs font-bold text-slate-500 shrink-0 pl-1">Category / Pillar:</span>
+        <button
+          type="button"
+          onClick={() => setCategoryFilter('all')}
+          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
+            categoryFilter === 'all'
+              ? 'bg-slate-900 text-white shadow-xs'
+              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+          }`}
+        >
+          All ({events.length})
+        </button>
+        {GYF_CATEGORIES.map((cat) => {
+          const count = events.filter(e => e.category === cat.name).length;
+          return (
+            <button
+              key={cat.id}
+              type="button"
+              onClick={() => setCategoryFilter(cat.name)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all shrink-0 flex items-center gap-1.5 ${
+                categoryFilter === cat.name
+                  ? 'bg-teal-700 text-white shadow-xs font-bold'
+                  : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200'
+              }`}
             >
-              <div>
-                <div className="relative h-44 bg-slate-100 overflow-hidden">
-                  <img
-                    src={ev.image}
-                    alt={ev.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-slate-900/80 backdrop-blur-xs text-white text-[11px] font-bold">
-                    {ev.category}
-                  </span>
-                  <span className={`absolute top-3 right-3 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider backdrop-blur-xs text-white ${
-                    ev.status === 'Upcoming' ? 'bg-teal-600/90' :
-                    ev.status === 'Ongoing' ? 'bg-amber-600/90' :
-                    'bg-slate-700/90'
-                  }`}>
-                    {ev.status || 'Upcoming'}
-                  </span>
-                </div>
+              <span>{cat.shortTitle}</span>
+              <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-black/10">
+                {count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
 
-                <div className="p-5 space-y-3">
-                  <div className="flex items-center gap-3 text-xs text-slate-500 font-semibold">
-                    <span className="flex items-center gap-1 text-teal-800 font-bold">
-                      <Calendar className="w-3.5 h-3.5" />
-                      {ev.date}
+      {/* VIEW MODE 1: Organised BY CATEGORY PILLARS */}
+      {viewMode === 'byCategory' && (
+        <div className="space-y-8">
+          {GYF_CATEGORIES
+            .filter(cat => categoryFilter === 'all' || categoryFilter === cat.name)
+            .map((category) => {
+              const categoryEvents = filteredEvents.filter(e => e.category === category.name);
+              return (
+                <div 
+                  key={category.id} 
+                  className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs space-y-5 p-6"
+                >
+                  {/* Category Header */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2.5">
+                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${category.badgeBg} ${category.badgeText}`}>
+                          {category.shortTitle}
+                        </span>
+                        <span className="text-xs font-bold text-slate-400">
+                          {categoryEvents.length} Events Listed
+                        </span>
+                      </div>
+                      <h3 className="text-lg font-extrabold text-slate-900">
+                        {category.name}
+                      </h3>
+                      <p className="text-xs text-slate-500 max-w-2xl">
+                        {category.tagline} • Beneficiaries: {category.beneficiaries}
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleOpenAdd(category.name)}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 text-xs font-bold transition-all shrink-0"
+                    >
+                      <FolderPlus className="w-4 h-4 text-teal-700" />
+                      <span>Upload Event to this Category</span>
+                    </button>
+                  </div>
+
+                  {/* Category Events Grid */}
+                  {categoryEvents.length === 0 ? (
+                    <div className="py-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-slate-400 text-xs">
+                      No events matching filters under this category.
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                      {categoryEvents.map((ev) => (
+                        <div
+                          key={ev.id}
+                          className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
+                        >
+                          <div>
+                            <div className="relative h-40 bg-slate-100 overflow-hidden">
+                              <img
+                                src={ev.image}
+                                alt={ev.title}
+                                className="w-full h-full object-cover"
+                              />
+                              {ev.documentPage && (
+                                <span className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-md bg-slate-950/80 backdrop-blur-xs text-white text-[10px] font-mono font-bold">
+                                  Doc Page {ev.documentPage}
+                                </span>
+                              )}
+                              <span className={`absolute top-2.5 right-2.5 px-2 py-0.5 rounded-md text-[10px] font-bold text-white ${
+                                ev.status === 'Upcoming' ? 'bg-teal-600/90' :
+                                ev.status === 'Ongoing' ? 'bg-amber-600/90' :
+                                'bg-slate-700/90'
+                              }`}>
+                                {ev.status || 'Completed'}
+                              </span>
+                            </div>
+
+                            <div className="p-4 space-y-2.5">
+                              <div className="flex items-center gap-2 text-[11px] text-slate-500 font-semibold">
+                                <span className="flex items-center gap-1 text-teal-800 font-bold">
+                                  <Calendar className="w-3 h-3" />
+                                  {ev.date}
+                                </span>
+                                <span>•</span>
+                                <span className="flex items-center gap-1 line-clamp-1">
+                                  <MapPin className="w-3 h-3 text-slate-400" />
+                                  {ev.location}
+                                </span>
+                              </div>
+
+                              <h4 className="font-bold text-slate-900 text-sm leading-snug line-clamp-2">
+                                {ev.title}
+                              </h4>
+
+                              <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                                {ev.description}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="p-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                            <span className="text-[11px] font-semibold text-slate-500">
+                              {ev.attendeesCount || ev.attendees ? `${ev.attendeesCount || ev.attendees}` : 'Archival record'}
+                            </span>
+                            <div className="flex items-center gap-1.5">
+                              <Link
+                                to={`/events?view=monograph&page=${ev.documentPage || 2}&event=${ev.id}`}
+                                target="_blank"
+                                className="p-1.5 rounded-lg text-slate-600 hover:text-teal-800 hover:bg-white border border-transparent hover:border-slate-200 transition-all"
+                                title="View Archival Monograph Page"
+                              >
+                                <BookOpen className="w-3.5 h-3.5" />
+                              </Link>
+                              <button
+                                type="button"
+                                onClick={() => handleOpenEdit(ev)}
+                                className="p-1.5 rounded-lg text-slate-600 hover:text-teal-800 hover:bg-white border border-transparent hover:border-slate-200 transition-all"
+                                title="Edit Event"
+                              >
+                                <Edit3 className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setEventToDelete(ev)}
+                                className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-100 transition-all"
+                                title="Delete Event"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+        </div>
+      )}
+
+      {/* VIEW MODE 2: Flat Grid of All Events */}
+      {viewMode === 'flat' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredEvents.length === 0 ? (
+            <div className="col-span-full py-16 text-center bg-white rounded-3xl border border-dashed border-slate-200 text-slate-400 text-xs">
+              No events found matching your search.
+            </div>
+          ) : (
+            filteredEvents.map((ev) => (
+              <div
+                key={ev.id}
+                className="bg-white rounded-3xl border border-slate-200/90 overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
+              >
+                <div>
+                  <div className="relative h-44 bg-slate-100 overflow-hidden">
+                    <img
+                      src={ev.image}
+                      alt={ev.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-slate-900/80 backdrop-blur-xs text-white text-[11px] font-bold">
+                      {ev.category}
                     </span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5" />
-                      {ev.time}
+                    <span className={`absolute top-3 right-3 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider backdrop-blur-xs text-white ${
+                      ev.status === 'Upcoming' ? 'bg-teal-600/90' :
+                      ev.status === 'Ongoing' ? 'bg-amber-600/90' :
+                      'bg-slate-700/90'
+                    }`}>
+                      {ev.status || 'Upcoming'}
                     </span>
                   </div>
 
-                  <h3 className="font-bold text-slate-900 text-base leading-snug">
-                    {ev.title}
-                  </h3>
+                  <div className="p-5 space-y-3">
+                    <div className="flex items-center gap-3 text-xs text-slate-500 font-semibold">
+                      <span className="flex items-center gap-1 text-teal-800 font-bold">
+                        <Calendar className="w-3.5 h-3.5" />
+                        {ev.date}
+                      </span>
+                      <span>•</span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5" />
+                        {ev.time}
+                      </span>
+                    </div>
 
-                  <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed">
-                    {ev.description}
-                  </p>
+                    <h3 className="font-bold text-slate-900 text-base leading-snug">
+                      {ev.title}
+                    </h3>
 
-                  <div className="pt-2 border-t border-slate-100 space-y-1 text-xs text-slate-600">
-                    <div className="flex items-center gap-1.5 font-medium">
-                      <MapPin className="w-3.5 h-3.5 text-teal-700 shrink-0" />
-                      <span className="truncate">{ev.location}</span>
+                    <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed">
+                      {ev.description}
+                    </p>
+
+                    <div className="pt-2 border-t border-slate-100 space-y-1 text-xs text-slate-600">
+                      <div className="flex items-center gap-1.5 font-medium">
+                        <MapPin className="w-3.5 h-3.5 text-teal-700 shrink-0" />
+                        <span className="truncate">{ev.location}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Bottom Actions */}
-              <div className="px-5 py-3.5 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between">
-                <Link
-                  to="/events"
-                  target="_blank"
-                  className="text-xs font-bold text-teal-800 hover:text-teal-950 flex items-center gap-1"
-                >
-                  <span>Public View</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </Link>
+                {/* Bottom Actions */}
+                <div className="px-5 py-3.5 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Link
+                      to={`/events?view=monograph&page=${ev.documentPage || 2}&event=${ev.id}`}
+                      target="_blank"
+                      className="text-xs font-bold text-teal-800 hover:text-teal-950 flex items-center gap-1"
+                    >
+                      <BookOpen className="w-3.5 h-3.5" />
+                      <span>Monograph</span>
+                    </Link>
+                    <span className="text-slate-300">•</span>
+                    <Link
+                      to="/events"
+                      target="_blank"
+                      className="text-xs font-semibold text-slate-500 hover:text-slate-800 flex items-center gap-1"
+                    >
+                      <span>Public</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </Link>
+                  </div>
 
-                <div className="flex items-center gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => handleOpenEdit(ev)}
-                    className="p-2 rounded-xl text-slate-600 hover:text-sky-800 hover:bg-sky-50 transition-colors"
-                    title="Edit Event"
-                  >
-                    <Edit3 className="w-4 h-4" />
-                  </button>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => handleOpenEdit(ev)}
+                      className="p-2 rounded-xl text-slate-600 hover:text-sky-800 hover:bg-sky-50 transition-colors"
+                      title="Edit Event"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                    </button>
 
-                  <button
-                    type="button"
-                    onClick={() => setEventToDelete(ev)}
-                    className="p-2 rounded-xl text-slate-400 hover:text-rose-700 hover:bg-rose-50 transition-colors"
-                    title="Delete Event"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => setEventToDelete(ev)}
+                      className="p-2 rounded-xl text-slate-400 hover:text-rose-700 hover:bg-rose-50 transition-colors"
+                      title="Delete Event"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
-        )}
-      </div>
+            ))
+          )}
+        </div>
+      )}
 
       {/* Event Modal */}
       <EventModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         event={editingEvent}
+        defaultCategory={presetCategory}
         onSave={handleSave}
       />
 

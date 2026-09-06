@@ -30,9 +30,11 @@ import {
   NEWS_ITEMS, 
   TESTIMONIALS 
 } from '../data/mockData';
+import { ARCHIVAL_EVENTS, ArchivalEventData } from '../data/archivalEvents';
 import { StatCounter } from '../components/StatCounter';
 import { ProgramCard } from '../components/ProgramCard';
 import { EventCard } from '../components/EventCard';
+import { ArchivalMonographPage } from '../components/ArchivalMonographPage';
 import { NewsCard } from '../components/NewsCard';
 import { TestimonialCard } from '../components/TestimonialCard';
 import { GalleryGrid } from '../components/GalleryGrid';
@@ -668,54 +670,48 @@ export const HomePage: React.FC = () => {
       <Modal
         isOpen={selectedEvent !== null}
         onClose={() => setSelectedEvent(null)}
-        title={selectedEvent?.title || 'Event Details'}
-        maxWidth="lg"
+        title={selectedEvent ? `Document Page ${selectedEvent.documentPage}: ${selectedEvent.title}` : 'Event Report'}
+        maxWidth="2xl"
       >
-        {selectedEvent && (
-          <div className="space-y-4">
-            <img
-              src={selectedEvent.image}
-              alt={selectedEvent.title}
-              className="w-full h-56 object-cover rounded-xl"
-              referrerPolicy="no-referrer"
-            />
-            <div className="flex flex-wrap gap-2 text-xs">
-              <span className="px-2.5 py-1 rounded bg-teal-50 text-teal-800 font-bold">
-                {selectedEvent.category}
-              </span>
-              <span className="px-2.5 py-1 rounded bg-slate-100 text-slate-700 font-medium">
-                {selectedEvent.date}
-              </span>
-              {selectedEvent.time && (
-                <span className="px-2.5 py-1 rounded bg-slate-100 text-slate-700 font-medium">
-                  {selectedEvent.time}
+        {selectedEvent && (() => {
+          const archivalData: ArchivalEventData = ARCHIVAL_EVENTS.find(
+            e => e.id === selectedEvent.id || e.documentPage === selectedEvent.documentPage
+          ) || {
+            ...selectedEvent,
+            documentPage: selectedEvent.documentPage || 2,
+            layoutType: 'single',
+            banners: [],
+            archivalPhotos: [{ id: 'p1', caption: selectedEvent.title }]
+          } as ArchivalEventData;
+
+          return (
+            <div className="space-y-4">
+              <ArchivalMonographPage event={archivalData} />
+
+              <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                <span className="text-xs text-slate-500 font-mono">
+                  Official Global Youth Foundation Archives
                 </span>
-              )}
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedEvent(null)}
+                    className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg"
+                  >
+                    Close
+                  </button>
+                  <Link
+                    to="/events"
+                    onClick={() => setSelectedEvent(null)}
+                    className="px-4 py-2 text-xs font-bold bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors"
+                  >
+                    Explore All 17 Archival Events
+                  </Link>
+                </div>
+              </div>
             </div>
-            <div className="text-xs text-slate-500 font-semibold flex items-center gap-1">
-              <MapPin className="w-3.5 h-3.5 text-teal-600" />
-              <span>{selectedEvent.location}</span>
-            </div>
-            <p className="text-sm text-slate-700 leading-relaxed">
-              {selectedEvent.fullDetails || selectedEvent.description}
-            </p>
-            <div className="pt-3 border-t border-slate-100 flex justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => setSelectedEvent(null)}
-                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg"
-              >
-                Close
-              </button>
-              <Link
-                to="/membership"
-                className="px-4 py-2 text-xs font-bold bg-teal-600 hover:bg-teal-700 text-white rounded-lg"
-              >
-                Register as Volunteer
-              </Link>
-            </div>
-          </div>
-        )}
+          );
+        })()}
       </Modal>
 
       {/* News Details Modal */}

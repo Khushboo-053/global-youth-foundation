@@ -8,6 +8,7 @@ import {
   FAQItem, 
   GrievanceRecord 
 } from '../types';
+import { ARCHIVAL_EVENTS } from './archivalEvents';
 
 export const ORG_INFO = {
   name: 'Global Youth Foundation',
@@ -96,183 +97,105 @@ export const IMPACT_STATS: ImpactStat[] = [
 
 export const PROGRAMS: Program[] = [
   {
-    id: 'youth-empowerment',
-    title: 'Youth Empowerment',
-    shortDescription: 'Developing leadership, confidence, skills and opportunities for young people.',
-    fullDescription: 'Our Youth Empowerment program equips young individuals with practical leadership training, public speaking acumen, emotional intelligence, and digital skills. Through structured fellowships and mentorship circles, we bridge the gap between academic education and real-world civic impact.',
+    id: 'peace-harmony',
+    title: 'Peace, Justice & Social Harmony',
+    shortDescription: 'Advancing communal harmony, nonviolent democratic advocacy, and inter-faith dialogue.',
+    fullDescription: 'Promoting mutual respect, justice, and nonviolent social change across Kashmir through peaceful rallies, candlelight protests, mass signature campaigns, and consultative roundtables with senior religious scholars and community elders. Documented initiatives include the Peace with Justice rally, Candlelight Vigils, Signature Drives, and High-Level De-Radicalization dialogues.',
     objectives: [
-      'Conduct grassroots leadership incubators for underrepresented youth.',
-      'Provide career counseling, mentorship, and digital literacy workshops.',
-      'Create student representation councils in universities and local communities.'
+      'Organize Youth Peace Circles, candlelight solidarity vigils, and restorative mediation forums.',
+      'Conduct consultative conferences with respected Imams and scholars on de-radicalization.',
+      'Mobilize students and citizens through mass signature campaigns for peaceful coexistence.'
     ],
-    impactStats: '3,200+ Young Leaders Trained',
-    iconName: 'Zap',
-    image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80',
-    category: 'Leadership & Skills',
-    beneficiariesTarget: 'Youth aged 15–29, students, young entrepreneurs'
-  },
-  {
-    id: 'human-rights',
-    title: 'Human Rights',
-    shortDescription: 'Promoting dignity, equality and awareness of fundamental rights.',
-    fullDescription: 'We advocate for human dignity, legal literacy, non-discrimination, and fundamental freedoms. GYF conducts rights-awareness clinics, provides free paralegal guidance for vulnerable families, and works alongside civil rights practitioners to protect individual and community rights.',
-    objectives: [
-      'Disseminate accessible legal literacy guides in local languages.',
-      'Host free civic grievance clinics and legal awareness seminars.',
-      'Advocate for the eradication of discrimination, gender bias, and youth exploitation.'
-    ],
-    impactStats: '1,400+ Citizens Supported in Legal Literacy',
-    iconName: 'ShieldAlert',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&q=80',
-    category: 'Advocacy & Justice',
-    beneficiariesTarget: 'Vulnerable citizens, marginalized youth, students'
-  },
-  {
-    id: 'peace-justice',
-    title: 'Peace & Justice',
-    shortDescription: 'Supporting peacebuilding, dialogue, justice and social harmony.',
-    fullDescription: 'Fostering cohesive communities through youth-led intercommunity dialogues, conflict de-escalation workshops, and collaborative art and cultural forums. We believe lasting peace is anchored in restorative justice and mutual empathy.',
-    objectives: [
-      'Organize Youth Peace Circles and restorative mediation forums.',
-      'Train youth ambassadors in conflict resolution and empathetic communication.',
-      'Publish policy briefs and youth perspectives on local peacebuilding.'
-    ],
-    impactStats: '45+ Peace Dialogues Facilitated',
+    impactStats: '45+ Peace Dialogues & Rallies',
     iconName: 'Scale',
-    image: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&w=1200&q=80',
-    category: 'Peace & Harmony',
-    beneficiariesTarget: 'Community elders, youth councils, grassroots peace advocates'
+    image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=80',
+    category: 'Peace, Justice & Social Harmony',
+    beneficiariesTarget: 'Community elders, youth councils, inter-faith scholars & civic groups'
   },
   {
-    id: 'environmental-sustainability',
-    title: 'Environmental Sustainability',
-    shortDescription: 'Encouraging youth participation in environmental protection and sustainable development.',
-    fullDescription: 'Empowering young climate stewards to lead urban tree plantation drives, water body conservation, plastic-reduction campaigns, and renewable energy literacy. We connect grassroots ecological action with United Nations Sustainable Development Goals (SDGs).',
+    id: 'humanitarian-health',
+    title: 'Disaster Relief & Healthcare Outreach',
+    shortDescription: 'Emergency flood rescue, free specialist medical camps, and menstrual hygiene dignity.',
+    fullDescription: 'Serving as frontline first-responders during catastrophic crises such as the 2014 Kashmir floods, organizing free diagnostic health camps with prescription drug dispensaries, and breaking taboos through the "Wings of Hope" women’s menstrual hygiene and dignity distribution drive.',
     objectives: [
-      'Plant and nurture 25,000+ native saplings in urban and peri-urban zones.',
-      'Organize riverbank and public lake cleanup mobilizations.',
-      'Train school students in waste segregation and climate resilience.'
+      'Deploy rapid volunteer response teams during seasonal climate disasters and flood emergencies.',
+      'Provide free doctor consultations, diagnostic checkups, and prescription medicines to rural families.',
+      'Distribute menstrual hygiene packages and conduct adolescent reproductive health workshops.'
     ],
-    impactStats: '18,000+ Trees Planted & 12 Cleanups',
+    impactStats: '14,000+ Citizens Supported in Crises',
+    iconName: 'HeartHandshake',
+    image: 'https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=1200&q=80',
+    category: 'Disaster Relief & Healthcare Outreach',
+    beneficiariesTarget: 'Flood survivors, rural patients, elderly citizens, and schoolgirls'
+  },
+  {
+    id: 'substance-prevention',
+    title: 'Substance Abuse Prevention & De-Addiction',
+    shortDescription: 'Confronting youth addiction through clinical guidance, legal awareness, and faith alliances.',
+    fullDescription: 'Tackling Kashmir’s substance abuse crisis through community-based awareness camps, training on the HIV Act 2017, and pioneering partnerships with the J&K Imam Association to mobilize mosques and communities toward early intervention and rehabilitation.',
+    objectives: [
+      'Conduct grassroots awareness cum training seminars on the HIV Act 2017 and addiction risks.',
+      'Forge coalitions with religious scholars and Imams to counsel youth from mosque pulpits.',
+      'Provide compassionate counseling and refer affected youth to structured rehabilitation facilities.'
+    ],
+    impactStats: '1,800+ Youth Counseled & Sensitized',
+    iconName: 'ShieldAlert',
+    image: 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1200&q=80',
+    category: 'Substance Abuse Prevention & De-Addiction',
+    beneficiariesTarget: 'At-risk youth, recovering individuals, families & religious leaders'
+  },
+  {
+    id: 'women-empowerment',
+    title: 'Women & Girl Child Empowerment',
+    shortDescription: 'Fostering academic confidence, gender equality, leadership, and martial arts self-defense.',
+    fullDescription: 'Empowering young girls and women through commemorative leadership assemblies, academic award ceremonies, and championship martial arts training (Budokan Karate) that instills physical discipline, mental poise, and self-defense skills.',
+    objectives: [
+      'Celebrate Women Empowerment Day with leadership summits, awards, and community dialogues.',
+      'Sponsor martial arts and self-defense championships for young school and college girls.',
+      'Promote equal opportunities in education, public speaking, and youth civic representation.'
+    ],
+    impactStats: '2,500+ Girls & Young Women Empowered',
+    iconName: 'Award',
+    image: 'https://images.unsplash.com/photo-1555597673-b21d5c935865?auto=format&fit=crop&w=1200&q=80',
+    category: 'Women & Girl Child Empowerment',
+    beneficiariesTarget: 'School and college girls, young female athletes, women entrepreneurs'
+  },
+  {
+    id: 'youth-sports-culture',
+    title: 'Youth Leadership, Sports & Culture',
+    shortDescription: 'Building character and talent through athletic meets, debate championships, and trekking.',
+    fullDescription: 'Channeling young energy constructively through “Jawan Aur Awam” sports festivals, parliamentary debate tournaments at Sherwani Hall, high-altitude wilderness trekking expeditions with summit flag ceremonies, and Kashmir’s Got Talent cultural showcases.',
+    objectives: [
+      'Host multi-sport community festivals ("Jawan Aur Awam Aman Hai Makaam") featuring running, carom, and games.',
+      'Organize competitive debate championships ("Encounter of Polemics") in collaboration with Municipal Councils.',
+      'Lead wilderness trekking expeditions that build physical endurance, team morale, and civic pride.',
+      'Stage performing arts and talent hunts celebrating young musical, artistic, and literary talents.'
+    ],
+    impactStats: '5,500+ Young Athletes & Performers',
+    iconName: 'Zap',
+    image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&q=80',
+    category: 'Youth Leadership, Sports & Culture',
+    beneficiariesTarget: 'Student debaters, athletes, trekkers, and performing artists'
+  },
+  {
+    id: 'environmental-stewardship',
+    title: 'Environmental Stewardship & Climate Action',
+    shortDescription: 'Promoting school afforestation, native sapling plantations, and climate awareness.',
+    fullDescription: 'Inspiring future generations to care for the earth through comprehensive tree-plantation drives across government schools and rural zones, teaching students the vital importance of biodiversity, green cover, and climate action.',
+    objectives: [
+      'Conduct school-wide plantation drives planting native pine, cedar, and shade saplings.',
+      'Educate students on environmental balance, climate change mitigation, and conservation.',
+      'Establish student eco-clubs to nurture planted trees and preserve campus biodiversity.'
+    ],
+    impactStats: '18,000+ Native Saplings Planted',
     iconName: 'Leaf',
     image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1200&q=80',
-    category: 'Climate & Ecology',
-    beneficiariesTarget: 'Youth climate activists, schools, local neighborhoods'
-  },
-  {
-    id: 'community-development',
-    title: 'Community Development',
-    shortDescription: 'Supporting grassroots initiatives and vulnerable communities.',
-    fullDescription: 'Direct intervention programs addressing socio-economic distress, winter relief drives, emergency food distribution, sanitary health kit distributions for young women, and infrastructure rehabilitation in underprivileged areas.',
-    objectives: [
-      'Deploy rapid volunteer response teams during seasonal climate hardships.',
-      'Distribute menstrual hygiene and essential healthcare supplies.',
-      'Establish community micro-libraries and study spaces in rural clusters.'
-    ],
-    impactStats: '25+ Villages & Municipal Wards Supported',
-    iconName: 'Building2',
-    image: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=1200&q=80',
-    category: 'Grassroots Upliftment',
-    beneficiariesTarget: 'Low-income households, remote communities, children'
-  },
-  {
-    id: 'education-awareness',
-    title: 'Education & Awareness',
-    shortDescription: 'Conducting workshops, campaigns, training and awareness programs.',
-    fullDescription: 'Breaking structural barriers to education through remedial tutoring for first-generation learners, scholarship discovery guidance, anti-substance abuse drives, and cyber safety workshops for teens and parents.',
-    objectives: [
-      'Facilitate free weekend tutoring and board examination preparation.',
-      'Host awareness campaigns against substance abuse and mental health stigma.',
-      'Provide digital safety and misinformation resilience toolkits.'
-    ],
-    impactStats: '8,500+ Students Reached in Schools & Colleges',
-    iconName: 'GraduationCap',
-    image: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1200&q=80',
-    category: 'Education & Learning',
-    beneficiariesTarget: 'School pupils, college scholars, educators'
+    category: 'Environmental Stewardship & Climate Action',
+    beneficiariesTarget: 'School students, teachers, local communities, and rural habitats'
   }
 ];
 
-export const EVENTS: EventItem[] = [
-  {
-    id: 'event-1',
-    title: 'Youth Leadership Workshop 2026',
-    date: 'March 18, 2026',
-    time: '10:00 AM - 04:30 PM',
-    location: 'Srinagar Convention Centre, J&K',
-    category: 'Workshop',
-    description: 'An intensive, interactive seminar focusing on public policy advocacy, conflict resolution strategies, and civic leadership.',
-    fullDetails: 'Participants will engage with seasoned civil society activists, participate in policy simulation rounds, and collaborate on actionable community project roadmaps.',
-    image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1000&q=80',
-    status: 'Upcoming',
-    attendeesCount: 140
-  },
-  {
-    id: 'event-2',
-    title: 'Human Rights Awareness Campaign',
-    date: 'April 05, 2026',
-    time: '11:00 AM - 03:00 PM',
-    location: 'University Campus & Public Square, Bemina',
-    category: 'Campaign',
-    description: 'Street theatre, rights handbook distribution, and open legal helpdesks to foster awareness of constitutional and human rights.',
-    fullDetails: 'GYF volunteers and legal scholars will host open-mic sessions and one-on-one citizen advisory desks explaining RTI, basic civil liberties, and grievance redressal.',
-    image: 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=1000&q=80',
-    status: 'Upcoming',
-    attendeesCount: 320
-  },
-  {
-    id: 'event-3',
-    title: 'Peacebuilding Initiative & Youth Dialogue',
-    date: 'January 24, 2026',
-    time: '02:00 PM - 06:00 PM',
-    location: 'Community Peace Hall, Rajbagh',
-    category: 'Peacebuilding',
-    description: 'A cross-generational dialogue bringing young voices and community leaders together to build mutual trust and harmonic frameworks.',
-    fullDetails: 'A high-impact symposium bringing together 70+ young delegates to discuss community harmony, youth inclusion in municipal decision-making, and peace education.',
-    image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1000&q=80',
-    status: 'Completed',
-    attendeesCount: 95
-  },
-  {
-    id: 'event-4',
-    title: 'Environmental Awareness Drive & Lake Clean-Up',
-    date: 'February 12, 2026',
-    time: '08:30 AM - 01:30 PM',
-    location: 'Dal Foreshore Road & Surrounding Wetlands',
-    category: 'Environment',
-    description: 'Youth volunteers gathered to collect over 1.2 metric tons of non-biodegradable waste and distributed reusable cloth bags to shopkeepers.',
-    fullDetails: 'A collaborative drive with local municipal volunteers, mobilizing 180 youth to clear plastic pollutants and install eco-signboards promoting sustainable tourism.',
-    image: 'https://images.unsplash.com/photo-1618477461853-cf6ed80faba5?auto=format&fit=crop&w=1000&q=80',
-    status: 'Completed',
-    attendeesCount: 185
-  },
-  {
-    id: 'event-5',
-    title: 'Community Outreach & Winter Warmth Program',
-    date: 'December 28, 2025',
-    time: '09:00 AM - 05:00 PM',
-    location: 'Rural Outskirts & Tribal Settlements',
-    category: 'Outreach',
-    description: 'Providing thermal blankets, woolens, and nutritional emergency rations to 350+ elderly citizens and underprivileged children.',
-    fullDetails: 'GYF grassroots response unit mapped vulnerable families prior to the harsh chill, ensuring timely, dignified distribution of protective winter gear.',
-    image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1000&q=80',
-    status: 'Completed',
-    attendeesCount: 420
-  },
-  {
-    id: 'event-6',
-    title: 'Youth Digital Skills & Media Literacy Bootcamp',
-    date: 'May 14, 2026',
-    time: '10:00 AM - 03:00 PM',
-    location: 'GYF Digital Hub & Virtual Stream',
-    category: 'Leadership',
-    description: 'Empowering young content creators and student journalists to combat fake news and produce positive social advocacy campaigns.',
-    fullDetails: 'Hands-on practical sessions in ethical digital storytelling, smartphone filmmaking for causes, and cybersecurity basics.',
-    image: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1000&q=80',
-    status: 'Upcoming',
-    attendeesCount: 200
-  }
-];
+export const EVENTS: EventItem[] = ARCHIVAL_EVENTS;
 
 export const NEWS_ITEMS: NewsItem[] = [
   {
