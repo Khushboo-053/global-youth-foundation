@@ -79,7 +79,11 @@ export function App() {
           <Route path="/programs" element={<ProgramsPage />} />
           <Route path="/events" element={<EventsPage />} />
           <Route path="/blogs" element={<BlogsPage />} />
+          <Route path="/blogs/:id" element={<BlogsPage />} />
+          <Route path="/blog" element={<BlogsPage />} />
+          <Route path="/blog/:id" element={<BlogsPage />} />
           <Route path="/news" element={<BlogsPage />} />
+          <Route path="/news/:id" element={<BlogsPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/donate" element={<DonatePage />} />
           <Route path="/membership" element={<MembershipPage />} />

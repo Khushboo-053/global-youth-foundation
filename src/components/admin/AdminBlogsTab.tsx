@@ -102,14 +102,26 @@ export const AdminBlogsTab: React.FC<AdminBlogsTabProps> = ({
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={handleOpenAdd}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-teal-800 hover:bg-teal-900 text-white text-xs font-bold shadow-xs transition-colors shrink-0"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Write New Article</span>
-        </button>
+        <div className="flex items-center gap-2.5">
+          <Link
+            to="/blogs"
+            target="_blank"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-slate-200 hover:border-slate-300 text-slate-700 hover:text-slate-900 bg-white text-xs font-bold transition-colors shadow-2xs"
+            title="Open Live Public Blogs Page"
+          >
+            <ExternalLink className="w-3.5 h-3.5 text-teal-800" />
+            <span>Live Blog Page</span>
+          </Link>
+
+          <button
+            type="button"
+            onClick={handleOpenAdd}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-teal-800 hover:bg-teal-900 text-white text-xs font-bold shadow-xs transition-colors shrink-0"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Write New Article</span>
+          </button>
+        </div>
       </div>
 
       {actionSuccess && (
@@ -235,9 +247,10 @@ export const AdminBlogsTab: React.FC<AdminBlogsTabProps> = ({
                 {/* Bottom Actions Bar */}
                 <div className="px-5 py-3.5 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between">
                   <Link
-                    to="/blogs"
+                    to={`/blogs?id=${encodeURIComponent(blog.id)}`}
                     target="_blank"
                     className="text-xs font-bold text-teal-800 hover:text-teal-950 flex items-center gap-1"
+                    title={`Open "${blog.title}" live in newsroom`}
                   >
                     <span>View Live</span>
                     <ExternalLink className="w-3.5 h-3.5" />
@@ -312,7 +325,15 @@ export const AdminBlogsTab: React.FC<AdminBlogsTabProps> = ({
               articleImages={blogToPreview.articleImages}
             />
 
-            <div className="pt-4 border-t border-slate-100 flex justify-end">
+            <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+              <Link
+                to={`/blogs?id=${encodeURIComponent(blogToPreview.id)}`}
+                target="_blank"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-teal-800 hover:text-teal-950 bg-teal-50 hover:bg-teal-100 rounded-xl transition-colors"
+              >
+                <span>View Live on Site</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </Link>
               <button
                 type="button"
                 onClick={() => setBlogToPreview(null)}

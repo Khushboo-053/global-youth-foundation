@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams, useParams } from 'react-router-dom';
 import { 
   Search, 
   Calendar, 
@@ -25,6 +25,10 @@ export const BlogsPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedArticle, setSelectedArticle] = useState<NewsItem | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const params = useParams<{ id?: string }>();
+
+  const targetArticleId = searchParams.get('id') || searchParams.get('article') || params.id;
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -45,6 +49,28 @@ export const BlogsPage: React.FC = () => {
     fetchBlogs();
   }, []);
 
+  // Automatically open article when targetId is provided in URL
+  useEffect(() => {
+    if (!targetArticleId || blogs.length === 0) return;
+    const found = blogs.find(
+      b => String(b.id) === String(targetArticleId) || 
+           b.id.toLowerCase() === targetArticleId.toLowerCase()
+    );
+    if (found) {
+      setSelectedArticle(found);
+    }
+  }, [targetArticleId, blogs]);
+
+  const handleCloseArticle = () => {
+    setSelectedArticle(null);
+    if (searchParams.get('id') || searchParams.get('article')) {
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.delete('id');
+      nextParams.delete('article');
+      setSearchParams(nextParams, { replace: true });
+    }
+  };
+
   const categories = ['All', ...Array.from(new Set(blogs.map(b => b.category).filter(Boolean)))];
 
   const filteredBlogs = blogs.filter(b => {
@@ -58,14 +84,15 @@ export const BlogsPage: React.FC = () => {
   });
 
   const handleShare = (article: NewsItem) => {
+    const articleUrl = `${window.location.origin}/blogs?id=${encodeURIComponent(article.id)}`;
     if (navigator.share) {
       navigator.share({
         title: article.title,
         text: article.shortDescription,
-        url: window.location.href,
+        url: articleUrl,
       }).catch(() => {});
     } else {
-      navigator.clipboard.writeText(window.location.href);
+      navigator.clipboard.writeText(articleUrl);
       setCopiedLink(true);
       setTimeout(() => setCopiedLink(false), 2500);
     }
@@ -233,7 +260,7 @@ export const BlogsPage: React.FC = () => {
       {/* Full Article Reader Modal with Inside Photos & Captions */}
       <Modal
         isOpen={selectedArticle !== null}
-        onClose={() => setSelectedArticle(null)}
+        onClose={handleCloseArticle}
         title={selectedArticle?.title || 'Article Reader'}
         maxWidth="2xl"
       >
