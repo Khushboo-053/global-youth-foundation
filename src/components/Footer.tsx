@@ -12,7 +12,8 @@ import {
   Instagram, 
   Linkedin, 
   Youtube, 
-  Twitter 
+  Twitter,
+  HeartHandshake
 } from 'lucide-react';
 import { ORG_INFO } from '../data/mockData';
 import { GyfLogo } from './GyfLogo';
@@ -116,6 +117,13 @@ export const Footer: React.FC = () => {
                 <Link to="/track-complaint" className="text-slate-400 hover:text-white transition-colors flex items-center gap-1.5">
                   <span>Track Complaint</span>
                   <ArrowUpRight className="w-3 h-3 text-slate-500" />
+                </Link>
+              </li>
+              <li>
+                <Link to="/track-volunteer" className="text-teal-400 hover:text-teal-300 font-semibold transition-colors flex items-center gap-1.5">
+                  <HeartHandshake className="w-3.5 h-3.5 text-teal-400" />
+                  <span>Track Volunteer Form</span>
+                  <ArrowUpRight className="w-3 h-3 text-teal-500" />
                 </Link>
               </li>
               <li>

@@ -9,7 +9,8 @@ import {
   ShieldCheck, 
   HeartHandshake, 
   Sparkles, 
-  AlertCircle 
+  AlertCircle,
+  Search
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { MembershipRecord } from '../types';
@@ -34,6 +35,7 @@ export const MembershipPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedApp, setSubmittedApp] = useState<MembershipRecord | null>(null);
   const [copiedId, setCopiedId] = useState(false);
+  const [otherInterestText, setOtherInterestText] = useState('');
 
   const interestOptions = [
     'Youth Leadership & Fellowships',
@@ -42,7 +44,12 @@ export const MembershipPage: React.FC = () => {
     'Environmental Sustainability & Climate Action',
     'Community Development & Relief',
     'Education & Skill Workshops',
-    'Media, Communications & Research'
+    'Media, Communications & Research',
+    'Women & Girl Child Empowerment',
+    'Substance Abuse Prevention & De-addiction',
+    'Healthcare, Medical Camps & Blood Donation',
+    'Arts, Kashmiri Heritage & Cultural Revival',
+    'Any other (Please specify below)'
   ];
 
   const validate = () => {
@@ -61,6 +68,9 @@ export const MembershipPage: React.FC = () => {
     if (!formData.dob) errs.dob = 'Date of Birth is required';
     if (!formData.city.trim()) errs.city = 'City is required';
     if (!formData.state.trim()) errs.state = 'State / UT is required';
+    if (formData.areaOfInterest === 'Any other (Please specify below)' && !otherInterestText.trim()) {
+      errs.areaOfInterest = 'Please specify your custom Area of Interest';
+    }
     if (!formData.motivation.trim() || formData.motivation.trim().length < 15) {
       errs.motivation = 'Please share a brief motivation (minimum 15 characters)';
     }
@@ -76,6 +86,10 @@ export const MembershipPage: React.FC = () => {
     setIsSubmitting(true);
 
     try {
+      const chosenArea = formData.areaOfInterest === 'Any other (Please specify below)'
+        ? otherInterestText.trim()
+        : formData.areaOfInterest;
+
       const record = await submitMembership({
         fullName: formData.fullName.trim(),
         email: formData.email.trim(),
@@ -85,7 +99,7 @@ export const MembershipPage: React.FC = () => {
         city: formData.city.trim(),
         state: formData.state.trim(),
         country: formData.country.trim(),
-        areaOfInterest: formData.areaOfInterest,
+        areaOfInterest: chosenArea,
         motivation: formData.motivation.trim()
       });
 
@@ -167,17 +181,29 @@ export const MembershipPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
+              <div className="pt-4 flex flex-wrap items-center justify-center gap-3">
+                <Link
+                  to={`/track-volunteer?ref=${encodeURIComponent(submittedApp.applicationId)}`}
+                  id="membership-track-app-btn"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-teal-800 hover:bg-teal-900 text-white text-xs font-bold transition-all shadow-md cursor-pointer"
+                >
+                  <Search className="w-4 h-4" />
+                  <span>Track Application Status</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+
                 <Link
                   to="/dashboard"
                   className="px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all"
                 >
                   View in Dashboard
                 </Link>
+
                 <button
                   type="button"
                   onClick={() => {
                     setSubmittedApp(null);
+                    setOtherInterestText('');
                     setFormData({
                       fullName: '',
                       email: '',
@@ -191,7 +217,7 @@ export const MembershipPage: React.FC = () => {
                       motivation: ''
                     });
                   }}
-                  className="px-6 py-3 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold border border-slate-200"
+                  className="px-6 py-3 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold border border-slate-200 cursor-pointer"
                 >
                   Submit Another Application
                 </button>
@@ -280,7 +306,7 @@ export const MembershipPage: React.FC = () => {
                 </div>
 
                 {/* Area of Interest */}
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 sm:col-span-2">
                   <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
                     Area of Interest <span className="text-rose-500">*</span>
                   </label>
@@ -294,6 +320,32 @@ export const MembershipPage: React.FC = () => {
                     ))}
                   </select>
                 </div>
+
+                {/* Specific field if "Any other" chosen */}
+                {formData.areaOfInterest === 'Any other (Please specify below)' && (
+                  <div className="space-y-1.5 sm:col-span-2 p-4 rounded-2xl bg-teal-50/80 border border-teal-200 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <label className="text-xs font-bold text-teal-950 uppercase tracking-wider flex items-center justify-between">
+                      <span>Specify Custom Area of Interest / Domain</span>
+                      <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="mem-input-other-interest"
+                      value={otherInterestText}
+                      onChange={(e) => setOtherInterestText(e.target.value)}
+                      placeholder="e.g. Kashmiri Calligraphy, Elderly Care, Sports Coaching, Mental Health..."
+                      className={`w-full px-4 py-2.5 rounded-xl bg-white border text-sm focus:outline-none focus:ring-2 ${
+                        errors.areaOfInterest ? 'border-rose-400 focus:ring-rose-400' : 'border-teal-300 focus:ring-teal-600'
+                      }`}
+                    />
+                    {errors.areaOfInterest && (
+                      <p className="text-xs text-rose-600 font-medium">{errors.areaOfInterest}</p>
+                    )}
+                    <p className="text-[11px] text-teal-800">
+                      Your custom domain will be reviewed and recorded with your applicant profile.
+                    </p>
+                  </div>
+                )}
 
                 {/* Address */}
                 <div className="space-y-1.5 sm:col-span-2">

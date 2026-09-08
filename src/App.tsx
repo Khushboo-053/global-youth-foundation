@@ -12,6 +12,7 @@ import { DonatePage } from './pages/DonatePage';
 import { MembershipPage } from './pages/MembershipPage';
 import { GrievancePage } from './pages/GrievancePage';
 import { TrackComplaintPage } from './pages/TrackComplaintPage';
+import { TrackVolunteerPage } from './pages/TrackVolunteerPage';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
 import { DashboardPage } from './pages/DashboardPage';
@@ -89,6 +90,9 @@ export function App() {
           <Route path="/membership" element={<MembershipPage />} />
           <Route path="/grievance" element={<GrievancePage />} />
           <Route path="/track-complaint" element={<TrackComplaintPage />} />
+          <Route path="/track-volunteer" element={<TrackVolunteerPage />} />
+          <Route path="/track-application" element={<TrackVolunteerPage />} />
+          <Route path="/track-form" element={<TrackVolunteerPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           

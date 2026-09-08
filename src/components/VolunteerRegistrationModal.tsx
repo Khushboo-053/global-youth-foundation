@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   HeartHandshake, 
   CheckCircle2, 
@@ -13,7 +14,11 @@ import {
   Check, 
   ArrowRight,
   ShieldCheck,
-  Award
+  Award,
+  Search,
+  Copy,
+  Plus,
+  X
 } from 'lucide-react';
 import { Modal } from './Modal';
 import { useApp } from '../context/AppContext';
@@ -48,7 +53,14 @@ const VOLUNTEER_DOMAINS = [
   { id: 'Community Mediation', label: 'Dispute Mediation' },
   { id: 'Digital Media & Campaigns', label: 'Media & Tech' },
   { id: 'Field Surveys & Research', label: 'Field Research' },
-  { id: 'Event Operations & Logistics', label: 'Event Operations' }
+  { id: 'Event Operations & Logistics', label: 'Event Operations' },
+  { id: 'Women & Girl Child Empowerment', label: 'Women Empowerment' },
+  { id: 'Substance Abuse Prevention & De-addiction', label: 'Substance Prevention' },
+  { id: 'Environmental Protection & Climate Action', label: 'Climate Action' },
+  { id: 'Healthcare, Medical Camps & Blood Donation', label: 'Health & Medical' },
+  { id: 'Education, Tutoring & Vocational Skills', label: 'Education & Skills' },
+  { id: 'Arts, Kashmiri Heritage & Cultural Revival', label: 'Arts & Heritage' },
+  { id: 'Any other (Please specify below)', label: 'Any Other (Specify)' }
 ];
 
 const AVAILABILITY_OPTIONS = [
@@ -85,16 +97,32 @@ export const VolunteerRegistrationModal: React.FC<VolunteerRegistrationModalProp
     'Youth Leadership Workshops'
   ]);
   const [customSkill, setCustomSkill] = useState('');
+  const [isOtherSelected, setIsOtherSelected] = useState(false);
+  const [otherSpecifyText, setOtherSpecifyText] = useState('');
+  const [copiedRef, setCopiedRef] = useState(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [submittedVolunteer, setSubmittedVolunteer] = useState<UserAccount | null>(null);
 
-  const toggleSkill = (skill: string) => {
-    if (selectedSkills.includes(skill)) {
-      setSelectedSkills(selectedSkills.filter(s => s !== skill));
+  const toggleSkill = (skillId: string) => {
+    if (skillId === 'Any other (Please specify below)') {
+      if (isOtherSelected) {
+        setIsOtherSelected(false);
+        setSelectedSkills(prev => prev.filter(s => s !== 'Any other (Please specify below)' && s !== otherSpecifyText.trim()));
+      } else {
+        setIsOtherSelected(true);
+        if (!selectedSkills.includes('Any other (Please specify below)')) {
+          setSelectedSkills(prev => [...prev, 'Any other (Please specify below)']);
+        }
+      }
+      return;
+    }
+
+    if (selectedSkills.includes(skillId)) {
+      setSelectedSkills(selectedSkills.filter(s => s !== skillId));
     } else {
-      setSelectedSkills([...selectedSkills, skill]);
+      setSelectedSkills([...selectedSkills, skillId]);
     }
   };
 
@@ -122,6 +150,10 @@ export const VolunteerRegistrationModal: React.FC<VolunteerRegistrationModalProp
       agreeToCodeOfConduct: false
     });
     setSelectedSkills(['Legal Aid & Human Rights', 'Youth Leadership Workshops']);
+    setIsOtherSelected(false);
+    setOtherSpecifyText('');
+    setCustomSkill('');
+    setCopiedRef(false);
     setErrorMessage(null);
     setSubmittedVolunteer(null);
   };
@@ -157,6 +189,22 @@ export const VolunteerRegistrationModal: React.FC<VolunteerRegistrationModalProp
       return;
     }
 
+    // Finalize skills including any custom specified area of interest
+    let finalSkills = selectedSkills.filter(s => s !== 'Any other (Please specify below)');
+    if (isOtherSelected && otherSpecifyText.trim()) {
+      if (!finalSkills.includes(otherSpecifyText.trim())) {
+        finalSkills.push(otherSpecifyText.trim());
+      }
+    }
+    if (customSkill.trim() && !finalSkills.includes(customSkill.trim())) {
+      finalSkills.push(customSkill.trim());
+    }
+
+    if (finalSkills.length === 0) {
+      setErrorMessage('Please select or specify at least one Area of Interest.');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       const newVol = await applyAsVolunteer({
@@ -164,7 +212,7 @@ export const VolunteerRegistrationModal: React.FC<VolunteerRegistrationModalProp
         email: formData.email,
         phone: formData.phone,
         chapter: formData.chapter,
-        skills: selectedSkills,
+        skills: finalSkills,
         bio: formData.bio,
         bloodGroup: formData.bloodGroup,
         emergencyContact: formData.emergencyContact,
@@ -209,9 +257,25 @@ export const VolunteerRegistrationModal: React.FC<VolunteerRegistrationModalProp
               <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
                 Application Reference ID
               </span>
-              <span className="font-mono font-black text-teal-800 text-sm bg-teal-50 px-2.5 py-1 rounded-md border border-teal-200">
-                {submittedVolunteer.membershipId || submittedVolunteer.id}
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="font-mono font-black text-teal-800 text-sm bg-teal-50 px-2.5 py-1 rounded-md border border-teal-200">
+                  {submittedVolunteer.membershipId || submittedVolunteer.id}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const ref = submittedVolunteer.membershipId || submittedVolunteer.id;
+                    navigator.clipboard.writeText(ref);
+                    setCopiedRef(true);
+                    setTimeout(() => setCopiedRef(false), 2000);
+                  }}
+                  className="px-2 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-[11px] font-bold flex items-center gap-1 shadow-2xs cursor-pointer transition-all"
+                  title="Copy Reference ID"
+                >
+                  {copiedRef ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3 text-slate-500" />}
+                  <span>{copiedRef ? 'Copied' : 'Copy'}</span>
+                </button>
+              </div>
             </div>
             
             <div className="grid grid-cols-2 gap-2 text-xs">
@@ -238,16 +302,27 @@ export const VolunteerRegistrationModal: React.FC<VolunteerRegistrationModalProp
               2. The administrator will review and either <strong>Accept</strong> or <strong>Reject</strong> the application.
             </p>
             <p>
-              3. Upon acceptance, your volunteer credentials, digital taskforce ID, and operational rights are activated.
+              3. You can track your screening status at any time on our public <strong>Track Volunteer Form</strong> portal.
             </p>
           </div>
 
-          <div className="pt-2 flex justify-center">
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link
+              to={`/track-volunteer?ref=${encodeURIComponent(submittedVolunteer.membershipId || submittedVolunteer.id)}`}
+              onClick={handleClose}
+              id="volunteer-track-status-btn"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-teal-800 hover:bg-teal-900 text-white font-bold text-sm shadow-md transition-all cursor-pointer"
+            >
+              <Search className="w-4 h-4" />
+              <span>Track Application Status</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+
             <button
               type="button"
               id="volunteer-success-done-btn"
               onClick={handleClose}
-              className="px-6 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white font-bold text-sm shadow-sm transition-all cursor-pointer"
+              className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 font-bold text-sm shadow-xs transition-all cursor-pointer"
             >
               Done & Close
             </button>
@@ -433,7 +508,7 @@ export const VolunteerRegistrationModal: React.FC<VolunteerRegistrationModalProp
 
               <div className="flex flex-wrap gap-2">
                 {VOLUNTEER_DOMAINS.map((domain) => {
-                  const isSelected = selectedSkills.includes(domain.id);
+                  const isSelected = selectedSkills.includes(domain.id) || (domain.id === 'Any other (Please specify below)' && isOtherSelected);
                   return (
                     <button
                       key={domain.id}
@@ -452,24 +527,97 @@ export const VolunteerRegistrationModal: React.FC<VolunteerRegistrationModalProp
                 })}
               </div>
 
-              {/* Custom Skill Input */}
-              <div className="flex items-center gap-2 pt-1">
-                <input
-                  type="text"
-                  value={customSkill}
-                  onChange={(e) => setCustomSkill(e.target.value)}
-                  onKeyDown={handleAddCustomSkill}
-                  placeholder="Other skill (e.g. Urdu/Kashmiri Translation, Videography)..."
-                  className="flex-1 px-3 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-teal-700"
-                />
-                <button
-                  type="button"
-                  onClick={handleAddCustomSkill}
-                  className="px-3 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold cursor-pointer"
-                >
-                  Add Skill
-                </button>
+              {/* Dedicated "Any Other" Area of Interest Specification Input */}
+              {isOtherSelected && (
+                <div className="p-3.5 rounded-xl bg-teal-50/90 border border-teal-200 space-y-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-teal-950 flex items-center gap-1">
+                      <span>Specify Custom Area of Interest</span>
+                      <span className="text-rose-500">*</span>
+                    </label>
+                    <span className="text-[10px] text-teal-700 font-semibold">Specialty / Custom Field</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      id="vol-input-other-interest"
+                      value={otherSpecifyText}
+                      onChange={(e) => setOtherSpecifyText(e.target.value)}
+                      placeholder="e.g. Kashmiri Calligraphy, Elderly Care, Sports Coaching, Mental Health..."
+                      className="flex-1 px-3 py-2 text-xs rounded-lg border border-teal-300 bg-white focus:outline-none focus:ring-2 focus:ring-teal-700 font-medium"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const trimmed = otherSpecifyText.trim();
+                        if (trimmed && !selectedSkills.includes(trimmed)) {
+                          setSelectedSkills([...selectedSkills.filter(s => s !== 'Any other (Please specify below)'), trimmed]);
+                        }
+                      }}
+                      className="px-3 py-2 rounded-lg bg-teal-800 hover:bg-teal-900 text-white text-xs font-bold shrink-0 transition-all cursor-pointer"
+                    >
+                      Apply Area
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-teal-800">
+                    {otherSpecifyText.trim() 
+                      ? <>Selected Custom Area: <strong>"{otherSpecifyText.trim()}"</strong></> 
+                      : 'Type your specialized field of interest above. It will be logged with your volunteer profile.'}
+                  </p>
+                </div>
+              )}
+
+              {/* Custom Additional Skill Input */}
+              <div className="space-y-1.5 pt-1">
+                <label className="block text-[11px] font-semibold text-slate-500">
+                  Add Additional Skills or Capabilities (Optional):
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={customSkill}
+                    onChange={(e) => setCustomSkill(e.target.value)}
+                    onKeyDown={handleAddCustomSkill}
+                    placeholder="Other skill (e.g. Urdu/Kashmiri Translation, Videography)..."
+                    className="flex-1 px-3 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-teal-700"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddCustomSkill}
+                    className="px-3 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold cursor-pointer transition-colors"
+                  >
+                    Add Skill
+                  </button>
+                </div>
               </div>
+
+              {/* Selected tags list with remove button */}
+              {selectedSkills.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {selectedSkills.map((s, idx) => (
+                    <span
+                      key={idx}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-teal-50 text-teal-900 border border-teal-200 text-[11px] font-semibold"
+                    >
+                      <span>{s}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (s === otherSpecifyText.trim() || s === 'Any other (Please specify below)') {
+                            setIsOtherSelected(false);
+                            setOtherSpecifyText('');
+                          }
+                          setSelectedSkills(selectedSkills.filter(item => item !== s));
+                        }}
+                        className="hover:text-rose-600 cursor-pointer ml-0.5"
+                        title={`Remove ${s}`}
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
 
               {/* Availability */}
               <div className="pt-2">

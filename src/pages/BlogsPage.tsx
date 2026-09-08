@@ -17,8 +17,10 @@ import { api } from '../services/api';
 import { Modal } from '../components/Modal';
 import { ArticleContentRenderer } from '../components/ArticleContentRenderer';
 import { NEWS_ITEMS } from '../data/mockData';
+import { useApp } from '../context/AppContext';
 
 export const BlogsPage: React.FC = () => {
+  const { blogs: appBlogs, user } = useApp();
   const [blogs, setBlogs] = useState<NewsItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -31,30 +33,38 @@ export const BlogsPage: React.FC = () => {
   const targetArticleId = searchParams.get('id') || searchParams.get('article') || params.id;
 
   useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        setIsLoading(true);
-        const data = await api.blogs.getPublished();
-        if (data && data.length > 0) {
-          setBlogs(data);
-        } else {
+    if (appBlogs && appBlogs.length > 0) {
+      setBlogs(appBlogs);
+      setIsLoading(false);
+    } else {
+      const fetchBlogs = async () => {
+        try {
+          setIsLoading(true);
+          const data = await api.blogs.getAll();
+          if (data && data.length > 0) {
+            setBlogs(data);
+          } else {
+            setBlogs(NEWS_ITEMS.map(b => ({ ...b, isPublished: true })));
+          }
+        } catch (err) {
           setBlogs(NEWS_ITEMS.map(b => ({ ...b, isPublished: true })));
+        } finally {
+          setIsLoading(false);
         }
-      } catch (err) {
-        setBlogs(NEWS_ITEMS.map(b => ({ ...b, isPublished: true })));
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchBlogs();
-  }, []);
+      };
+      fetchBlogs();
+    }
+  }, [appBlogs]);
 
-  // Automatically open article when targetId is provided in URL
+  // Automatically open article when targetId is provided in URL (e.g. from backend View Live)
   useEffect(() => {
     if (!targetArticleId || blogs.length === 0) return;
+    const cleanTarget = decodeURIComponent(targetArticleId).trim();
     const found = blogs.find(
-      b => String(b.id) === String(targetArticleId) || 
-           b.id.toLowerCase() === targetArticleId.toLowerCase()
+      b => String(b.id) === cleanTarget || 
+           b.id.toLowerCase() === cleanTarget.toLowerCase() ||
+           String(b.id).replace(/^blog-/, '') === cleanTarget.replace(/^blog-/, '') ||
+           b.title.toLowerCase() === cleanTarget.toLowerCase()
     );
     if (found) {
       setSelectedArticle(found);
@@ -73,7 +83,9 @@ export const BlogsPage: React.FC = () => {
 
   const categories = ['All', ...Array.from(new Set(blogs.map(b => b.category).filter(Boolean)))];
 
-  const filteredBlogs = blogs.filter(b => {
+  const visibleBlogs = blogs.filter(b => user?.role === 'admin' || b.isPublished !== false);
+
+  const filteredBlogs = visibleBlogs.filter(b => {
     const matchesCategory = selectedCategory === 'All' || b.category === selectedCategory;
     const matchesSearch = 
       b.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -100,6 +112,26 @@ export const BlogsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50/60 pb-20">
+      {/* Admin Live Preview Banner */}
+      {user?.role === 'admin' && (
+        <div className="bg-slate-900 border-b border-teal-500/30 text-white px-4 py-2.5 sm:px-6">
+          <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2">
+              <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+              <span className="font-bold text-teal-300">Admin Mode:</span>
+              <span className="text-slate-300">Viewing Live Newsroom</span>
+            </div>
+            <Link
+              to="/admin"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-teal-800 hover:bg-teal-700 text-white font-bold text-xs transition-colors cursor-pointer"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back to Admin Dashboard</span>
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Hero Header */}
       <section className="bg-gradient-to-b from-slate-900 via-teal-950 to-slate-900 text-white py-16 px-4 sm:px-6 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#2dd4bf_1px,transparent_1px)] [background-size:16px_16px]" />

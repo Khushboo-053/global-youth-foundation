@@ -9,7 +9,8 @@ import {
   Phone, 
   Mail,
   Megaphone,
-  LogOut
+  LogOut,
+  HeartHandshake
 } from 'lucide-react';
 import { ORG_INFO } from '../data/mockData';
 import { GyfLogo } from './GyfLogo';
@@ -136,6 +137,11 @@ export const Navbar: React.FC = () => {
             <span>•</span>
             <Link to="/track-complaint" className="hover:text-white transition-colors flex items-center gap-1">
               <span>Track Complaint</span>
+            </Link>
+            <span>•</span>
+            <Link to="/track-volunteer" className="text-teal-300 hover:text-white font-semibold transition-colors flex items-center gap-1">
+              <HeartHandshake className="w-3.5 h-3.5 text-teal-400" />
+              <span>Track Volunteer Form</span>
             </Link>
             <span>•</span>
             {user ? (
@@ -270,7 +276,16 @@ export const Navbar: React.FC = () => {
                 Services & Grievance
               </div>
               <Link
+                to="/track-volunteer"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm text-teal-800 bg-teal-50/80 font-bold hover:bg-teal-100"
+              >
+                <HeartHandshake className="w-4 h-4 text-teal-700" />
+                <span>Track Volunteer Form</span>
+              </Link>
+              <Link
                 to="/grievance"
+                onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-50"
               >
                 <ShieldCheck className="w-4 h-4 text-[#2C3292]" />
@@ -278,6 +293,7 @@ export const Navbar: React.FC = () => {
               </Link>
               <Link
                 to="/track-complaint"
+                onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-50"
               >
                 <div className="w-4 h-4 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-700">#</div>
