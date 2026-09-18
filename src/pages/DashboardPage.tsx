@@ -75,7 +75,8 @@ export const DashboardPage: React.FC = () => {
     markAllNotificationsRead,
     clearAllNotifications,
     restoreDefaultNotifications,
-    updateProfile
+    updateProfile,
+    websiteContent
   } = useApp();
 
   const navigate = useNavigate();
@@ -795,31 +796,31 @@ export const DashboardPage: React.FC = () => {
                     </div>
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 flex items-center gap-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                      <span>OPEN TODAY</span>
+                      <span>{websiteContent?.helpDeskBadge || 'OPEN TODAY'}</span>
                     </span>
                   </div>
 
                   <div>
                     <h3 className="text-base font-bold text-white">
-                      Baramulla & Srinagar Grievance Cell
+                      {websiteContent?.helpDeskTitle || 'Baramulla & Srinagar Grievance Cell'}
                     </h3>
                     <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-                      Offering free citizen document drafting, legal counseling, student scholarship follow-ups, and ombudsman mediation.
+                      {websiteContent?.helpDeskDescription || 'Offering free citizen document drafting, legal counseling, student scholarship follow-ups, and ombudsman mediation.'}
                     </p>
                   </div>
 
                   <div className="space-y-2 text-xs text-slate-300 pt-2 border-t border-slate-800">
                     <div className="flex items-center gap-2">
                       <Clock className="w-3.5 h-3.5 text-teal-400 shrink-0" />
-                      <span>Hours: 10:00 AM – 05:00 PM (Mon–Sat)</span>
+                      <span>Hours: {websiteContent?.helpDeskHours || '10:00 AM – 05:00 PM (Mon–Sat)'}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Phone className="w-3.5 h-3.5 text-teal-400 shrink-0" />
-                      <span>Hotline: +91 91035 99292</span>
+                      <span>Hotline: {websiteContent?.helpDeskPhone || '+91 91035 99292'}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <MapPin className="w-3.5 h-3.5 text-teal-400 shrink-0" />
-                      <span>Baramulla Main Town & Srinagar (Bemina)</span>
+                      <span>{websiteContent?.helpDeskLocation || 'Baramulla Main Town & Srinagar (Bemina)'}</span>
                     </div>
                   </div>
 
@@ -1331,10 +1332,10 @@ export const DashboardPage: React.FC = () => {
                   <span>Free Public Legal Helpdesk & Citizen Aid Cell</span>
                 </div>
                 <h2 className="text-2xl font-extrabold text-white">
-                  Baramulla & Srinagar Grievance Cell
+                  {websiteContent?.helpDeskTitle || 'Baramulla & Srinagar Grievance Cell'}
                 </h2>
                 <p className="text-xs text-slate-300 leading-relaxed">
-                  Established to ensure that no citizen or young person in the region remains helpless due to lack of resources, guidance, or administrative access. We provide pro-bono paralegal counseling, government scheme liaison, and document drafting.
+                  {websiteContent?.helpDeskDescription || 'Established to ensure that no citizen or young person in the region remains helpless due to lack of resources, guidance, or administrative access. We provide pro-bono paralegal counseling, government scheme liaison, and document drafting.'}
                 </p>
               </div>
 

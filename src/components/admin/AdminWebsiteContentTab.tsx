@@ -103,6 +103,14 @@ export const AdminWebsiteContentTab: React.FC = () => {
   const [legalAidHotline, setLegalAidHotline] = useState('1800-GYF-LEGAL (Toll Free)');
   const [hqAddress, setHqAddress] = useState('Peace & Civic Action Complex, M.A. Road, Srinagar, J&K 190001');
 
+  // Secretariat Help Desk & Grievance Cell (Shown on User Dashboard)
+  const [helpDeskTitle, setHelpDeskTitle] = useState('Baramulla & Srinagar Grievance Cell');
+  const [helpDeskBadge, setHelpDeskBadge] = useState('OPEN TODAY');
+  const [helpDeskDescription, setHelpDeskDescription] = useState('Offering free citizen document drafting, legal counseling, student scholarship follow-ups, and ombudsman mediation.');
+  const [helpDeskHours, setHelpDeskHours] = useState('10:00 AM – 05:00 PM (Mon–Sat)');
+  const [helpDeskPhone, setHelpDeskPhone] = useState('+91 91035 99292');
+  const [helpDeskLocation, setHelpDeskLocation] = useState('Baramulla Main Town & Srinagar (Bemina)');
+
   // Bank & Donation Info
   const [bankAccountName, setBankAccountName] = useState('Global Youth Foundation Trust');
   const [bankName, setBankName] = useState('Jammu & Kashmir Bank Ltd.');
@@ -179,6 +187,12 @@ export const AdminWebsiteContentTab: React.FC = () => {
       if (websiteContent.bankIfsc) setBankIfsc(websiteContent.bankIfsc);
       if (websiteContent.bankUpi) setBankUpi(websiteContent.bankUpi);
       if (websiteContent.bankQrCodeUrl !== undefined) setBankQrCodeUrl(websiteContent.bankQrCodeUrl);
+      if (websiteContent.helpDeskTitle) setHelpDeskTitle(websiteContent.helpDeskTitle);
+      if (websiteContent.helpDeskBadge) setHelpDeskBadge(websiteContent.helpDeskBadge);
+      if (websiteContent.helpDeskDescription) setHelpDeskDescription(websiteContent.helpDeskDescription);
+      if (websiteContent.helpDeskHours) setHelpDeskHours(websiteContent.helpDeskHours);
+      if (websiteContent.helpDeskPhone) setHelpDeskPhone(websiteContent.helpDeskPhone);
+      if (websiteContent.helpDeskLocation) setHelpDeskLocation(websiteContent.helpDeskLocation);
       if (Array.isArray(websiteContent.leadershipTeam) && websiteContent.leadershipTeam.length > 0) {
         setLeadershipTeam(websiteContent.leadershipTeam);
       }
@@ -289,7 +303,13 @@ export const AdminWebsiteContentTab: React.FC = () => {
         bankIfsc,
         bankUpi,
         bankQrCodeUrl,
-        leadershipTeam
+        leadershipTeam,
+        helpDeskTitle,
+        helpDeskBadge,
+        helpDeskDescription,
+        helpDeskHours,
+        helpDeskPhone,
+        helpDeskLocation
       };
 
       await updateWebsiteContent(content);
@@ -328,6 +348,12 @@ export const AdminWebsiteContentTab: React.FC = () => {
         setBankUpi(reset.bankUpi);
         setBankQrCodeUrl(reset.bankQrCodeUrl || '');
         setLeadershipTeam(reset.leadershipTeam);
+        setHelpDeskTitle(reset.helpDeskTitle || 'Baramulla & Srinagar Grievance Cell');
+        setHelpDeskBadge(reset.helpDeskBadge || 'OPEN TODAY');
+        setHelpDeskDescription(reset.helpDeskDescription || 'Offering free citizen document drafting, legal counseling, student scholarship follow-ups, and ombudsman mediation.');
+        setHelpDeskHours(reset.helpDeskHours || '10:00 AM – 05:00 PM (Mon–Sat)');
+        setHelpDeskPhone(reset.helpDeskPhone || '+91 91035 99292');
+        setHelpDeskLocation(reset.helpDeskLocation || 'Baramulla Main Town & Srinagar (Bemina)');
         setSaveSuccess(true);
         setTimeout(() => setSaveSuccess(false), 4000);
       } finally {
@@ -1045,6 +1071,93 @@ export const AdminWebsiteContentTab: React.FC = () => {
                   value={hqAddress}
                   onChange={(e) => setHqAddress(e.target.value)}
                   className="w-full p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Member Dashboard Help Desk Card (Baramulla & Srinagar Grievance Cell) */}
+          <div className="p-5 sm:p-6 bg-white rounded-2xl border border-teal-200/80 shadow-2xs space-y-4 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-28 h-28 bg-teal-500/5 rounded-bl-full pointer-events-none" />
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-teal-50 text-teal-800 flex items-center justify-center">
+                  <Scale className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider">User Dashboard Help Desk Card</h3>
+                  <p className="text-[11px] text-slate-400">Controls the dark "Secretariat Help Desk / Grievance Cell" card on member portals</p>
+                </div>
+              </div>
+              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-teal-100 text-teal-900">Live on Dashboard</span>
+            </div>
+
+            <div className="space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="sm:col-span-2 space-y-1">
+                  <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider">Cell / Center Title</label>
+                  <input
+                    type="text"
+                    value={helpDeskTitle}
+                    onChange={(e) => setHelpDeskTitle(e.target.value)}
+                    placeholder="e.g. Baramulla & Srinagar Grievance Cell"
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:bg-white focus:border-teal-500 transition-colors"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider">Status Badge</label>
+                  <input
+                    type="text"
+                    value={helpDeskBadge}
+                    onChange={(e) => setHelpDeskBadge(e.target.value)}
+                    placeholder="e.g. OPEN TODAY"
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:bg-white focus:border-teal-500 transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider">Services Description</label>
+                <textarea
+                  rows={2}
+                  value={helpDeskDescription}
+                  onChange={(e) => setHelpDeskDescription(e.target.value)}
+                  placeholder="Offering free citizen document drafting, legal counseling, student scholarship follow-ups, and ombudsman mediation."
+                  className="w-full p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:bg-white focus:border-teal-500 transition-colors"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider">Operating Hours</label>
+                  <input
+                    type="text"
+                    value={helpDeskHours}
+                    onChange={(e) => setHelpDeskHours(e.target.value)}
+                    placeholder="e.g. 10:00 AM – 05:00 PM (Mon–Sat)"
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:bg-white focus:border-teal-500 transition-colors"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider">Hotline Number</label>
+                  <input
+                    type="text"
+                    value={helpDeskPhone}
+                    onChange={(e) => setHelpDeskPhone(e.target.value)}
+                    placeholder="e.g. +91 91035 99292"
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:bg-white focus:border-teal-500 transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider">Center Locations / Branch Coverage</label>
+                <input
+                  type="text"
+                  value={helpDeskLocation}
+                  onChange={(e) => setHelpDeskLocation(e.target.value)}
+                  placeholder="e.g. Baramulla Main Town & Srinagar (Bemina)"
+                  className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:bg-white focus:border-teal-500 transition-colors"
                 />
               </div>
             </div>

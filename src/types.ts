@@ -434,5 +434,11 @@ export interface WebsiteContent {
   bankQrCodeUrl?: string;
   leadershipTeam: LeadershipMember[];
   updatedAt?: string;
+  helpDeskTitle?: string;
+  helpDeskBadge?: string;
+  helpDeskDescription?: string;
+  helpDeskHours?: string;
+  helpDeskPhone?: string;
+  helpDeskLocation?: string;
 }
 

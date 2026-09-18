@@ -111,7 +111,13 @@ export const DEFAULT_WEBSITE_CONTENT: WebsiteContent = {
   bankUpi: 'gyf.ombudsman@jkb',
   bankQrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=upi%3A%2F%2Fpay%3Fpa%3Dgyf.ombudsman%40jkb%26pn%3DGlobal%2520Youth%2520Foundation%2520Trust%26cu%3DINR',
   leadershipTeam: DEFAULT_LEADERSHIP_COUNCIL,
-  updatedAt: new Date().toISOString()
+  updatedAt: new Date().toISOString(),
+  helpDeskTitle: 'Baramulla & Srinagar Grievance Cell',
+  helpDeskBadge: 'OPEN TODAY',
+  helpDeskDescription: 'Offering free citizen document drafting, legal counseling, student scholarship follow-ups, and ombudsman mediation.',
+  helpDeskHours: '10:00 AM – 05:00 PM (Mon–Sat)',
+  helpDeskPhone: '+91 91035 99292',
+  helpDeskLocation: 'Baramulla Main Town & Srinagar (Bemina)'
 };
 
 
