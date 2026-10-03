@@ -17,11 +17,13 @@ import { UserAccount } from '../../types';
 interface AdminProfileTabProps {
   user: UserAccount | null;
   onLogout: () => void;
+  onUpdateProfile?: (data: Partial<UserAccount>) => Promise<void>;
 }
 
 export const AdminProfileTab: React.FC<AdminProfileTabProps> = ({
   user,
-  onLogout
+  onLogout,
+  onUpdateProfile
 }) => {
   const [fullName, setFullName] = useState(user?.fullName || 'Super Administrator');
   const [email, setEmail] = useState(user?.email || 'admin@gyf.org');
@@ -32,14 +34,28 @@ export const AdminProfileTab: React.FC<AdminProfileTabProps> = ({
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    setTimeout(() => {
-      setIsSaving(false);
-      setSaveSuccess(true);
-      setTimeout(() => setSaveSuccess(false), 3000);
-    }, 400);
+    if (onUpdateProfile) {
+      try {
+        await onUpdateProfile({
+          fullName,
+          email,
+          phone,
+          city,
+          state
+        });
+      } catch (error) {
+        console.error("Failed to update profile", error);
+      }
+    } else {
+      await new Promise(resolve => setTimeout(resolve, 400));
+    }
+    
+    setIsSaving(false);
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 3000);
   };
 
   return (

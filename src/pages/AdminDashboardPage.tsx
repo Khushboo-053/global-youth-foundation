@@ -1,26 +1,26 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { 
-  ShieldCheck, 
-  Users, 
-  UserCheck, 
-  FileText, 
-  Heart, 
-  Calendar, 
-  Layers, 
-  Bot, 
-  Activity, 
-  Search, 
-  Plus, 
-  Edit3, 
-  Trash2, 
-  CheckCircle2, 
-  AlertCircle, 
-  Clock, 
-  Eye, 
-  EyeOff, 
-  Check, 
-  X, 
+import {
+  ShieldCheck,
+  Users,
+  UserCheck,
+  FileText,
+  Heart,
+  Calendar,
+  Layers,
+  Bot,
+  Activity,
+  Search,
+  Plus,
+  Edit3,
+  Trash2,
+  CheckCircle2,
+  AlertCircle,
+  Clock,
+  Eye,
+  EyeOff,
+  Check,
+  X,
   ExternalLink,
   Phone,
   Mail,
@@ -65,37 +65,38 @@ import { ContactDetailModal } from '../components/admin/ContactDetailModal';
 import { UserEditModal } from '../components/admin/UserEditModal';
 import { GyfLogo } from '../components/GyfLogo';
 
-export type AdminTab = 
-  | 'overview' 
-  | 'users' 
-  | 'volunteers' 
-  | 'blogs' 
-  | 'donations' 
-  | 'grievances' 
-  | 'chatbot' 
-  | 'events' 
-  | 'programs' 
-  | 'membership' 
-  | 'contact' 
-  | 'website-content' 
+export type AdminTab =
+  | 'overview'
+  | 'users'
+  | 'volunteers'
+  | 'blogs'
+  | 'donations'
+  | 'grievances'
+  | 'chatbot'
+  | 'events'
+  | 'programs'
+  | 'membership'
+  | 'contact'
+  | 'website-content'
   | 'volunteer-assignments'
   | 'volunteer-reports'
   | 'notifications'
   | 'profile';
 
 export const AdminDashboardPage: React.FC = () => {
-  const { 
-    user, 
-    logout, 
-    users, 
-    volunteers, 
+  const {
+    user,
+    logout,
+    updateProfile,
+    users,
+    volunteers,
     volunteerPermissions,
     volunteerActivityReports,
-    blogs, 
-    donations, 
-    complaints, 
-    events, 
-    programs, 
+    blogs,
+    donations,
+    complaints,
+    events,
+    programs,
     contactMessages,
     notifications,
     chatbotFaqs,
@@ -114,6 +115,7 @@ export const AdminDashboardPage: React.FC = () => {
     deleteBlog,
     toggleBlogPublish,
     updateDonationStatus,
+    deleteDonation,
     updateComplaintStatus,
     updateComplaintPriority,
     assignGrievance,
@@ -276,7 +278,7 @@ export const AdminDashboardPage: React.FC = () => {
 
   return (
     <div id="admin-dashboard-page" className="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-sans">
-      
+
       {/* Toast Notification Banner */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
@@ -289,14 +291,13 @@ export const AdminDashboardPage: React.FC = () => {
 
       {/* Main Admin Frame Container */}
       <div className="flex-1 flex overflow-hidden">
-        
+
         {/* ========================================================= */}
         {/* SIDEBAR NAVIGATION */}
         {/* ========================================================= */}
-        <aside 
-          className={`fixed inset-y-0 left-0 z-40 w-64 bg-[#1b205a] text-slate-200 border-r border-[#2C3292]/30 flex flex-col justify-between transition-transform duration-300 lg:static lg:translate-x-0 ${
-            sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          }`}
+        <aside
+          className={`fixed inset-y-0 left-0 z-40 w-64 bg-[#1b205a] text-slate-200 border-r border-[#2C3292]/30 flex flex-col justify-between transition-transform duration-300 lg:static lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+            }`}
         >
           <div className="flex flex-col flex-1 overflow-y-auto">
             {/* Sidebar Brand Header */}
@@ -341,27 +342,26 @@ export const AdminDashboardPage: React.FC = () => {
                           setActiveTab(item.id as AdminTab);
                           setSidebarOpen(false);
                         }}
-                        className={`w-full flex items-center justify-start px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                          isActive
+                        className={`w-full flex items-center justify-start px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${isActive
                             ? 'bg-teal-800 text-white shadow-sm font-black'
                             : 'text-blue-100 hover:bg-white/10 hover:text-white'
-                        }`}
+                          }`}
                       >
-                          <div className="flex items-center justify-between w-full">
-                            <div className="flex items-center gap-2.5">
-                              <Icon className={`w-4 h-4 ${isActive ? 'text-teal-200' : 'text-blue-200'}`} />
-                              <span className="truncate">{item.label}</span>
-                            </div>
-                            {item.unreadCount !== undefined && item.unreadCount > 0 && (
-                              <span 
-                                id={`admin-nav-${item.id}-badge`}
-                                className="ml-auto px-2 py-0.5 rounded-full text-[11px] font-black bg-amber-400 text-slate-950 shrink-0 shadow-xs ring-1 ring-amber-300 min-w-[20px] text-center"
-                                title={`${item.unreadCount} pending application${item.unreadCount > 1 ? 's' : ''} awaiting review`}
-                              >
-                                {item.unreadCount}
-                              </span>
-                            )}
+                        <div className="flex items-center justify-between w-full">
+                          <div className="flex items-center gap-2.5">
+                            <Icon className={`w-4 h-4 ${isActive ? 'text-teal-200' : 'text-blue-200'}`} />
+                            <span className="truncate">{item.label}</span>
                           </div>
+                          {item.unreadCount !== undefined && item.unreadCount > 0 && (
+                            <span
+                              id={`admin-nav-${item.id}-badge`}
+                              className="ml-auto px-2 py-0.5 rounded-full text-[11px] font-black bg-amber-400 text-slate-950 shrink-0 shadow-xs ring-1 ring-amber-300 min-w-[20px] text-center"
+                              title={`${item.unreadCount} pending application${item.unreadCount > 1 ? 's' : ''} awaiting review`}
+                            >
+                              {item.unreadCount}
+                            </span>
+                          )}
+                        </div>
                       </button>
                     );
                   })}
@@ -386,11 +386,10 @@ export const AdminDashboardPage: React.FC = () => {
                           setActiveTab(item.id as AdminTab);
                           setSidebarOpen(false);
                         }}
-                        className={`w-full flex items-center justify-start px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                          isActive
+                        className={`w-full flex items-center justify-start px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${isActive
                             ? 'bg-teal-800 text-white shadow-sm font-black'
                             : 'text-blue-200/90 hover:bg-white/10 hover:text-white'
-                        }`}
+                          }`}
                       >
                         <div className="flex items-center gap-2.5">
                           <Icon className={`w-4 h-4 ${isActive ? 'text-teal-200' : 'text-blue-300'}`} />
@@ -442,9 +441,9 @@ export const AdminDashboardPage: React.FC = () => {
 
         {/* Sidebar Overlay for Mobile */}
         {sidebarOpen && (
-          <div 
+          <div
             onClick={() => setSidebarOpen(false)}
-            className="fixed inset-0 z-30 bg-slate-900/50 backdrop-blur-xs lg:hidden" 
+            className="fixed inset-0 z-30 bg-slate-900/50 backdrop-blur-xs lg:hidden"
           />
         )}
 
@@ -452,7 +451,7 @@ export const AdminDashboardPage: React.FC = () => {
         {/* MAIN DASHBOARD CONTENT AREA */}
         {/* ========================================================= */}
         <main className="flex-1 overflow-y-auto flex flex-col min-w-0">
-          
+
           {/* Top Bar Header */}
           <header className="sticky top-0 z-20 bg-white border-b border-slate-200/80 px-4 sm:px-8 py-3.5 flex items-center justify-between gap-4 shadow-xs">
             <div className="flex items-center gap-3">
@@ -538,7 +537,7 @@ export const AdminDashboardPage: React.FC = () => {
 
           {/* Viewport Content */}
           <div className="p-4 sm:p-8 max-w-7xl w-full mx-auto space-y-8 flex-1">
-            
+
             {/* TAB 1: OVERVIEW */}
             {activeTab === 'overview' && (
               <AdminOverviewTab
@@ -606,6 +605,7 @@ export const AdminDashboardPage: React.FC = () => {
               <AdminDonationsTab
                 donations={donations}
                 onUpdateStatus={updateDonationStatus}
+                onDeleteDonation={deleteDonation}
               />
             )}
 
@@ -727,6 +727,7 @@ export const AdminDashboardPage: React.FC = () => {
               <AdminProfileTab
                 user={user}
                 onLogout={handleLogout}
+                onUpdateProfile={updateProfile}
               />
             )}
 
