@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  FileText, 
-  Upload, 
-  Check, 
-  Maximize2, 
-  Minimize2, 
-  Sparkles, 
-  Eye, 
-  ShieldCheck, 
-  Printer, 
-  ChevronLeft, 
+import { DragDropImageUpload } from './admin/DragDropImageUpload';
+import {
+  FileText,
+  Upload,
+  Check,
+  Maximize2,
+  Minimize2,
+  Sparkles,
+  Eye,
+  ShieldCheck,
+  Printer,
+  ChevronLeft,
   ChevronRight,
   RefreshCw,
   Image as ImageIcon
@@ -194,8 +195,8 @@ export const ArchivalMonographPage: React.FC<ArchivalMonographPageProps> = ({
       <div className="my-4 space-y-2">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
           {photos.map((p, idx) => {
-            const imgSrc = idx === 0 
-              ? event.image 
+            const imgSrc = idx === 0
+              ? event.image
               : (event.galleryImages?.[(idx - 1) % (event.galleryImages.length || 1)] || event.image);
 
             return (
@@ -237,7 +238,7 @@ export const ArchivalMonographPage: React.FC<ArchivalMonographPageProps> = ({
   return (
     <div className={`transition-all duration-300 ${isFullscreen ? 'fixed inset-0 z-50 bg-slate-950/95 overflow-y-auto p-4 sm:p-8 flex justify-center items-start' : 'w-full'}`}>
       <div className="w-full max-w-4xl mx-auto space-y-4">
-        
+
         {/* Navigation & Controls Bar */}
         <div className="bg-slate-900 text-white px-4 py-2.5 rounded-xl flex flex-wrap items-center justify-between gap-3 shadow-md border border-slate-800">
           <div className="flex items-center gap-2">
@@ -325,7 +326,7 @@ export const ArchivalMonographPage: React.FC<ArchivalMonographPageProps> = ({
 
         {/* The Authentic Archival Printed Page Sheet */}
         <div className="bg-white border-2 border-slate-300 shadow-2xl rounded-xs p-6 sm:p-10 md:p-12 relative print:border-none print:shadow-none print:p-0">
-          
+
           {/* Authentic Document Header */}
           <div className="border-b-2 border-slate-900 pb-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -408,45 +409,22 @@ export const ArchivalMonographPage: React.FC<ArchivalMonographPageProps> = ({
               Upload the original scan for <strong>Page {event.documentPage}: {event.title}</strong> directly from your computer or provide an image link.
             </p>
 
-            {/* Local file upload */}
-            <div className="space-y-2">
-              <label className="block text-xs font-bold text-slate-700">
-                Choose Image File (.jpg, .png, .webp)
-              </label>
-              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-300 rounded-xl hover:border-teal-500 hover:bg-teal-50/50 cursor-pointer transition-colors p-4 text-center">
-                <Upload className="w-6 h-6 text-teal-600 mb-1" />
-                <span className="text-xs font-bold text-slate-700">Click to browse file</span>
-                <span className="text-[11px] text-slate-400">Supports scans from smartphone or flatbed</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileUpload}
-                  className="hidden"
-                />
-              </label>
+            <div className="space-y-4">
+              <DragDropImageUpload
+                label="Custom Scan Image"
+                value={customImage || ''}
+                onChange={(url) => {
+                  if (url) {
+                    setCustomImage(url);
+                    localStorage.setItem(`gyf_archival_img_${event.id}`, url);
+                    setShowUploadModal(false);
+                  } else {
+                    setCustomImage(null);
+                    localStorage.removeItem(`gyf_archival_img_${event.id}`);
+                  }
+                }}
+              />
             </div>
-
-            {/* URL input */}
-            <form onSubmit={handleUrlSubmit} className="space-y-2 pt-2 border-t border-slate-100">
-              <label className="block text-xs font-bold text-slate-700">
-                Or Paste Image Web URL
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="url"
-                  placeholder="https://example.com/scan.jpg"
-                  value={inputUrl}
-                  onChange={(e) => setInputUrl(e.target.value)}
-                  className="flex-1 px-3 py-2 rounded-lg border border-slate-200 text-xs focus:outline-none focus:border-teal-500"
-                />
-                <button
-                  type="submit"
-                  className="px-3 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition-colors"
-                >
-                  Apply
-                </button>
-              </div>
-            </form>
 
             <div className="pt-2 flex justify-end">
               <button

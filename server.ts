@@ -1,14 +1,54 @@
+import "dotenv/config";
 import express, { Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
+import multer from 'multer';
 import { createServer as createViteServer } from 'vite';
 import { ARCHIVAL_EVENTS } from './src/data/archivalEvents';
 import { PROGRAMS } from './src/data/mockData';
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3040;
 
 app.use(express.json());
+
+// -----------------------------------------------------------------
+// FILE UPLOAD: multer — saves to public/uploads/
+// -----------------------------------------------------------------
+const UPLOADS_DIR = path.join(process.cwd(), 'public', 'uploads');
+if (!fs.existsSync(UPLOADS_DIR)) {
+  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, UPLOADS_DIR),
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase() || '.jpg';
+    cb(null, `event-${Date.now()}${ext}`);
+  }
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB max
+  fileFilter: (_req, file, cb) => {
+    const allowed = /jpeg|jpg|png|gif|webp/;
+    const ok = allowed.test(file.mimetype) && allowed.test(path.extname(file.originalname).toLowerCase().slice(1));
+    ok ? cb(null, true) : cb(new Error('Only image files are allowed (jpg, png, gif, webp).'));
+  }
+});
+
+// Serve uploaded files as static assets
+app.use('/uploads', express.static(UPLOADS_DIR));
+app.use('/hero', express.static(path.join(process.cwd(), 'public', 'hero')));
+
+app.post('/api/upload', upload.single('image'), (req: Request, res: Response) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No image file provided.' });
+  }
+  const url = `/uploads/${req.file.filename}`;
+  res.json({ success: true, url });
+});
 
 // Persistent database file path
 const DATA_DIR = path.join(process.cwd(), 'data');
@@ -95,34 +135,54 @@ function loadDatabase() {
     if (fs.existsSync(DB_FILE)) {
       const data = fs.readFileSync(DB_FILE, 'utf-8');
       const parsed = JSON.parse(data);
-      // Auto-migrate to official 17 archival reports and 6 thematic pillars if outdated
-      const needsMigration = 
-        !parsed.events || 
-        parsed.events.length < ARCHIVAL_EVENTS.length || 
-        parsed.events.some((e: any) => e.id.startsWith('ev-0')) ||
-        !parsed.programs ||
-        parsed.programs.some((p: any) => p.id === 'youth-empowerment');
 
-      if (needsMigration) {
+      let changed = false;
+
+      // --- NON-DESTRUCTIVE events migration ---
+      // Only seed archival events that are genuinely missing by ID.
+      // NEVER wipe or reset existing events — user-created ones must be preserved.
+      if (!parsed.events || !Array.isArray(parsed.events)) {
         parsed.events = ARCHIVAL_EVENTS.map(e => ({
           ...e,
           isPublished: true,
           createdAt: e.createdAt || '2026-01-15T10:00:00.000Z'
         }));
+        changed = true;
+      } else {
+        const existingIds = new Set(parsed.events.map((e: any) => e.id));
+        const missingArchival = ARCHIVAL_EVENTS.filter(e => !existingIds.has(e.id));
+        if (missingArchival.length > 0) {
+          // Append only the truly missing archival events (don't touch existing ones)
+          parsed.events = [
+            ...parsed.events,
+            ...missingArchival.map(e => ({
+              ...e,
+              isPublished: true,
+              createdAt: e.createdAt || '2026-01-15T10:00:00.000Z'
+            }))
+          ];
+          changed = true;
+        }
+      }
+
+      // --- Programs migration (safe: only if missing the new pillar structure) ---
+      if (!parsed.programs || !Array.isArray(parsed.programs) || parsed.programs.some((p: any) => p.id === 'youth-empowerment')) {
         parsed.programs = PROGRAMS.map(p => ({
           ...p,
           status: 'Active',
           isPublished: true,
           createdAt: '2026-01-15T10:00:00.000Z'
         }));
-        saveDatabase(parsed);
+        changed = true;
       }
+
+      if (changed) saveDatabase(parsed);
       return parsed;
     }
   } catch (err) {
     console.error('Error reading database file, using default seed:', err);
   }
-  // Initialize file
+  // Initialize file with defaults
   saveDatabase(DEFAULT_DB);
   return DEFAULT_DB;
 }
@@ -351,6 +411,7 @@ app.post('/api/events', (req: Request, res: Response) => {
     time,
     location,
     image,
+    galleryImages,
     category,
     status,
     attendeesCount
@@ -369,6 +430,7 @@ app.post('/api/events', (req: Request, res: Response) => {
     time: time || '10:00 AM - 04:00 PM IST',
     location: location || 'Srinagar, Jammu & Kashmir',
     image: image || 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1000&q=80',
+    galleryImages: galleryImages || [],
     category: category || 'Workshop',
     status: status || 'Upcoming',
     attendeesCount: attendeesCount || 50,
@@ -465,7 +527,7 @@ app.patch('/api/contact/:id', (req: Request, res: Response) => {
 
   const current = db.contactMessages[index];
   const isRead = typeof req.body.isRead === 'boolean' ? req.body.isRead : !current.isRead;
-  
+
   db.contactMessages[index] = {
     ...current,
     isRead,

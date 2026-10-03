@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Program } from '../../types';
 import { Modal } from '../Modal';
+import { UploadCloud, Loader2 } from 'lucide-react';
+import { DragDropImageUpload } from './DragDropImageUpload';
 
 interface ProgramModalProps {
   isOpen: boolean;
@@ -27,6 +29,7 @@ export const ProgramModal: React.FC<ProgramModalProps> = ({
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     if (program) {
@@ -59,7 +62,7 @@ export const ProgramModal: React.FC<ProgramModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title.trim() || !formData.description.trim()) {
-      setErrorMsg('Title and Description are required.');
+      setErrorMsg('Program name and description are required.');
       return;
     }
 
@@ -79,6 +82,38 @@ export const ProgramModal: React.FC<ProgramModalProps> = ({
     }
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('Please select a valid image file');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Image must be smaller than 10MB');
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const body = new FormData();
+      body.append('image', file);
+      const res = await fetch('/api/upload', { method: 'POST', body });
+      const data = await res.json();
+      if (res.ok && data.url) {
+        setFormData(prev => ({ ...prev, image: data.url }));
+      } else {
+        alert(data.error || 'Upload failed');
+      }
+    } catch (err) {
+      console.error('Upload failed', err);
+      alert('Upload failed. Please try again.');
+    } finally {
+      setIsUploading(false);
+      e.target.value = '';
+    }
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -86,12 +121,7 @@ export const ProgramModal: React.FC<ProgramModalProps> = ({
       title={program ? `Edit Program: ${program.title}` : 'Launch New Initiative / Program'}
     >
       <form onSubmit={handleSubmit} className="space-y-4">
-        {errorMsg && (
-          <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">
-            {errorMsg}
-          </div>
-        )}
-
+        {errorMsg && <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">{errorMsg}</div>}
         <div>
           <label className="block text-xs font-bold text-slate-700 mb-1">
             Program Name *
@@ -180,17 +210,11 @@ export const ProgramModal: React.FC<ProgramModalProps> = ({
           />
         </div>
 
-        <div>
-          <label className="block text-xs font-bold text-slate-700 mb-1">
-            Banner Image URL
-          </label>
-          <input
-            type="url"
-            value={formData.image}
-            onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-teal-700 focus:outline-hidden"
-          />
-        </div>
+        <DragDropImageUpload
+          label="Banner Image"
+          value={formData.image}
+          onChange={(url) => setFormData({ ...formData, image: url })}
+        />
 
         <div>
           <label className="block text-xs font-bold text-slate-700 mb-1">
@@ -222,7 +246,7 @@ export const ProgramModal: React.FC<ProgramModalProps> = ({
             {isSubmitting ? 'Saving...' : program ? 'Save Changes' : 'Create Program'}
           </button>
         </div>
-      </form>
-    </Modal>
+      </form >
+    </Modal >
   );
 };

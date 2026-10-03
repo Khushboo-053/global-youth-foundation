@@ -64,7 +64,6 @@ export const DashboardPage: React.FC = () => {
   const { 
     user, 
     logout, 
-    loginAsDemo, 
     complaints, 
     memberships, 
     notifications,
@@ -152,36 +151,10 @@ export const DashboardPage: React.FC = () => {
             </p>
           </div>
 
-          {/* Quick Demo Access Switcher */}
-          <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 text-left space-y-3">
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
-              <Sparkles className="w-4 h-4 text-teal-600" />
-              <span>Instant 1-Click Demo Profiles (Explore Now):</span>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              <button
-                type="button"
-                onClick={() => loginAsDemo('member')}
-                className="p-3 rounded-xl bg-white border border-slate-200 hover:border-teal-400 hover:bg-teal-50/50 text-left transition-all group"
-              >
-                <div className="text-xs font-bold text-slate-900 group-hover:text-teal-800">
-                  Tariq Manzoor
-                </div>
-                <div className="text-[11px] text-teal-700 font-medium">Normal User (Website User)</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => loginAsDemo('volunteer')}
-                className="p-3 rounded-xl bg-white border border-slate-200 hover:border-teal-400 hover:bg-teal-50/50 text-left transition-all group"
-              >
-                <div className="text-xs font-bold text-slate-900 group-hover:text-teal-800">
-                  Aisha Begum
-                </div>
-                <div className="text-[11px] text-teal-700 font-medium">Youth Member</div>
-              </button>
-            </div>
+          <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 text-center space-y-2">
+            <p className="text-xs font-semibold text-slate-700">
+              Please sign in with your registered account credentials to access this portal.
+            </p>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
@@ -486,35 +459,8 @@ export const DashboardPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Sidebar Footer with Demo Role Switcher & Log Out */}
+        {/* Sidebar Footer with Log Out */}
         <div className="p-4 border-t border-white/10 bg-black/20 space-y-3">
-          
-          {/* Quick Profile Switcher */}
-          <div className="p-2 rounded-xl bg-black/20 border border-white/5 space-y-1.5">
-            <span className="text-[9.5px] font-extrabold text-blue-300/70 uppercase tracking-wider block px-1">
-              Switch Demo Profile:
-            </span>
-            <div className="grid grid-cols-2 gap-1.5 text-[11px] font-bold">
-              <button
-                type="button"
-                onClick={() => loginAsDemo('member')}
-                className={`py-1 px-2 rounded-lg transition-colors text-center truncate ${
-                  user.membershipStatus === 'Member' ? 'bg-teal-500 text-slate-950 font-black' : 'bg-white/5 text-blue-200 hover:bg-white/10'
-                }`}
-              >
-                Tariq (User)
-              </button>
-              <button
-                type="button"
-                onClick={() => loginAsDemo('volunteer')}
-                className={`py-1 px-2 rounded-lg transition-colors text-center truncate ${
-                  user.membershipStatus === 'Volunteer' ? 'bg-teal-500 text-slate-950 font-black' : 'bg-white/5 text-blue-200 hover:bg-white/10'
-                }`}
-              >
-                Aisha (Youth)
-              </button>
-            </div>
-          </div>
 
           <div className="flex items-center gap-2">
             <Link

@@ -1,18 +1,18 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { 
-  Heart, 
-  UserPlus, 
-  ArrowRight, 
-  ShieldCheck, 
-  Search, 
-  Phone, 
-  Mail, 
-  MapPin, 
-  Sparkles, 
-  CheckCircle2, 
-  Users, 
-  Calendar, 
+import {
+  Heart,
+  UserPlus,
+  ArrowRight,
+  ShieldCheck,
+  Search,
+  Phone,
+  Mail,
+  MapPin,
+  Sparkles,
+  CheckCircle2,
+  Users,
+  Calendar,
   MessageSquare,
   Facebook,
   Instagram,
@@ -22,13 +22,13 @@ import {
   ChevronRight,
   HeartHandshake
 } from 'lucide-react';
-import { 
-  ORG_INFO, 
-  IMPACT_STATS, 
-  PROGRAMS, 
-  EVENTS, 
-  NEWS_ITEMS, 
-  TESTIMONIALS 
+import {
+  ORG_INFO,
+  IMPACT_STATS,
+  PROGRAMS,
+  EVENTS,
+  NEWS_ITEMS,
+  TESTIMONIALS
 } from '../data/mockData';
 import { ARCHIVAL_EVENTS, ArchivalEventData } from '../data/archivalEvents';
 import { StatCounter } from '../components/StatCounter';
@@ -50,9 +50,26 @@ export const HomePage: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
   const [isVolunteerModalOpen, setIsVolunteerModalOpen] = useState(false);
+  const [currentBgIndex, setCurrentBgIndex] = useState(0);
+
+  const heroBackgrounds = useMemo(() => [
+    { src: '/hero/peace-with-justice.jpg', alt: 'GYF Peace With Justice march — students and volunteers carrying the foundation banner' },
+    { src: '/hero/nasha-mukt.jpg', alt: 'GYF Nasha Mukt Jammu & Kashmir Abhiyan — field campaign with community members' },
+    { src: '/hero/flag-hoisting.jpg', alt: 'GYF youth delegates at a hilltop flag hoisting in Jammu and Kashmir' },
+    { src: '/hero/peace-day.jpg', alt: 'GYF International Peace Day candle vigil for justice, dignity, and peace' }
+  ], []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentBgIndex((prev) => (prev + 1) % heroBackgrounds.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [heroBackgrounds.length]);
 
   const displayPrograms = (livePrograms && livePrograms.length > 0) ? livePrograms.filter(p => !p.status || p.status === 'Active' || (p.status as any) === 'Published') : PROGRAMS;
-  const displayEvents = (liveEvents && liveEvents.length > 0) ? liveEvents.filter(e => !e.status || e.status === 'Upcoming' || e.status === 'Completed' || (e.status as any) === 'Published') : EVENTS;
+  const displayEvents = (liveEvents && liveEvents.length > 0)
+    ? liveEvents.filter(e => e.isPublished !== false && (e.status as any) !== 'Draft')
+    : EVENTS;
   const displayNews = (liveBlogs && liveBlogs.length > 0) ? liveBlogs.filter(b => b.isPublished !== false) : NEWS_ITEMS;
 
   const heroTitle = websiteContent?.heroTitle || 'Empowering Youth. Defending Human Rights. Resolving Grievances.';
@@ -108,107 +125,113 @@ export const HomePage: React.FC = () => {
 
   return (
     <div id="home-page" className="min-h-screen bg-slate-50 text-slate-800">
-      
+
       {/* ========================================================= */}
       {/* 1. HERO SECTION */}
       {/* ========================================================= */}
-      <section id="hero-section" className="relative overflow-hidden bg-[#14173d] text-white pt-12 pb-20 lg:pt-20 lg:pb-32">
-        {/* Background Subtle Gradient & Mesh */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#12143b] via-[#1f2360] to-[#2C3292]/80 opacity-95" />
-        <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-[#2C3292]/30 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-blue-500/20 blur-3xl pointer-events-none" />
+      <section id="hero-section" className="relative overflow-hidden text-white min-h-[92vh] flex flex-col justify-center">
+        {/* Full-bleed photograph carousel — real GYF field photos, rotating every 5s */}
+        <div className="absolute inset-0 z-0 bg-[#0d0f2e]">
+          {heroBackgrounds.map((bg, index) => (
+            <img
+              key={bg.src}
+              src={bg.src}
+              alt={bg.alt}
+              className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ease-in-out ${index === currentBgIndex ? 'opacity-100' : 'opacity-0'}`}
+              loading={index === 0 ? 'eager' : 'lazy'}
+            />
+          ))}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0d0f2e]/75 via-[#14173d]/45 to-black/25" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0d0f2e]/70 via-transparent to-[#0d0f2e]/20" />
+        </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-            
-            {/* Hero Left Content */}
-            <div className="lg:col-span-7 space-y-6 text-left">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-blue-200 text-xs font-bold tracking-wide uppercase shadow-xs">
-                <Sparkles className="w-3.5 h-3.5 text-blue-300" />
-                <span>Youth-Led Global Movement</span>
+        {/* Decorative blur blobs */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-blue-600/10 blur-3xl pointer-events-none z-0" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-indigo-500/10 blur-3xl pointer-events-none z-0" />
+
+        {/* Content */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32 w-full">
+          <div className="max-w-3xl space-y-7">
+
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/25 text-blue-200 text-xs font-bold tracking-widest uppercase shadow backdrop-blur-sm">
+              <Sparkles className="w-3.5 h-3.5 text-blue-300" />
+              <span>Youth-Led Global Movement — J&amp;K, India</span>
+            </div>
+
+            {/* Headline */}
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-white tracking-tight leading-[1.1] drop-shadow-xl">
+              {heroTitle}
+            </h1>
+
+            {/* Subtitle */}
+            <p className="text-base sm:text-xl text-blue-100/90 leading-relaxed max-w-2xl font-normal drop-shadow-md">
+              {heroSubtitle}
+            </p>
+
+            {/* Action Buttons */}
+            <div className="pt-2 flex flex-wrap items-center gap-4">
+              <Link
+                to="/grievance"
+                id="hero-submit-grievance-btn"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white text-[#2C3292] hover:bg-blue-50 text-sm font-bold shadow-xl shadow-black/30 transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl"
+              >
+                <ShieldCheck className="w-4 h-4 text-[#2C3292]" />
+                <span>{primaryCta}</span>
+              </Link>
+
+              <Link
+                to="/membership"
+                id="hero-donate-now-btn"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-[#2C3292]/80 hover:bg-[#2C3292] text-white text-sm font-bold border border-white/30 backdrop-blur-md shadow-xl shadow-[#2C3292]/40 transition-all duration-200 hover:-translate-y-1"
+              >
+                <Heart className="w-4 h-4 text-blue-200 fill-blue-200/30" />
+                <span>{secondaryCta}</span>
+              </Link>
+            </div>
+
+            {/* Live Impact Metrics */}
+            <div className="pt-6 border-t border-white/15 grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="bg-black/30 backdrop-blur-sm p-4 rounded-2xl border border-white/10 hover:border-white/25 transition-all duration-200 hover:bg-black/40">
+                <div className="font-extrabold text-white text-xl font-mono">{websiteContent?.statYouthTrained || '25,000+'}</div>
+                <div className="text-blue-200/80 text-[11px] font-semibold mt-1 uppercase tracking-wide">Youth Trained</div>
               </div>
-
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.15]">
-                {heroTitle}
-              </h1>
-
-              <p className="text-base sm:text-lg text-slate-200 leading-relaxed max-w-2xl font-normal">
-                {heroSubtitle}
-              </p>
-
-              {/* Action Buttons */}
-              <div className="pt-3 flex flex-wrap items-center gap-4">
-                <Link
-                  to="/grievance"
-                  id="hero-submit-grievance-btn"
-                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-white text-[#2C3292] hover:bg-blue-50 text-sm font-bold shadow-lg shadow-black/20 transition-all duration-200 hover:-translate-y-0.5"
-                >
-                  <ShieldCheck className="w-4 h-4 text-[#2C3292]" />
-                  <span>{primaryCta}</span>
-                </Link>
-
-                <Link
-                  to="/membership"
-                  id="hero-donate-now-btn"
-                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-[#2C3292] hover:bg-[#3d45ab] text-white text-sm font-bold border border-white/20 backdrop-blur-md shadow-lg shadow-[#2C3292]/30 transition-all duration-200 hover:-translate-y-0.5"
-                >
-                  <Heart className="w-4 h-4 text-blue-200 fill-blue-200/30" />
-                  <span>{secondaryCta}</span>
-                </Link>
+              <div className="bg-black/30 backdrop-blur-sm p-4 rounded-2xl border border-white/10 hover:border-white/25 transition-all duration-200 hover:bg-black/40">
+                <div className="font-extrabold text-white text-xl font-mono">{websiteContent?.statCasesResolved || '1,840+'}</div>
+                <div className="text-blue-200/80 text-[11px] font-semibold mt-1 uppercase tracking-wide">Grievances Resolved</div>
               </div>
-
-              {/* Trust Indicators - 4 Live Public Impact Metrics */}
-              <div className="pt-6 border-t border-blue-900/60 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs text-blue-200">
-                <div className="bg-white/5 p-3 rounded-xl border border-white/10 hover:border-white/20 transition-colors">
-                  <div className="font-extrabold text-white text-base font-mono">{websiteContent?.statYouthTrained || '25,000+'}</div>
-                  <div className="text-blue-200/90 text-[11px] font-medium mt-0.5">Youth Trained</div>
-                </div>
-                <div className="bg-white/5 p-3 rounded-xl border border-white/10 hover:border-white/20 transition-colors">
-                  <div className="font-extrabold text-white text-base font-mono">{websiteContent?.statCasesResolved || '1,840+'}</div>
-                  <div className="text-blue-200/90 text-[11px] font-medium mt-0.5">Grievances Resolved</div>
-                </div>
-                <div className="bg-white/5 p-3 rounded-xl border border-white/10 hover:border-white/20 transition-colors">
-                  <div className="font-extrabold text-white text-base font-mono">{websiteContent?.statDistrictsCovered || '10'}</div>
-                  <div className="text-blue-200/90 text-[11px] font-medium mt-0.5">Districts Covered</div>
-                </div>
-                <div className="bg-white/5 p-3 rounded-xl border border-white/10 hover:border-white/20 transition-colors">
-                  <div className="font-extrabold text-white text-base font-mono">{websiteContent?.statLegalAidProvided || '3,200+'}</div>
-                  <div className="text-blue-200/90 text-[11px] font-medium mt-0.5">Legal Aid Beneficiaries</div>
-                </div>
+              <div className="bg-black/30 backdrop-blur-sm p-4 rounded-2xl border border-white/10 hover:border-white/25 transition-all duration-200 hover:bg-black/40">
+                <div className="font-extrabold text-white text-xl font-mono">{websiteContent?.statDistrictsCovered || '10'}</div>
+                <div className="text-blue-200/80 text-[11px] font-semibold mt-1 uppercase tracking-wide">Districts Covered</div>
+              </div>
+              <div className="bg-black/30 backdrop-blur-sm p-4 rounded-2xl border border-white/10 hover:border-white/25 transition-all duration-200 hover:bg-black/40">
+                <div className="font-extrabold text-white text-xl font-mono">{websiteContent?.statLegalAidProvided || '3,200+'}</div>
+                <div className="text-blue-200/80 text-[11px] font-semibold mt-1 uppercase tracking-wide">Legal Aid Beneficiaries</div>
               </div>
             </div>
 
-            {/* Hero Right Image / Visual Card */}
-            <div className="lg:col-span-5 relative">
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-[#2C3292]/40 bg-slate-900">
-                <img
-                  src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80"
-                  alt="Young leaders of Global Youth Foundation collaborating on social impact"
-                  className="w-full h-80 sm:h-96 lg:h-[460px] object-cover"
-                  loading="eager"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#14173d]/90 via-[#14173d]/20 to-transparent" />
-                
-                {/* Floating Badge */}
-                <div className="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-[#1f2360]/95 backdrop-blur-md border border-blue-400/30 text-white space-y-1">
-                  <div className="flex items-center justify-between text-xs text-blue-200 font-bold">
-                    <span>Active Field Initiative</span>
-                    <span className="flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                      Live
-                    </span>
-                  </div>
-                  <div className="text-sm font-bold text-white">
-                    Peacebuilding & Civic Rights Outreach
-                  </div>
-                  <p className="text-xs text-blue-100/80 line-clamp-1">
-                    Uniting youth voices for justice, dignity, and sustainable transformation.
-                  </p>
-                </div>
-              </div>
-            </div>
+          </div>
 
+          {/* Photograph carousel indicators */}
+          <div className="absolute bottom-8 left-4 sm:left-6 lg:left-10 flex items-center gap-2" aria-hidden="true">
+            {heroBackgrounds.map((bg, index) => (
+              <button
+                key={bg.src}
+                type="button"
+                onClick={() => setCurrentBgIndex(index)}
+                className={`h-2 rounded-full transition-all duration-300 ${index === currentBgIndex ? 'w-8 bg-white' : 'w-2 bg-white/40 hover:bg-white/70'}`}
+                aria-label={`Show photograph ${index + 1}`}
+              />
+            ))}
+          </div>
+
+          {/* Live badge — bottom right */}
+          <div className="absolute bottom-10 right-6 lg:right-10 hidden sm:flex items-center gap-3 px-4 py-3 rounded-2xl bg-black/40 backdrop-blur-md border border-white/15 text-white shadow-xl">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping shrink-0" />
+            <div>
+              <div className="text-xs font-bold text-white">Active Field Initiative</div>
+              <div className="text-[11px] text-blue-200/80">Peacebuilding &amp; Civic Rights Outreach</div>
+            </div>
           </div>
         </div>
       </section>
@@ -219,7 +242,7 @@ export const HomePage: React.FC = () => {
       <section id="about-snippet-section" className="py-20 bg-white border-b border-slate-200/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
+
             <div className="lg:col-span-5 space-y-4">
               <div className="relative rounded-2xl overflow-hidden shadow-lg border border-slate-200">
                 <img
@@ -304,7 +327,7 @@ export const HomePage: React.FC = () => {
       {/* ========================================================= */}
       <section id="statistics-section" className="py-20 bg-slate-100/60 border-b border-slate-200/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          
+
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs font-black uppercase tracking-wider">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -332,7 +355,7 @@ export const HomePage: React.FC = () => {
       {/* ========================================================= */}
       <section id="programs-section" className="py-20 bg-white border-b border-slate-200/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          
+
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-3 max-w-2xl">
               <span className="text-xs font-bold text-[#2C3292] uppercase tracking-wider">
@@ -370,7 +393,7 @@ export const HomePage: React.FC = () => {
       {/* ========================================================= */}
       <section id="events-section" className="py-20 bg-slate-50 border-b border-slate-200/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          
+
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-3 max-w-2xl">
               <span className="text-xs font-bold text-[#2C3292] uppercase tracking-wider">
@@ -396,10 +419,10 @@ export const HomePage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {displayEvents.slice(0, 3).map((event) => (
-              <EventCard 
-                key={event.id} 
-                event={event} 
-                onViewDetails={(ev) => setSelectedEvent(ev)} 
+              <EventCard
+                key={event.id}
+                event={event}
+                onViewDetails={(ev) => setSelectedEvent(ev)}
               />
             ))}
           </div>
@@ -412,7 +435,7 @@ export const HomePage: React.FC = () => {
       {/* ========================================================= */}
       <section id="news-section" className="py-20 bg-white border-b border-slate-200/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          
+
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <span className="text-xs font-bold text-[#2C3292] uppercase tracking-wider">
               Stay Informed
@@ -427,10 +450,10 @@ export const HomePage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {displayNews.slice(0, 4).map((item) => (
-              <NewsCard 
-                key={item.id} 
-                item={item} 
-                onReadMore={(n) => setSelectedNews(n)} 
+              <NewsCard
+                key={item.id}
+                item={item}
+                onReadMore={(n) => setSelectedNews(n)}
               />
             ))}
           </div>
@@ -447,7 +470,7 @@ export const HomePage: React.FC = () => {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center space-y-6">
-            
+
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 border border-white/20 text-blue-200 text-xs font-bold uppercase tracking-wider">
               <ShieldCheck className="w-4 h-4 text-blue-300" />
               <span>Confidential Citizen Helpline</span>
@@ -494,7 +517,7 @@ export const HomePage: React.FC = () => {
       {/* ========================================================= */}
       <section id="testimonials-section" className="py-20 bg-slate-50 border-b border-slate-200/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          
+
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <span className="text-xs font-bold text-[#2C3292] uppercase tracking-wider">
               Real Impact
@@ -521,7 +544,7 @@ export const HomePage: React.FC = () => {
       {/* ========================================================= */}
       <section id="gallery-section" className="py-20 bg-white border-b border-slate-200/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-          
+
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <span className="text-xs font-bold text-[#2C3292] uppercase tracking-wider">
               Visual Highlights
@@ -544,7 +567,7 @@ export const HomePage: React.FC = () => {
       {/* ========================================================= */}
       <section id="get-involved-section" className="py-20 bg-[#1f2360] text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-[#14173d] via-[#1f2360] to-[#2C3292] opacity-95" />
-        
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <span className="text-xs font-bold text-blue-300 uppercase tracking-wider">
             Join the Movement
@@ -584,7 +607,7 @@ export const HomePage: React.FC = () => {
       <section id="contact-preview-section" className="py-16 bg-[#14173d] text-slate-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="p-8 sm:p-10 rounded-3xl bg-[#1f2360] border border-[#2C3292]/40 flex flex-col lg:flex-row items-center justify-between gap-8">
-            
+
             <div className="space-y-3 text-center lg:text-left">
               <span className="text-xs font-bold text-blue-300 uppercase tracking-wider">
                 Get In Touch
@@ -592,21 +615,21 @@ export const HomePage: React.FC = () => {
               <h3 className="text-2xl sm:text-3xl font-extrabold text-white">
                 Global Youth Foundation Secretariat
               </h3>
-              
+
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 pt-2 text-sm text-slate-400">
-                <a 
-                  href={`tel:${ORG_INFO.phone}`} 
+                <a
+                  href={`tel:${websiteContent?.contactPhone || websiteContent?.helpDeskPhone || ORG_INFO.phone}`}
                   className="flex items-center gap-2 text-slate-200 hover:text-blue-300 font-bold transition-colors"
                 >
                   <Phone className="w-4 h-4 text-blue-300" />
-                  <span>{ORG_INFO.phone}</span>
+                  <span>{websiteContent?.contactPhone || websiteContent?.helpDeskPhone || ORG_INFO.phone}</span>
                 </a>
-                <a 
-                  href={`mailto:${ORG_INFO.email}`} 
+                <a
+                  href={`mailto:${websiteContent?.contactEmail || ORG_INFO.email}`}
                   className="flex items-center gap-2 text-slate-200 hover:text-blue-300 font-medium transition-colors"
                 >
                   <Mail className="w-4 h-4 text-blue-300" />
-                  <span>{ORG_INFO.email}</span>
+                  <span>{websiteContent?.contactEmail || ORG_INFO.email}</span>
                 </a>
               </div>
             </div>
@@ -623,37 +646,37 @@ export const HomePage: React.FC = () => {
 
               {/* Social media icons */}
               <div className="flex items-center gap-2">
-                <a 
-                  href={ORG_INFO.socialLinks.facebook} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
+                <a
+                  href={ORG_INFO.socialLinks.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 rounded-xl bg-[#14173d] text-slate-300 hover:bg-[#2C3292] hover:text-white flex items-center justify-center transition-colors border border-[#2C3292]/30"
                   aria-label="Facebook"
                 >
                   <Facebook className="w-4 h-4" />
                 </a>
-                <a 
-                  href={ORG_INFO.socialLinks.instagram} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
+                <a
+                  href={ORG_INFO.socialLinks.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 rounded-xl bg-[#14173d] text-slate-300 hover:bg-[#2C3292] hover:text-white flex items-center justify-center transition-colors border border-[#2C3292]/30"
                   aria-label="Instagram"
                 >
                   <Instagram className="w-4 h-4" />
                 </a>
-                <a 
-                  href={ORG_INFO.socialLinks.linkedin} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
+                <a
+                  href={ORG_INFO.socialLinks.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 rounded-xl bg-[#14173d] text-slate-300 hover:bg-[#2C3292] hover:text-white flex items-center justify-center transition-colors border border-[#2C3292]/30"
                   aria-label="LinkedIn"
                 >
                   <Linkedin className="w-4 h-4" />
                 </a>
-                <a 
-                  href={ORG_INFO.socialLinks.twitter} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
+                <a
+                  href={ORG_INFO.socialLinks.twitter}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 rounded-xl bg-[#14173d] text-slate-300 hover:bg-[#2C3292] hover:text-white flex items-center justify-center transition-colors border border-[#2C3292]/30"
                   aria-label="Twitter"
                 >
@@ -733,10 +756,10 @@ export const HomePage: React.FC = () => {
               <span className="font-extrabold text-teal-800 uppercase tracking-wider">{selectedNews.category}</span>
               <span>{selectedNews.date} • By {selectedNews.author} • {selectedNews.readTime || '3 min read'}</span>
             </div>
-            
+
             {/* Formatted Article Content with Inline Images & Lightbox */}
-            <ArticleContentRenderer 
-              content={selectedNews.content} 
+            <ArticleContentRenderer
+              content={selectedNews.content}
               articleImages={selectedNews.articleImages}
             />
 

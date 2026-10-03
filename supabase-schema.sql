@@ -67,11 +67,11 @@ CREATE TABLE IF NOT EXISTS public.events (
   date TEXT NOT NULL,
   time TEXT,
   location TEXT NOT NULL,
-  category TEXT NOT NULL CHECK (category IN ('Workshop', 'Campaign', 'Peacebuilding', 'Environment', 'Outreach', 'Leadership')),
+  category TEXT NOT NULL,
   description TEXT NOT NULL,
   full_details TEXT,
   image TEXT,
-  status TEXT NOT NULL DEFAULT 'Upcoming' CHECK (status IN ('Upcoming', 'Completed')),
+  status TEXT NOT NULL DEFAULT 'Upcoming',
   attendees_count INTEGER DEFAULT 0,
   is_published BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -240,61 +240,93 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Profiles Policies
+DROP POLICY IF EXISTS "Public profiles can be viewed by anyone" ON public.profiles;
 CREATE POLICY "Public profiles can be viewed by anyone" ON public.profiles FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Users can update their own profile" ON public.profiles;
 CREATE POLICY "Users can update their own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id);
+DROP POLICY IF EXISTS "Admins have full access to profiles" ON public.profiles;
 CREATE POLICY "Admins have full access to profiles" ON public.profiles FOR ALL USING (public.is_admin());
 
 -- Volunteer Permissions Policies
+DROP POLICY IF EXISTS "Volunteers can view their own permissions" ON public.volunteer_permissions;
 CREATE POLICY "Volunteers can view their own permissions" ON public.volunteer_permissions FOR SELECT USING (auth.uid() = volunteer_id OR public.is_admin());
+DROP POLICY IF EXISTS "Admins can manage volunteer permissions" ON public.volunteer_permissions;
 CREATE POLICY "Admins can manage volunteer permissions" ON public.volunteer_permissions FOR ALL USING (public.is_admin());
 
 -- Programs Policies
+DROP POLICY IF EXISTS "Published programs are viewable by everyone" ON public.programs;
 CREATE POLICY "Published programs are viewable by everyone" ON public.programs FOR SELECT USING (is_published = true OR public.is_volunteer());
+DROP POLICY IF EXISTS "Admins can manage programs" ON public.programs;
 CREATE POLICY "Admins can manage programs" ON public.programs FOR ALL USING (public.is_admin());
 
 -- Events Policies
+DROP POLICY IF EXISTS "Published events are viewable by everyone" ON public.events;
 CREATE POLICY "Published events are viewable by everyone" ON public.events FOR SELECT USING (is_published = true OR public.is_volunteer());
+DROP POLICY IF EXISTS "Volunteers and admins can manage events" ON public.events;
 CREATE POLICY "Volunteers and admins can manage events" ON public.events FOR ALL USING (public.is_volunteer());
 
 -- Event Registrations Policies
+DROP POLICY IF EXISTS "Users can view their own registrations" ON public.event_registrations;
 CREATE POLICY "Users can view their own registrations" ON public.event_registrations FOR SELECT USING (auth.uid() = user_id OR public.is_volunteer());
+DROP POLICY IF EXISTS "Users can register for events" ON public.event_registrations;
 CREATE POLICY "Users can register for events" ON public.event_registrations FOR INSERT WITH CHECK (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Users can cancel their registration" ON public.event_registrations;
 CREATE POLICY "Users can cancel their registration" ON public.event_registrations FOR DELETE USING (auth.uid() = user_id OR public.is_admin());
 
 -- Blogs Policies
+DROP POLICY IF EXISTS "Published blogs are viewable by everyone" ON public.blogs;
 CREATE POLICY "Published blogs are viewable by everyone" ON public.blogs FOR SELECT USING (is_published = true OR public.is_admin());
+DROP POLICY IF EXISTS "Admins can manage blogs" ON public.blogs;
 CREATE POLICY "Admins can manage blogs" ON public.blogs FOR ALL USING (public.is_admin());
 
 -- Donations Policies
+DROP POLICY IF EXISTS "Donors can view their own donations" ON public.donations;
 CREATE POLICY "Donors can view their own donations" ON public.donations FOR SELECT USING (email = auth.jwt() ->> 'email' OR public.is_admin());
+DROP POLICY IF EXISTS "Anyone can submit a donation report" ON public.donations;
 CREATE POLICY "Anyone can submit a donation report" ON public.donations FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS "Admins can manage donations" ON public.donations;
 CREATE POLICY "Admins can manage donations" ON public.donations FOR ALL USING (public.is_admin());
 
 -- Grievances Policies
+DROP POLICY IF EXISTS "Anyone can submit a grievance" ON public.grievances;
 CREATE POLICY "Anyone can submit a grievance" ON public.grievances FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS "Public can view grievances with tracking ID" ON public.grievances;
 CREATE POLICY "Public can view grievances with tracking ID" ON public.grievances FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Volunteers and Admins can update grievances" ON public.grievances;
 CREATE POLICY "Volunteers and Admins can update grievances" ON public.grievances FOR UPDATE USING (public.is_volunteer());
+DROP POLICY IF EXISTS "Admins can delete grievances" ON public.grievances;
 CREATE POLICY "Admins can delete grievances" ON public.grievances FOR DELETE USING (public.is_admin());
 
 -- Grievance Timeline Policies
+DROP POLICY IF EXISTS "Timeline is viewable with grievance" ON public.grievance_timeline;
 CREATE POLICY "Timeline is viewable with grievance" ON public.grievance_timeline FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Volunteers and Admins can add timeline events" ON public.grievance_timeline;
 CREATE POLICY "Volunteers and Admins can add timeline events" ON public.grievance_timeline FOR INSERT WITH CHECK (public.is_volunteer());
 
 -- Membership Applications Policies
+DROP POLICY IF EXISTS "Anyone can apply for membership" ON public.membership_applications;
 CREATE POLICY "Anyone can apply for membership" ON public.membership_applications FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS "Users can view their own applications" ON public.membership_applications;
 CREATE POLICY "Users can view their own applications" ON public.membership_applications FOR SELECT USING (email = auth.jwt() ->> 'email' OR public.is_admin() OR public.is_volunteer());
+DROP POLICY IF EXISTS "Admins can manage membership applications" ON public.membership_applications;
 CREATE POLICY "Admins can manage membership applications" ON public.membership_applications FOR ALL USING (public.is_admin());
 
 -- Chatbot FAQs Policies
+DROP POLICY IF EXISTS "Active FAQs viewable by everyone" ON public.chatbot_faqs;
 CREATE POLICY "Active FAQs viewable by everyone" ON public.chatbot_faqs FOR SELECT USING (is_active = true OR public.is_admin());
+DROP POLICY IF EXISTS "Admins can manage chatbot FAQs" ON public.chatbot_faqs;
 CREATE POLICY "Admins can manage chatbot FAQs" ON public.chatbot_faqs FOR ALL USING (public.is_admin());
 
 -- Chatbot Queries Policies
+DROP POLICY IF EXISTS "Anyone can log a chatbot query" ON public.chatbot_queries;
 CREATE POLICY "Anyone can log a chatbot query" ON public.chatbot_queries FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS "Admins can view chatbot query logs" ON public.chatbot_queries;
 CREATE POLICY "Admins can view chatbot query logs" ON public.chatbot_queries FOR SELECT USING (public.is_admin());
 
 -- Activity Logs Policies
+DROP POLICY IF EXISTS "Admins can view activity logs" ON public.activity_logs;
 CREATE POLICY "Admins can view activity logs" ON public.activity_logs FOR SELECT USING (public.is_admin());
+DROP POLICY IF EXISTS "System and users can insert activity logs" ON public.activity_logs;
 CREATE POLICY "System and users can insert activity logs" ON public.activity_logs FOR INSERT WITH CHECK (true);
 
 -- ==============================================================================

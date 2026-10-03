@@ -9,13 +9,15 @@ interface GyfLogoProps {
   showText?: boolean;
 }
 
-export const GyfIcon: React.FC<{ size?: number | string; className?: string; color?: string }> = ({ 
+export const GyfIcon: React.FC<{ size?: number | string; className?: string; color?: string; variant?: 'color' | 'white' }> = ({ 
   size = 40, 
   className = '', 
+  variant = 'color'
 }) => {
+  const logoSrc = '/GYF_Logo.png';
   return (
     <img
-      src="/GYF_Logo.png"
+      src={logoSrc}
       alt="Global Youth Foundation"
       className={`object-contain shrink-0 ${className}`}
       style={{
@@ -42,16 +44,12 @@ export const GyfLogo: React.FC<GyfLogoProps> = ({
   };
 
   const currentHeight = heightClasses[size] || heightClasses.md;
-
-  // On dark backgrounds (like variant="white"), ensure high visibility with a subtle clean backdrop
-  const containerBg = variant === 'white' 
-    ? 'bg-white/95 backdrop-blur-xs px-2.5 py-1 rounded-xl shadow-xs border border-white/20' 
-    : '';
+  const logoSrc = '/GYF_Logo.png';
 
   return (
-    <div className={`inline-flex items-center select-none ${containerBg} ${className}`}>
+    <div className={`inline-flex items-center select-none ${className}`}>
       <img
-        src="/GYF_Logo.png"
+        src={logoSrc}
         alt="Global Youth Foundation (GYF)"
         className={`${currentHeight} w-auto max-w-full object-contain transition-transform duration-200`}
         referrerPolicy="no-referrer"
@@ -59,4 +57,3 @@ export const GyfLogo: React.FC<GyfLogoProps> = ({
     </div>
   );
 };
-

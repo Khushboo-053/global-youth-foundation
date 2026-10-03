@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Globe, 
-  Save, 
-  RotateCcw, 
-  CheckCircle2, 
-  Layers, 
-  Phone, 
-  Mail, 
-  MapPin, 
-  CreditCard, 
-  Sparkles, 
-  Megaphone, 
+import { DragDropImageUpload } from './DragDropImageUpload';
+import {
+  Globe,
+  Save,
+  RotateCcw,
+  CheckCircle2,
+  Layers,
+  Phone,
+  Mail,
+  MapPin,
+  CreditCard,
+  Sparkles,
+  Megaphone,
   TrendingUp,
   Eye,
   FileText,
@@ -23,7 +24,8 @@ import {
   ChevronRight,
   Scale,
   QrCode,
-  Upload
+  Upload,
+  UploadCloud
 } from 'lucide-react';
 import { CouncilMemberModal } from './CouncilMemberModal';
 import { useApp } from '../../context/AppContext';
@@ -248,10 +250,10 @@ export const AdminWebsiteContentTab: React.FC = () => {
 
   const handleSaveCouncilMember = async (member: LeadershipMember) => {
     const exists = leadershipTeam.some(m => m.id === member.id);
-    const updated = exists 
+    const updated = exists
       ? leadershipTeam.map(m => m.id === member.id ? member : m)
       : [...leadershipTeam, member];
-    
+
     setLeadershipTeam(updated);
     await updateWebsiteContent({ leadershipTeam: updated });
     setSaveSuccess(true);
@@ -260,6 +262,37 @@ export const AdminWebsiteContentTab: React.FC = () => {
 
   const handleUpdateLeader = (id: string, field: keyof LeadershipMember, value: string) => {
     setLeadershipTeam(prev => prev.map(m => m.id === id ? { ...m, [field]: value } : m));
+  };
+
+  const [uploadingImageId, setUploadingImageId] = useState<string | null>(null);
+
+  const handleLeaderImageUpload = async (id: string, file: File) => {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('Please select a valid image file');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image is too large. Max size is 5MB.');
+      return;
+    }
+    setUploadingImageId(id);
+    try {
+      const body = new FormData();
+      body.append('image', file);
+      const res = await fetch('/api/upload', { method: 'POST', body });
+      const data = await res.json();
+      if (res.ok && data.url) {
+        handleUpdateLeader(id, 'image', data.url);
+      } else {
+        alert(data.error || 'Upload failed');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Upload failed. Please check network.');
+    } finally {
+      setUploadingImageId(null);
+    }
   };
 
   const handleRemoveLeader = async (id: string) => {
@@ -364,7 +397,7 @@ export const AdminWebsiteContentTab: React.FC = () => {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
-      
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -406,7 +439,7 @@ export const AdminWebsiteContentTab: React.FC = () => {
       )}
 
       <form onSubmit={handleSaveAll} className="space-y-6">
-        
+
         {/* SECTION 1: Top Announcement Bar */}
         <div className="p-5 sm:p-6 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
@@ -561,7 +594,7 @@ export const AdminWebsiteContentTab: React.FC = () => {
           {/* Members Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {leadershipTeam.map((member, index) => (
-              <div 
+              <div
                 key={member.id || index}
                 className="p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition-all space-y-3 relative group"
               >
@@ -644,19 +677,11 @@ export const AdminWebsiteContentTab: React.FC = () => {
                 </div>
 
                 {/* Photo URL */}
-                <div>
-                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1 flex items-center gap-1">
-                    <ImageIcon className="w-3 h-3 text-slate-400" />
-                    <span>Photo Image URL</span>
-                  </label>
-                  <input
-                    type="url"
-                    value={member.image}
-                    onChange={(e) => handleUpdateLeader(member.id, 'image', e.target.value)}
-                    className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-[11px] font-mono text-slate-600 focus:outline-none focus:ring-1 focus:ring-teal-800"
-                    placeholder="https://images.unsplash.com/..."
-                  />
-                </div>
+                <DragDropImageUpload
+                  label="Photo URL"
+                  value={member.image}
+                  onChange={(url) => handleUpdateLeader(member.id, 'image', url)}
+                />
               </div>
             ))}
           </div>
@@ -1030,7 +1055,7 @@ export const AdminWebsiteContentTab: React.FC = () => {
 
         {/* SECTION 6: Contact, Hotline & Banking Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          
+
           {/* Contact Details */}
           <div className="p-5 sm:p-6 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-4">
             <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
@@ -1266,9 +1291,9 @@ export const AdminWebsiteContentTab: React.FC = () => {
                 {bankQrCodeUrl ? (
                   <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row items-center gap-4">
                     <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl bg-white p-2 border border-slate-200 shadow-xs flex items-center justify-center shrink-0 overflow-hidden">
-                      <img 
-                        src={bankQrCodeUrl} 
-                        alt="Official Donation QR Code" 
+                      <img
+                        src={bankQrCodeUrl}
+                        alt="Official Donation QR Code"
                         className="w-full h-full object-contain"
                         referrerPolicy="no-referrer"
                       />
@@ -1316,7 +1341,7 @@ export const AdminWebsiteContentTab: React.FC = () => {
                   </div>
                 ) : (
                   <div className="space-y-2.5">
-                    <div 
+                    <div
                       id="upload-qr-dropzone"
                       onClick={() => qrFileInputRef.current?.click()}
                       className="border-2 border-dashed border-slate-300 hover:border-teal-500 hover:bg-teal-50/30 rounded-2xl p-4 text-center cursor-pointer transition-all group"

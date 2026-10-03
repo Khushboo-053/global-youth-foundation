@@ -36,7 +36,7 @@ export const ChangeProfilePhotoModal: React.FC<ChangeProfilePhotoModalProps> = (
 
   if (!isOpen) return null;
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     setErrorMessage(null);
     if (!file) return;
@@ -51,16 +51,18 @@ export const ChangeProfilePhotoModal: React.FC<ChangeProfilePhotoModalProps> = (
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        setSelectedPhoto(reader.result);
+    try {
+      const body = new FormData();
+      body.append('image', file);
+      const res = await fetch('/api/upload', { method: 'POST', body });
+      const data = await res.json();
+      if (res.ok && data.url) {
+        setSelectedPhoto(data.url);
       }
-    };
-    reader.onerror = () => {
-      setErrorMessage('Failed to read the image file.');
-    };
-    reader.readAsDataURL(file);
+    } catch(err) {
+      console.error(err);
+      setErrorMessage('Upload failed');
+    }
   };
 
   const handleApplyUrl = () => {

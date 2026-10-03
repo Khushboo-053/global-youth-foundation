@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  Menu, 
-  X, 
-  Heart, 
-  ShieldCheck, 
-  ChevronRight, 
-  Phone, 
+import {
+  Menu,
+  X,
+  Heart,
+  ShieldCheck,
+  ChevronRight,
+  Phone,
   Mail,
   Megaphone,
   LogOut,
-  HeartHandshake
+  HeartHandshake,
+  LayoutDashboard
 } from 'lucide-react';
 import { ORG_INFO } from '../data/mockData';
 import { GyfLogo } from './GyfLogo';
@@ -75,14 +76,14 @@ export const Navbar: React.FC = () => {
     <>
       {/* Top Banner Announcements - Continuous News Headline Ticker */}
       {isAnnouncementActive && (
-        <div 
-          id="top-banner-announcements" 
+        <div
+          id="top-banner-announcements"
           className="bg-gradient-to-r from-slate-950 via-[#0e1335] to-slate-950 text-white text-xs border-b border-indigo-900/60 overflow-hidden relative z-50 shadow-xs"
         >
           <div className="max-w-7xl mx-auto flex items-center h-8 sm:h-9 px-3 sm:px-4">
             {/* News Headline Ticker Marquee */}
             <div className="flex-1 overflow-hidden relative py-0.5">
-              <div 
+              <div
                 className="animate-news-ticker flex items-center gap-10 font-medium text-slate-100 text-xs sm:text-[13px] tracking-wide cursor-default hover:text-white"
                 title="Hover to pause announcement"
               >
@@ -106,8 +107,8 @@ export const Navbar: React.FC = () => {
 
             {/* Quick Action Link / Button on Right */}
             <div className="shrink-0 ml-3 hidden md:flex items-center gap-2 z-10 pl-3 border-l border-slate-700/60">
-              <Link 
-                to="/membership" 
+              <Link
+                to="/membership"
                 className="text-[11px] font-semibold text-amber-300 hover:text-amber-200 transition-colors flex items-center gap-1 bg-white/5 hover:bg-white/10 px-2.5 py-0.5 rounded border border-amber-400/30"
               >
                 <span>Apply / Join</span> <ChevronRight className="w-3 h-3" />
@@ -144,6 +145,18 @@ export const Navbar: React.FC = () => {
               <span>Track Volunteer Form</span>
             </Link>
             <span>•</span>
+            {user && (
+              <>
+                <Link
+                  to={user.role === 'admin' ? '/admin' : user.role === 'volunteer' ? '/volunteer' : '/dashboard'}
+                  className="text-amber-300 hover:text-white font-semibold transition-colors flex items-center gap-1"
+                >
+                  <LayoutDashboard className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Dashboard</span>
+                </Link>
+                <span>•</span>
+              </>
+            )}
             {user ? (
               <button
                 type="button"
@@ -156,8 +169,8 @@ export const Navbar: React.FC = () => {
                 <span>Logout</span>
               </button>
             ) : (
-              <Link 
-                to="/login" 
+              <Link
+                to="/login"
                 id="nav-auth-toggle-btn"
                 className="hover:text-white font-bold text-teal-300 transition-colors"
               >
@@ -169,19 +182,18 @@ export const Navbar: React.FC = () => {
       </div>
 
       {/* Main Sticky Navbar */}
-      <header 
+      <header
         id="main-navbar"
-        className={`sticky top-0 z-50 transition-all duration-300 ${
-          isScrolled 
-            ? 'bg-white/98 backdrop-blur-md shadow-sm border-b border-slate-200/80 py-2.5' 
+        className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled
+            ? 'bg-white/98 backdrop-blur-md shadow-sm border-b border-slate-200/80 py-2.5'
             : 'bg-white border-b border-slate-100 py-3.5'
-        }`}
+          }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             {/* Brand Logo & Name */}
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               id="nav-brand-logo"
               className="flex items-center group focus:outline-none focus:ring-2 focus:ring-[#2C3292] rounded-lg p-1"
             >
@@ -195,11 +207,10 @@ export const Navbar: React.FC = () => {
                   key={link.path}
                   to={link.path}
                   id={`nav-link-${link.name.toLowerCase().replace(/\s+/g, '-')}`}
-                  className={`px-3.5 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200 ${
-                    isActive(link.path)
+                  className={`px-3.5 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200 ${isActive(link.path)
                       ? 'text-[#2C3292] bg-[#f0f2fc] font-bold shadow-xs'
                       : 'text-slate-600 hover:text-[#2C3292] hover:bg-slate-50'
-                  }`}
+                    }`}
                 >
                   {link.name}
                 </Link>
@@ -237,7 +248,7 @@ export const Navbar: React.FC = () => {
                 <Heart className="w-3.5 h-3.5" />
                 <span>Donate</span>
               </Link>
-              
+
               <button
                 type="button"
                 id="nav-hamburger-btn"
@@ -259,11 +270,10 @@ export const Navbar: React.FC = () => {
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm font-medium ${
-                    isActive(link.path)
+                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm font-medium ${isActive(link.path)
                       ? 'text-[#2C3292] bg-[#f0f2fc] font-semibold'
                       : 'text-slate-700 hover:bg-slate-50'
-                  }`}
+                    }`}
                 >
                   <span>{link.name}</span>
                   <ChevronRight className="w-4 h-4 text-slate-400" />
@@ -352,7 +362,7 @@ export const Navbar: React.FC = () => {
             </div>
 
             <div className="pt-2 text-center text-xs text-slate-500">
-              Helpline: <a href={`tel:${ORG_INFO.phone}`} className="font-semibold text-slate-700">{ORG_INFO.phone}</a>
+              Helpline: <a href={`tel:${displayPhone}`} className="font-semibold text-slate-700">{displayPhone}</a>
             </div>
           </div>
         )}

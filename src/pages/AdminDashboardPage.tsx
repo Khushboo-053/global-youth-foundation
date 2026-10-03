@@ -88,6 +88,7 @@ export const AdminDashboardPage: React.FC = () => {
     user,
     logout,
     updateProfile,
+    updateWebsiteContent,
     users,
     volunteers,
     volunteerPermissions,
@@ -727,7 +728,15 @@ export const AdminDashboardPage: React.FC = () => {
               <AdminProfileTab
                 user={user}
                 onLogout={handleLogout}
-                onUpdateProfile={updateProfile}
+                onUpdateProfile={async (data) => {
+                  await updateProfile(data);
+                  if (data.email || data.phone) {
+                    await updateWebsiteContent({
+                      ...(data.email ? { contactEmail: data.email } : {}),
+                      ...(data.phone ? { contactPhone: data.phone, helpDeskPhone: data.phone } : {})
+                    });
+                  }
+                }}
               />
             )}
 

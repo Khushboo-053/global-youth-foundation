@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
-import { 
-  Heart, 
-  DollarSign, 
-  Search, 
-  Filter, 
-  Eye, 
-  CheckCircle2, 
-  Clock, 
-  XCircle, 
-  Download, 
-  Check, 
-  Mail, 
+import {
+  Heart,
+  DollarSign,
+  Search,
+  Filter,
+  Eye,
+  CheckCircle2,
+  Clock,
+  XCircle,
+  Download,
+  Check,
+  Mail,
   Phone,
-  FileText
+  FileText,
+  Trash2
 } from 'lucide-react';
 import { DonationRecord } from '../../types';
 import { DonationDetailModal } from './DonationDetailModal';
@@ -20,11 +21,13 @@ import { DonationDetailModal } from './DonationDetailModal';
 interface AdminDonationsTabProps {
   donations: DonationRecord[];
   onUpdateStatus: (id: string, status: 'Verified' | 'Pending Verification' | 'Failed') => Promise<void>;
+  onDeleteDonation: (id: string) => Promise<void>;
 }
 
 export const AdminDonationsTab: React.FC<AdminDonationsTabProps> = ({
   donations,
-  onUpdateStatus
+  onUpdateStatus,
+  onDeleteDonation
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'Verified' | 'Pending Verification' | 'Failed'>('all');
@@ -43,7 +46,7 @@ export const AdminDonationsTab: React.FC<AdminDonationsTabProps> = ({
     .reduce((sum, d) => sum + d.amount, 0);
 
   const filteredDonations = donations.filter(d => {
-    const matchesSearch = 
+    const matchesSearch =
       d.donorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       d.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       d.transactionId.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -58,6 +61,14 @@ export const AdminDonationsTab: React.FC<AdminDonationsTabProps> = ({
     await onUpdateStatus(id, 'Verified');
     setActionSuccess(`Donation from "${donorName}" marked Verified & Reconciled.`);
     setTimeout(() => setActionSuccess(null), 4000);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (window.confirm('Are you certain you want to permanently delete this donation record? This action cannot be undone.')) {
+      await onDeleteDonation(id);
+      setActionSuccess('Donation record permanently deleted.');
+      setTimeout(() => setActionSuccess(null), 4000);
+    }
   };
 
   return (
@@ -132,7 +143,7 @@ export const AdminDonationsTab: React.FC<AdminDonationsTabProps> = ({
             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>{actionSuccess}</span>
           </div>
-          <button 
+          <button
             onClick={() => setActionSuccess(null)}
             className="text-emerald-600 hover:text-emerald-900 text-xs font-bold"
           >
@@ -161,11 +172,10 @@ export const AdminDonationsTab: React.FC<AdminDonationsTabProps> = ({
               key={st}
               type="button"
               onClick={() => setStatusFilter(st)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 ${
-                statusFilter === st
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 ${statusFilter === st
                   ? 'bg-teal-800 text-white shadow-xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
+                }`}
             >
               {st === 'all' ? 'All Donations' : st}
             </button>
@@ -237,13 +247,12 @@ export const AdminDonationsTab: React.FC<AdminDonationsTabProps> = ({
                     </td>
 
                     <td className="py-3.5 px-4">
-                      <span className={`px-2.5 py-1 rounded-full text-[11px] font-black uppercase tracking-wider ${
-                        d.paymentStatus === 'Verified'
+                      <span className={`px-2.5 py-1 rounded-full text-[11px] font-black uppercase tracking-wider ${d.paymentStatus === 'Verified'
                           ? 'bg-emerald-100 text-emerald-800'
                           : d.paymentStatus === 'Pending Verification'
-                          ? 'bg-amber-100 text-amber-800'
-                          : 'bg-rose-100 text-rose-800'
-                      }`}>
+                            ? 'bg-amber-100 text-amber-800'
+                            : 'bg-rose-100 text-rose-800'
+                        }`}>
                         {d.paymentStatus}
                       </span>
                     </td>
@@ -268,6 +277,14 @@ export const AdminDonationsTab: React.FC<AdminDonationsTabProps> = ({
                           title="View Receipt & Audit Details"
                         >
                           <Eye className="w-4 h-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(d.id)}
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                          title="Delete Record"
+                        >
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </td>

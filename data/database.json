@@ -1,67 +1,10 @@
 {
   "programs": [
     {
-      "id": "peace-harmony",
-      "title": "Peace, Justice & Social Harmony",
-      "shortDescription": "Advancing communal harmony, nonviolent democratic advocacy, and inter-faith dialogue.",
-      "fullDescription": "Promoting mutual respect, justice, and nonviolent social change across Kashmir through peaceful rallies, candlelight protests, mass signature campaigns, and consultative roundtables with senior religious scholars and community elders. Documented initiatives include the Peace with Justice rally, Candlelight Vigils, Signature Drives, and High-Level De-Radicalization dialogues.",
-      "objectives": [
-        "Organize Youth Peace Circles, candlelight solidarity vigils, and restorative mediation forums.",
-        "Conduct consultative conferences with respected Imams and scholars on de-radicalization.",
-        "Mobilize students and citizens through mass signature campaigns for peaceful coexistence."
-      ],
-      "impactStats": "45+ Peace Dialogues & Rallies",
-      "iconName": "Scale",
-      "image": "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=80",
-      "category": "Peace, Justice & Social Harmony",
-      "beneficiariesTarget": "Community elders, youth councils, inter-faith scholars & civic groups",
-      "status": "Active",
-      "isPublished": true,
-      "createdAt": "2026-01-15T10:00:00.000Z"
-    },
-    {
-      "id": "humanitarian-health",
-      "title": "Disaster Relief & Healthcare Outreach",
-      "shortDescription": "Emergency flood rescue, free specialist medical camps, and menstrual hygiene dignity.",
-      "fullDescription": "Serving as frontline first-responders during catastrophic crises such as the 2014 Kashmir floods, organizing free diagnostic health camps with prescription drug dispensaries, and breaking taboos through the \"Wings of Hope\" women’s menstrual hygiene and dignity distribution drive.",
-      "objectives": [
-        "Deploy rapid volunteer response teams during seasonal climate disasters and flood emergencies.",
-        "Provide free doctor consultations, diagnostic checkups, and prescription medicines to rural families.",
-        "Distribute menstrual hygiene packages and conduct adolescent reproductive health workshops."
-      ],
-      "impactStats": "14,000+ Citizens Supported in Crises",
-      "iconName": "HeartHandshake",
-      "image": "https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=1200&q=80",
-      "category": "Disaster Relief & Healthcare Outreach",
-      "beneficiariesTarget": "Flood survivors, rural patients, elderly citizens, and schoolgirls",
-      "status": "Active",
-      "isPublished": true,
-      "createdAt": "2026-01-15T10:00:00.000Z"
-    },
-    {
-      "id": "substance-prevention",
-      "title": "Substance Abuse Prevention & De-Addiction",
-      "shortDescription": "Confronting youth addiction through clinical guidance, legal awareness, and faith alliances.",
-      "fullDescription": "Tackling Kashmir’s substance abuse crisis through community-based awareness camps, training on the HIV Act 2017, and pioneering partnerships with the J&K Imam Association to mobilize mosques and communities toward early intervention and rehabilitation.",
-      "objectives": [
-        "Conduct grassroots awareness cum training seminars on the HIV Act 2017 and addiction risks.",
-        "Forge coalitions with religious scholars and Imams to counsel youth from mosque pulpits.",
-        "Provide compassionate counseling and refer affected youth to structured rehabilitation facilities."
-      ],
-      "impactStats": "1,800+ Youth Counseled & Sensitized",
-      "iconName": "ShieldAlert",
-      "image": "https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1200&q=80",
-      "category": "Substance Abuse Prevention & De-Addiction",
-      "beneficiariesTarget": "At-risk youth, recovering individuals, families & religious leaders",
-      "status": "Active",
-      "isPublished": true,
-      "createdAt": "2026-01-15T10:00:00.000Z"
-    },
-    {
       "id": "women-empowerment",
       "title": "Women & Girl Child Empowerment",
-      "shortDescription": "Fostering academic confidence, gender equality, leadership, and martial arts self-defense.",
-      "fullDescription": "Empowering young girls and women through commemorative leadership assemblies, academic award ceremonies, and championship martial arts training (Budokan Karate) that instills physical discipline, mental poise, and self-defense skills.",
+      "shortDescription": ".",
+      "fullDescription": ".",
       "objectives": [
         "Celebrate Women Empowerment Day with leadership summits, awards, and community dialogues.",
         "Sponsor martial arts and self-defense championships for young school and college girls.",
@@ -69,38 +12,22 @@
       ],
       "impactStats": "2,500+ Girls & Young Women Empowered",
       "iconName": "Award",
-      "image": "https://images.unsplash.com/photo-1555597673-b21d5c935865?auto=format&fit=crop&w=1200&q=80",
+      "image": "https://scontent.fixj2-1.fna.fbcdn.net/v/t39.30808-6/482248202_9322459111141748_3203683285462028590_n.jpg?stp=dst-jpg_tt6&cstp=mx960x720&ctp=s960x720&_nc_cat=106&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=833d8c&_nc_ohc=nY3qS2QbORgQ7kNvwEwdrER&_nc_oc=AdqnbU08_himErnRB6arEryMVMfw17F7wd6iph2QwhdzplZAG22ev2nca52ZFJNNejqn15Oxx48_J_6h1OVNwzh6&_nc_zt=23&_nc_ht=scontent.fixj2-1.fna&_nc_gid=czACnDdXpxPN5v-Z14wAOQ&_nc_ss=7b2a8&oh=00_AQKuxYn8GcCWuImMuwo4IOdLcBnj2s-R8PqPvd9WSmAW4g&oe=6ABA926E",
       "category": "Women & Girl Child Empowerment",
       "beneficiariesTarget": "School and college girls, young female athletes, women entrepreneurs",
-      "status": "Active",
+      "status": "Completed",
       "isPublished": true,
-      "createdAt": "2026-01-15T10:00:00.000Z"
-    },
-    {
-      "id": "youth-sports-culture",
-      "title": "Youth Leadership, Sports & Culture",
-      "shortDescription": "Building character and talent through athletic meets, debate championships, and trekking.",
-      "fullDescription": "Channeling young energy constructively through “Jawan Aur Awam” sports festivals, parliamentary debate tournaments at Sherwani Hall, high-altitude wilderness trekking expeditions with summit flag ceremonies, and Kashmir’s Got Talent cultural showcases.",
-      "objectives": [
-        "Host multi-sport community festivals (\"Jawan Aur Awam Aman Hai Makaam\") featuring running, carom, and games.",
-        "Organize competitive debate championships (\"Encounter of Polemics\") in collaboration with Municipal Councils.",
-        "Lead wilderness trekking expeditions that build physical endurance, team morale, and civic pride.",
-        "Stage performing arts and talent hunts celebrating young musical, artistic, and literary talents."
-      ],
-      "impactStats": "5,500+ Young Athletes & Performers",
-      "iconName": "Zap",
-      "image": "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&q=80",
-      "category": "Youth Leadership, Sports & Culture",
-      "beneficiariesTarget": "Student debaters, athletes, trekkers, and performing artists",
-      "status": "Active",
-      "isPublished": true,
-      "createdAt": "2026-01-15T10:00:00.000Z"
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "description": ".",
+      "impact": "1,000+ Youth Reached",
+      "beneficiaries": "Students & Fellows",
+      "location": "Srinagar & Valley Districts"
     },
     {
       "id": "environmental-stewardship",
       "title": "Environmental Stewardship & Climate Action",
-      "shortDescription": "Promoting school afforestation, native sapling plantations, and climate awareness.",
-      "fullDescription": "Inspiring future generations to care for the earth through comprehensive tree-plantation drives across government schools and rural zones, teaching students the vital importance of biodiversity, green cover, and climate action.",
+      "shortDescription": ".",
+      "fullDescription": ".",
       "objectives": [
         "Conduct school-wide plantation drives planting native pine, cedar, and shade saplings.",
         "Educate students on environmental balance, climate change mitigation, and conservation.",
@@ -108,31 +35,199 @@
       ],
       "impactStats": "18,000+ Native Saplings Planted",
       "iconName": "Leaf",
-      "image": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1200&q=80",
+      "image": "https://scontent.fixj2-1.fna.fbcdn.net/v/t39.30808-6/483365039_9275590765828583_7236540615077784696_n.jpg?stp=dst-jpg_tt6&cstp=mx960x720&ctp=s960x720&_nc_cat=102&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=833d8c&_nc_ohc=Raz9Mi4SOTEQ7kNvwFHGvDJ&_nc_oc=AdrW5JleEgiuJDrjw3rJMddz89scyrTLH1JEFqcQqMzIu6RF7Fe0WHspjI9TkdzDcomOdWiOJ_rakPyfx2WFLXul&_nc_zt=23&_nc_ht=scontent.fixj2-1.fna&_nc_gid=qzP07L1A1Q_HzsE_I-jsrA&_nc_ss=7b2a8&oh=00_AQKlc_phDPiIQ27Cc0gSZqoC0OpBQfXUjhfrGXEPTogYfA&oe=6ABA8868",
       "category": "Environmental Stewardship & Climate Action",
       "beneficiariesTarget": "School students, teachers, local communities, and rural habitats",
       "status": "Active",
       "isPublished": true,
-      "createdAt": "2026-01-15T10:00:00.000Z"
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "description": ".",
+      "impact": "1,000+ Youth Reached",
+      "beneficiaries": "Students & Fellows",
+      "location": "Srinagar & Valley Districts"
     }
   ],
   "events": [
     {
+      "id": "ev-1790312090741",
+      "title": "Relive Your Childhood: A Two-Day Fun Fair at M.E.T. Campus Sopore",
+      "description": "Global Youth Foundation organised a vibrant two-day Fun Fair at M.E.T. Campus, Sopore, bringing together entertainment, creativity and community spirit under the theme “Relive Your Childhood.” The event offered visitors a lively space to step away from routine and enjoy the simple joys of childhood.\n\nThe fair featured an exciting mix of shopping stalls, games and recreational activities, live music, art and craft stalls, food corners, exhibitions and much more. From creative displays and local products to fun-filled games and musical performances, every corner of the fair offered something engaging for visitors of all ages.\n\nMore than just an entertainment event, the Fun Fair created a shared platform for families, youngsters, artists, entrepreneurs and the local community to come together. With its cheerful atmosphere and diverse attractions, the programme celebrated the spirit of togetherness while giving everyone an opportunity to pause, reconnect and relive the joy of childhood.",
+      "fullDetails": "Global Youth Foundation organised a vibrant two-day Fun Fair at M.E.T. Campus, Sopore, bringing together entertainment, creativity and community spirit under the theme “Relive Your Childhood.” The event offered visitors a lively space to step away from routine and enjoy the simple joys of childhood.\n\nThe fair featured an exciting mix of shopping stalls, games and recreational activities, live music, art and craft stalls, food corners, exhibitions and much more. From creative displays and local products to fun-filled games and musical performances, every corner of the fair offered something engaging for visitors of all ages.\n\nMore than just an entertainment event, the Fun Fair created a shared platform for families, youngsters, artists, entrepreneurs and the local community to come together. With its cheerful atmosphere and diverse attractions, the programme celebrated the spirit of togetherness while giving everyone an opportunity to pause, reconnect and relive the joy of childhood.",
+      "date": "November, 2023",
+      "time": "10:00 AM - 04:00 PM IST",
+      "location": "M.E.T Campus Sopore, Baramulla, Jammu And Kashmir",
+      "image": "/uploads/event-1790312034752.jpg",
+      "galleryImages": [],
+      "category": "Youth Leadership, Sports & Culture",
+      "status": "Completed",
+      "attendeesCount": 50,
+      "isPublished": true,
+      "createdAt": "2026-09-25T04:54:50.741Z"
+    },
+    {
+      "id": "ev-1790237259054",
+      "title": "Perish Smoking, Cherish Lives: Awareness Among School Students.",
+      "description": "Global Youth Foundation conducted the “Perish Smoking, Cherish Lives” awareness programme among school students to educate young minds about the harmful effects of smoking and tobacco use. The initiative focused on creating awareness at an early age and encouraging students to make healthy and responsible choices.\n\nThrough interactive sessions, discussions and awareness activities, students were sensitised about the physical, social and financial consequences associated with tobacco addiction. The programme also encouraged them to stay away from peer pressure and become positive influencers among their friends and communities.\n\nThe initiative carried the message that prevention begins with awareness. By empowering school students with the right knowledge and confidence, GYF sought to encourage a healthier generation and inspire young people to choose a life of health, purpose and dignity.",
+      "fullDetails": "Global Youth Foundation conducted the “Perish Smoking, Cherish Lives” awareness programme among school students to educate young minds about the harmful effects of smoking and tobacco use. The initiative focused on creating awareness at an early age and encouraging students to make healthy and responsible choices.\n\nThrough interactive sessions, discussions and awareness activities, students were sensitised about the physical, social and financial consequences associated with tobacco addiction. The programme also encouraged them to stay away from peer pressure and become positive influencers among their friends and communities.\n\nThe initiative carried the message that prevention begins with awareness. By empowering school students with the right knowledge and confidence, GYF sought to encourage a healthier generation and inspire young people to choose a life of health, purpose and dignity.",
+      "date": "May 31, 2012",
+      "time": "10:00 AM - 04:00 PM IST",
+      "location": "Different Schools of Baramulla, Jammu And Kashmir",
+      "image": "/uploads/event-1790237109347.jpg",
+      "galleryImages": [],
+      "category": "Substance Abuse Prevention & De-Addiction",
+      "status": "Completed",
+      "attendeesCount": 50,
+      "isPublished": true,
+      "createdAt": "2026-09-24T08:07:39.054Z"
+    },
+    {
+      "id": "ev-1790236796047",
+      "title": "Youth Against Corruption: The Call for Integrity, Transparency and Change.",
+      "description": "Global Youth Foundation’s Youth Against Corruption initiative focused on engaging young people in creating greater awareness about the social and economic consequences of corruption. The programme encouraged youth to recognise the importance of honesty, transparency and accountability in everyday life and public affairs.\n\nThrough awareness activities, discussions and youth engagement, the initiative sought to inspire young minds to reject corrupt practices and become responsible citizens. It emphasised that lasting change begins with individuals who are willing to uphold integrity and speak for fairness.\n\nThe campaign reflected GYF’s belief that empowered and conscious youth can play an important role in promoting ethical values and building a more transparent and responsible society.",
+      "fullDetails": "Global Youth Foundation’s Youth Against Corruption initiative focused on engaging young people in creating greater awareness about the social and economic consequences of corruption. The programme encouraged youth to recognise the importance of honesty, transparency and accountability in everyday life and public affairs.\n\nThrough awareness activities, discussions and youth engagement, the initiative sought to inspire young minds to reject corrupt practices and become responsible citizens. It emphasised that lasting change begins with individuals who are willing to uphold integrity and speak for fairness.\n\nThe campaign reflected GYF’s belief that empowered and conscious youth can play an important role in promoting ethical values and building a more transparent and responsible society.",
+      "date": "May 05, 2012",
+      "time": "10:00 AM - 04:00 PM IST",
+      "location": "Higher Secondary School Rohama Rafiabad, Baramulla, Jammu And Kashmir",
+      "image": "/uploads/event-1790236612932.jpg",
+      "galleryImages": [],
+      "category": "Peace, Justice & Social Harmony",
+      "status": "Completed",
+      "attendeesCount": 50,
+      "isPublished": true,
+      "createdAt": "2026-09-24T07:59:56.047Z"
+    },
+    {
+      "id": "ev-1790236171897",
+      "title": "School Outreach Initiative 2012: Guiding Young Minds Towards a Responsible Future.",
+      "description": "In 2012, Global Youth Foundation undertook a series of visits to different schools across District Baramulla to engage with students on issues that could shape their future. The initiative created a direct platform for interaction with young minds, encouraging them to think beyond academics and become more aware of the opportunities, challenges and responsibilities that lie ahead.\n\nDuring these interactions, students were encouraged to focus on education, personal development, social responsibility, discipline and constructive participation in their communities. The Foundation also emphasised the importance of making informed choices, developing positive values and using their talents and education for the betterment of society.\n\nThe school outreach programme reflected GYF’s belief that meaningful social change begins by engaging with young people at an early stage. By reaching classrooms and interacting directly with students, the initiative sought to inspire a generation that is confident, responsible and committed to contributing positively to the future of Jammu and Kashmir and the nation.",
+      "fullDetails": "In 2012, Global Youth Foundation undertook a series of visits to different schools across District Baramulla to engage with students on issues that could shape their future. The initiative created a direct platform for interaction with young minds, encouraging them to think beyond academics and become more aware of the opportunities, challenges and responsibilities that lie ahead.\n\nDuring these interactions, students were encouraged to focus on education, personal development, social responsibility, discipline and constructive participation in their communities. The Foundation also emphasised the importance of making informed choices, developing positive values and using their talents and education for the betterment of society.\n\nThe school outreach programme reflected GYF’s belief that meaningful social change begins by engaging with young people at an early stage. By reaching classrooms and interacting directly with students, the initiative sought to inspire a generation that is confident, responsible and committed to contributing positively to the future of Jammu and Kashmir and the nation.",
+      "date": "April, 2012",
+      "time": "10:00 AM - 04:00 PM IST",
+      "location": "Different Schools of District Baramulla.",
+      "image": "/uploads/event-1790236165656.jpg",
+      "galleryImages": [],
+      "category": "Peace, Justice & Social Harmony",
+      "status": "Completed",
+      "attendeesCount": 50,
+      "isPublished": true,
+      "createdAt": "2026-09-24T07:49:31.897Z"
+    },
+    {
+      "id": "ev-1790235687084",
+      "title": "New Year Gathering 2012: A Celebration of Hope, Peace and Positive Change.",
+      "description": "In 2012, Global Youth Foundation organised a New Year Gathering with the vision of bringing young people together in an atmosphere of hope, friendship and positivity. At a time when the youth of Jammu and Kashmir faced numerous challenges and uncertainties, the gathering provided a platform for meaningful interaction, celebration and constructive engagement.\n\nThe event aimed to encourage young minds to look beyond negativity and embrace education, creativity, dialogue and social responsibility. Through cultural activities, interactions and messages of peace and harmony, the programme sought to promote a more positive outlook among the youth and strengthen their connection with the wider social fabric of the country.\n\nThe gathering reflected Global Youth Foundation’s early commitment to youth empowerment and peaceful community engagement. It carried a simple but powerful message: meaningful change begins when young people are given the confidence, opportunity and space to imagine a better future and contribute positively to society.",
+      "fullDetails": "In 2012, Global Youth Foundation organised a New Year Gathering with the vision of bringing young people together in an atmosphere of hope, friendship and positivity. At a time when the youth of Jammu and Kashmir faced numerous challenges and uncertainties, the gathering provided a platform for meaningful interaction, celebration and constructive engagement.\n\nThe event aimed to encourage young minds to look beyond negativity and embrace education, creativity, dialogue and social responsibility. Through cultural activities, interactions and messages of peace and harmony, the programme sought to promote a more positive outlook among the youth and strengthen their connection with the wider social fabric of the country.\n\nThe gathering reflected Global Youth Foundation’s early commitment to youth empowerment and peaceful community engagement. It carried a simple but powerful message: meaningful change begins when young people are given the confidence, opportunity and space to imagine a better future and contribute positively to society.",
+      "date": "January 01, 2012",
+      "time": "12:00 AM - 04:00 AM IST",
+      "location": "GDC Boys Auditorium, Baramulla, jammu And Kashmir",
+      "image": "/uploads/event-1790235448591.jpg",
+      "galleryImages": [],
+      "category": "Youth Leadership, Sports & Culture",
+      "status": "Completed",
+      "attendeesCount": 50,
+      "isPublished": true,
+      "createdAt": "2026-09-24T07:41:27.084Z"
+    },
+    {
+      "id": "ev-1790234674359",
+      "title": "Celebrating Children’s Day: Inspiring Young Minds Through Joy, Creativity and Opportunity",
+      "description": "Global Youth Foundation celebrated Children’s Day with enthusiasm, bringing together children in a joyful and encouraging environment. The event was centred around celebrating childhood, creativity and the dreams that shape the future.\n\nThrough engaging activities, cultural performances and interactive moments, the children were given an opportunity to express themselves, showcase their talents and enjoy a day dedicated to them. The celebration reflected the Foundation’s commitment to nurturing confidence, creativity and positive values among young minds.\n\nThe event concluded with a strong message that every child deserves care, education, dignity and equal opportunities to grow. Global Youth Foundation remains committed to supporting and empowering children as the foundation of a brighter and more inclusive society.",
+      "fullDetails": "Global Youth Foundation celebrated Children’s Day with enthusiasm, bringing together children in a joyful and encouraging environment. The event was centred around celebrating childhood, creativity and the dreams that shape the future.\n\nThrough engaging activities, cultural performances and interactive moments, the children were given an opportunity to express themselves, showcase their talents and enjoy a day dedicated to them. The celebration reflected the Foundation’s commitment to nurturing confidence, creativity and positive values among young minds.\n\nThe event concluded with a strong message that every child deserves care, education, dignity and equal opportunities to grow. Global Youth Foundation remains committed to supporting and empowering children as the foundation of a brighter and more inclusive society.",
+      "date": "November 15, 2011",
+      "time": "12:00 PM - 04:00 PM IST",
+      "location": "Sherwani Hall Baramulla, Jammu And Kashmir",
+      "image": "/uploads/event-1790234584380.jpg",
+      "galleryImages": [],
+      "category": "Women & Girl Child Empowerment",
+      "status": "Completed",
+      "attendeesCount": 50,
+      "isPublished": true,
+      "createdAt": "2026-09-24T07:24:34.359Z",
+      "subheading": "Save Children Shape The Future",
+      "attendees": "400+ Delegates"
+    },
+    {
+      "id": "ev-1790232016205",
+      "title": "Awareness Against Drug Abuse.",
+      "description": "The Global Youth Foundation (GYF), organised an awareness programme on Drug Abuse and Addiction at Government Higher Secondary School Fatehgarh Sheeri, Baramulla. The programme focused on educating students about the harmful consequences of substance abuse and encouraging them to make informed and responsible choices. Through meaningful interaction and awareness activities, the initiative highlighted the importance of education, family support and positive engagement in preventing addiction. The programme carried a clear message: protecting our youth from drugs today is an investment in a healthier, stronger and drug-free Jammu & Kashmir tomorrow.",
+      "fullDetails": "The Global Youth Foundation (GYF), organised an awareness programme on Drug Abuse and Addiction at Government Higher Secondary School Fatehgarh Sheeri, Baramulla. The programme focused on educating students about the harmful consequences of substance abuse and encouraging them to make informed and responsible choices. Through meaningful interaction and awareness activities, the initiative highlighted the importance of education, family support and positive engagement in preventing addiction. The programme carried a clear message: protecting our youth from drugs today is an investment in a healthier, stronger and drug-free Jammu & Kashmir tomorrow.",
+      "date": "Sep 24, 2026",
+      "time": "10:00 AM - 02:00 PM IST",
+      "location": "Higher Secondary School Fatehgarh, Baramulla, Jammu And Kashmir",
+      "image": "/uploads/event-1790231958144.jpg",
+      "galleryImages": [],
+      "category": "Substance Abuse Prevention & De-Addiction",
+      "status": "Completed",
+      "attendeesCount": 50,
+      "isPublished": true,
+      "createdAt": "2026-09-24T06:40:16.205Z",
+      "subheading": "",
+      "attendees": "400+ Delegates"
+    },
+    {
+      "id": "ev-1790231831587",
+      "title": "Mega Job Fair -Opening Doors to Opportunity.",
+      "description": "The Global Youth Foundation (GYF) organised a Mega Job Fair in Baramulla, Jammu & Kashmir, creating a vibrant platform where ambition met opportunity. The initiative brought together aspiring young job seekers and employers from diverse sectors, offering participants a valuable opportunity to explore careers, interact with recruiters and showcase their skills. More than just a recruitment platform, the event reflected a shared commitment to empowering youth, promoting employability and building pathways towards a secure and independent future. By connecting talent with opportunity, the Mega Job Fair marked another meaningful step towards strengthening the employment ecosystem for the youth of Jammu & Kashmir.\n",
+      "fullDetails": "The Global Youth Foundation (GYF) organised a Mega Job Fair in Baramulla, Jammu & Kashmir, creating a vibrant platform where ambition met opportunity. The initiative brought together aspiring young job seekers and employers from diverse sectors, offering participants a valuable opportunity to explore careers, interact with recruiters and showcase their skills. More than just a recruitment platform, the event reflected a shared commitment to empowering youth, promoting employability and building pathways towards a secure and independent future. By connecting talent with opportunity, the Mega Job Fair marked another meaningful step towards strengthening the employment ecosystem for the youth of Jammu & Kashmir.\n",
+      "date": "June 26, 2026",
+      "time": "10:00 AM - 04:00 PM IST",
+      "location": "Dak Banglow Baramulla, Jammu And Kashmir",
+      "image": "/uploads/event-1790231783949.jpg",
+      "galleryImages": [],
+      "category": "Youth Leadership, Sports & Culture",
+      "status": "Completed",
+      "attendeesCount": 50,
+      "isPublished": true,
+      "createdAt": "2026-09-24T06:37:11.587Z"
+    },
+    {
+      "id": "ev-1790231558245",
+      "title": "Nasha Mukt Jammu & Kashmir: A Collective Commitment Towards a Brighter Future",
+      "description": "The Nasha Mukt Jammu & Kashmir initiative reflects a collective commitment towards building a healthier, safer and more responsible society, where the youth are empowered to pursue their dreams free from the grip of substance abuse. Organised by the Global Youth Foundation (GYF), the campaign brings together the administration, civil society and young people on a common platform to spread awareness about the devastating consequences of drug addiction and to encourage a culture of responsibility, resilience and hope. The presence and support of Hon’ble Lieutenant Governor Shri Manoj Sinha, along with the Deputy Commissioner, Baramulla, and the leadership of GYF President Mr. Touseef Mehraj Raina, further strengthened the message that the fight against drug abuse requires collective participation and sustained efforts. The initiative goes beyond awareness by calling upon every section of society to stand together, support those affected by addiction, protect vulnerable youth and create opportunities that give young people a positive direction in life. A Nasha Mukt Jammu & Kashmir is not merely a vision for tomorrow; it is a responsibility that must be embraced today, with every individual, institution and community contributing towards a healthier generation and a stronger future.",
+      "fullDetails": "The Nasha Mukt Jammu & Kashmir initiative reflects a collective commitment towards building a healthier, safer and more responsible society, where the youth are empowered to pursue their dreams free from the grip of substance abuse. Organised by the Global Youth Foundation (GYF), the campaign brings together the administration, civil society and young people on a common platform to spread awareness about the devastating consequences of drug addiction and to encourage a culture of responsibility, resilience and hope. The presence and support of Hon’ble Lieutenant Governor Shri Manoj Sinha, along with the Deputy Commissioner, Baramulla, and the leadership of GYF President Mr. Touseef Mehraj Raina, further strengthened the message that the fight against drug abuse requires collective participation and sustained efforts. The initiative goes beyond awareness by calling upon every section of society to stand together, support those affected by addiction, protect vulnerable youth and create opportunities that give young people a positive direction in life. A Nasha Mukt Jammu & Kashmir is not merely a vision for tomorrow; it is a responsibility that must be embraced today, with every individual, institution and community contributing towards a healthier generation and a stronger future.",
+      "date": "May 14, 2026",
+      "time": "10:00 AM - 03:00 PM IST",
+      "location": "Baramulla, Jammu And Kashmir",
+      "image": "/uploads/event-1790231503349.jpg",
+      "galleryImages": [],
+      "category": "Substance Abuse Prevention & De-Addiction",
+      "status": "Completed",
+      "attendeesCount": 50,
+      "isPublished": true,
+      "createdAt": "2026-09-24T06:32:38.245Z"
+    },
+    {
+      "id": "ev-1790231361363",
+      "title": "Solidarity Candlelight March in Tribute to Martyred JK Police Officer.",
+      "description": "The Global Youth Foundation organized a solemn candlelight march to pay tribute to a martyred officer of the Jammu and Kashmir Police. The march was held as a mark of respect, remembrance, and solidarity with the bereaved family and the police fraternity.\n\nVolunteers, youth, and community members gathered peacefully, holding candles and observing moments of silence in honor of the officer’s courage and sacrifice in the line of duty. The atmosphere reflected unity, gratitude, and deep respect for those who dedicate their lives to safeguarding society.\n\nThrough this tribute, GYF reaffirmed its commitment to standing with institutions and families affected by such losses, while promoting peace, solidarity, and collective responsibility within the community.\n",
+      "fullDetails": "The Global Youth Foundation organized a solemn candlelight march to pay tribute to a martyred officer of the Jammu and Kashmir Police. The march was held as a mark of respect, remembrance, and solidarity with the bereaved family and the police fraternity.\n\nVolunteers, youth, and community members gathered peacefully, holding candles and observing moments of silence in honor of the officer’s courage and sacrifice in the line of duty. The atmosphere reflected unity, gratitude, and deep respect for those who dedicate their lives to safeguarding society.\n\nThrough this tribute, GYF reaffirmed its commitment to standing with institutions and families affected by such losses, while promoting peace, solidarity, and collective responsibility within the community.\n",
+      "date": "September 18, 2021",
+      "time": "05:00 PM - 07:00 PM IST",
+      "location": "Baramulla, Jammu And Kashmir",
+      "image": "/uploads/event-1790231337770.jpg",
+      "galleryImages": [],
+      "category": "Peace, Justice & Social Harmony",
+      "status": "Completed",
+      "attendeesCount": 50,
+      "isPublished": true,
+      "createdAt": "2026-09-24T06:29:21.363Z"
+    },
+    {
       "id": "gyf-ev-1",
       "title": "PEACE WITH JUSTICE – A STEP TOWARDS HARMONY",
       "subheading": "Peace & Communal Harmony Rally with Youth & Elders",
-      "date": "August 14, 2021",
+      "date": "June 09, 2013",
       "time": "04:00 PM - 07:30 PM",
-      "location": "Srinagar, Jammu & Kashmir",
+      "location": "Baramulla, Jammu & Kashmir",
       "category": "Peace, Justice & Social Harmony",
       "documentPage": 2,
       "layoutType": "single",
       "banners": [
         "KASHMIRI YOUTH STANDS FOR PEACE & COMMUNAL HARMONY - GLOBAL YOUTH FOUNDATION"
       ],
-      "description": "As part of our ongoing efforts to promote peace and unity, Global Youth Foundation (GYF) organized a peaceful rally carrying the message “Peace with Justice.” Students, young volunteers, and community members walked together with enthusiasm and a shared sense of responsibility toward society.",
+      "description": "As part of our ongoing efforts to promote peace and unity, Global Youth Foundation (GYF) organized a peaceful rally carrying the message “Peace with Justice.” Students, young volunteers, and community members walked together with enthusiasm and a shared sense of responsibility toward society.\n\nThe rally was not just a march it was a reminder that real change begins with awareness and collective action. Seeing young students actively participate reflected our strong belief that youth are the backbone of a progressive and peaceful society.\n\nAt GYF, we continue to encourage such initiatives that bring communities together, strengthen mutual understanding, and inspire young minds to stand for justice, harmony, and positive social change.\n",
       "fullDetails": "As part of our ongoing efforts to promote peace and unity, Global Youth Foundation (GYF) organized a peaceful rally carrying the message “Peace with Justice.” Students, young volunteers, and community members walked together with enthusiasm and a shared sense of responsibility toward society.\n\nThe rally was not just a march it was a reminder that real change begins with awareness and collective action. Seeing young students actively participate reflected our strong belief that youth are the backbone of a progressive and peaceful society.\n\nAt GYF, we continue to encourage such initiatives that bring communities together, strengthen mutual understanding, and inspire young minds to stand for justice, harmony, and positive social change.",
-      "image": "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=80",
+      "image": "/uploads/event-1790225314424.jpg",
       "galleryImages": [
         "https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=800&q=80",
         "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=800&q=80"
@@ -148,13 +243,14 @@
       "status": "Completed",
       "attendeesCount": 220,
       "isPublished": true,
-      "createdAt": "2026-01-15T10:00:00.000Z"
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "attendees": "400+ Delegates"
     },
     {
       "id": "gyf-ev-2",
       "title": "STANDING WITH THE PEOPLE DURING THE 2014 FLOODS",
       "subheading": "Humanitarian Flood Relief, Rescue & Rehabilitation Operations",
-      "date": "September 2014",
+      "date": "September, 2014",
       "time": "Round-the-Clock Emergency Relief",
       "location": "Flood-Ravaged Districts Across Kashmir Valley",
       "category": "Disaster Relief & Healthcare Outreach",
@@ -163,9 +259,9 @@
       "banners": [
         "FLOOD RELIEF & HUMANITARIAN ACTION - GYF RESCUE TEAM"
       ],
-      "description": "During the devastating floods of 2014, when many families were stranded and homes were damaged, Global Youth Foundation (GYF) stepped forward to stand with the affected communities. Under the leadership of Touseef Raina, our team personally visited flood-affected areas to assess the ground situation and extend immediate support.",
+      "description": "During the devastating floods of 2014, when many families were stranded and homes were damaged, Global Youth Foundation (GYF) stepped forward to stand with the affected communities. Under the leadership of Touseef Raina, our team personally visited flood-affected areas to assess the ground situation and extend immediate support.\n\nThe images reflect those difficult days damaged houses, distressed families, and communities struggling to recover. GYF volunteers reached out to the affected households, listened to their concerns, and provided relief assistance and moral support at a time when it was needed most.\n\nOur visit was not just about distributing aid; it was about solidarity. We stood with families in their villages, shared their pain, and reassured them that they were not alone. Through coordinated efforts, community support, and volunteer engagement, GYF contributed to relief and rehabilitation efforts during one of the most challenging times in the region.\n\nThe 2014 floods remain a reminder of resilience, unity, and the importance of timely humanitarian response values that continue to guide our mission today.\n",
       "fullDetails": "During the devastating floods of 2014, when many families were stranded and homes were damaged, Global Youth Foundation (GYF) stepped forward to stand with the affected communities. Under the leadership of Touseef Raina, our team personally visited flood-affected areas to assess the ground situation and extend immediate support.\n\nThe images reflect those difficult days damaged houses, distressed families, and communities struggling to recover. GYF volunteers reached out to the affected households, listened to their concerns, and provided relief assistance and moral support at a time when it was needed most.\n\nOur visit was not just about distributing aid; it was about solidarity. We stood with families in their villages, shared their pain, and reassured them that they were not alone. Through coordinated efforts, community support, and volunteer engagement, GYF contributed to relief and rehabilitation efforts during one of the most challenging times in the region.\n\nThe 2014 floods remain a reminder of resilience, unity, and the importance of timely humanitarian response values that continue to guide our mission today.",
-      "image": "https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=1200&q=80",
+      "image": "/uploads/event-1790226806309.jpg",
       "galleryImages": [
         "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=800&q=80",
         "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&w=800&q=80",
@@ -200,13 +296,14 @@
       "status": "Completed",
       "attendeesCount": 540,
       "isPublished": true,
-      "createdAt": "2026-01-15T10:00:00.000Z"
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "attendees": "400+ Delegates"
     },
     {
       "id": "gyf-ev-3",
       "title": "FREE MEDICAL OUTREACH INITIATIVE BY GLOBAL YOUTH FOUNDATION",
       "subheading": "Grassroots Healthcare Camp & Free Medicine Distribution",
-      "date": "March 2016",
+      "date": "October 11, 2014",
       "time": "09:00 AM - 05:00 PM",
       "location": "Baramulla & Underserved Rural Sectors, J&K",
       "category": "Disaster Relief & Healthcare Outreach",
@@ -215,9 +312,9 @@
       "banners": [
         "GLOBAL YOUTH FOUNDATION - FREE MEDICAL CAMP - CHAIRMAN TOUSEEF RAINA"
       ],
-      "description": "In continuation of its commitment to social responsibility and community welfare, Global Youth Foundation successfully organized a Free Medical Camp aimed at making essential healthcare services accessible to underserved sections of society.",
+      "description": "responsibility and community welfare, Global Youth Foundation successfully organized a Free Medical Camp aimed at making essential healthcare services accessible to underserved sections of society. The initiative brought together qualified medical professionals, support staff, and dedicated youth volunteers who worked in coordination to provide consultations, basic health assessments, and free distribution of essential medicines.\n\nThe camp witnessed encouraging participation from local residents, particularly elderly citizens and economically disadvantaged families who often face challenges in accessing timely medical care. Beyond treatment, the program also emphasized awareness and preventive guidance, ensuring that beneficiaries received practical advice for maintaining their overall well-being.\n\nThis outreach reflects the core values upon which Global Youth Foundation was established—service, dignity, and social justice. By continuing such grassroots initiatives, the Foundation reaffirms its commitment to bridging gaps in essential services and strengthening community trust through meaningful and compassionate action.\n",
       "fullDetails": "In continuation of its commitment to social responsibility and community welfare, Global Youth Foundation successfully organized a Free Medical Camp aimed at making essential healthcare services accessible to underserved sections of society. The initiative brought together qualified medical professionals, support staff, and dedicated youth volunteers who worked in coordination to provide consultations, basic health assessments, and free distribution of essential medicines.\n\nThe camp witnessed encouraging participation from local residents, particularly elderly citizens and economically disadvantaged families who often face challenges in accessing timely medical care. Beyond treatment, the program also emphasized awareness and preventive guidance, ensuring that beneficiaries received practical advice for maintaining their overall well-being.\n\nThis outreach reflects the core values upon which Global Youth Foundation was established—service, dignity, and social justice. By continuing such grassroots initiatives, the Foundation reaffirms its commitment to bridging gaps in essential services and strengthening community trust through meaningful and compassionate action.",
-      "image": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=80",
+      "image": "/uploads/event-1790227042357.jpg",
       "galleryImages": [
         "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80",
         "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=800&q=80"
@@ -248,7 +345,8 @@
       "status": "Completed",
       "attendeesCount": 380,
       "isPublished": true,
-      "createdAt": "2026-01-15T10:00:00.000Z"
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "attendees": "400+ Delegates"
     },
     {
       "id": "gyf-ev-4",
@@ -263,9 +361,9 @@
       "banners": [
         "JAWAN AUR AWAM AMAN HAI MAKAAM"
       ],
-      "description": "The Global Youth Foundation recently organized a community engagement program under its ongoing campaign “Jawan Aur Awam Aman Hai Makaam,” reaffirming its commitment to fostering trust, harmony, and meaningful connections among young people and the wider community.",
+      "description": "The Global Youth Foundation recently organized a community engagement program under its ongoing campaign “Jawan Aur Awam Aman Hai Makaam,” reaffirming its commitment to fostering trust, harmony, and meaningful connections among young people and the wider community.\n\nThe program brought together school children, predominantly young girls along with several boys, who participated enthusiastically alongside GYF volunteers. Gathered under the Foundation’s banner in an open and welcoming setting, the children shared moments of joy, interaction, and collective spirit that reflected the essence of the campaign.\n\nA series of recreational activities formed the core of the event. Students took part in friendly running races, indoor games such as carom, and a light net game that encouraged teamwork and cooperation. The emphasis remained on participation, confidence building, and creating a safe space where children could express themselves freely while learning the values of unity and mutual respect.\n\nThrough such initiatives, GYF continues to promote peace building, community cohesion, and the empowerment of young girls. The Foundation extends its sincere appreciation to the participating children, dedicated volunteers, and local supporters whose cooperation made the program a success. These efforts remain central to GYF’s vision of nurturing a more harmonious and progressive society.\n",
       "fullDetails": "The Global Youth Foundation recently organized a community engagement program under its ongoing campaign “Jawan Aur Awam Aman Hai Makaam,” reaffirming its commitment to fostering trust, harmony, and meaningful connections among young people and the wider community.\n\nThe program brought together school children, predominantly young girls along with several boys, who participated enthusiastically alongside GYF volunteers. Gathered under the Foundation’s banner in an open and welcoming setting, the children shared moments of joy, interaction, and collective spirit that reflected the essence of the campaign.\n\nA series of recreational activities formed the core of the event. Students took part in friendly running races, indoor games such as carom, and a light net game that encouraged teamwork and cooperation. The emphasis remained on participation, confidence building, and creating a safe space where children could express themselves freely while learning the values of unity and mutual respect.\n\nThrough such initiatives, GYF continues to promote peace building, community cohesion, and the empowerment of young girls. The Foundation extends its sincere appreciation to the participating children, dedicated volunteers, and local supporters whose cooperation made the program a success. These efforts remain central to GYF’s vision of nurturing a more harmonious and progressive society.",
-      "image": "https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&w=1200&q=80",
+      "image": "/uploads/event-1790229940952.jpg",
       "galleryImages": [
         "https://images.unsplash.com/photo-1511988617509-a57c8a288659?auto=format&fit=crop&w=800&q=80",
         "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80"
@@ -292,13 +390,14 @@
       "status": "Completed",
       "attendeesCount": 160,
       "isPublished": true,
-      "createdAt": "2026-01-15T10:00:00.000Z"
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "attendees": "400+ Delegates"
     },
     {
       "id": "gyf-ev-5",
       "title": "GREEN TOMORROW BEGINS TODAY: PLANTATION DRIVE BY GLOBAL YOUTH FOUNDATION",
       "subheading": "School Environmental Stewardship & Native Sapling Plantation",
-      "date": "April 2018",
+      "date": "April 24, 2022",
       "time": "08:30 AM - 02:00 PM",
       "location": "Govt Higher Secondary Schools Across Kashmir",
       "category": "Environmental Stewardship & Climate Action",
@@ -307,9 +406,9 @@
       "banners": [
         "PLANTATION DRIVE - GLOBAL YOUTH FOUNDATION"
       ],
-      "description": "The Global Youth Foundation successfully conducted a plantation drive across various schools with the aim of promoting environmental awareness and encouraging young minds to take responsibility for a greener future.",
+      "description": "The Global Youth Foundation successfully conducted a plantation drive across various schools with the aim of promoting environmental awareness and encouraging young minds to take responsibility for a greener future. Students, teachers, and volunteers actively participated in planting saplings within school premises, symbolizing a collective commitment towards sustainability and ecological balance.\n\nThe initiative not only focused on increasing green cover but also on educating students about the importance of trees in combating climate change, improving air quality, and preserving biodiversity. The drive witnessed enthusiastic involvement from school authorities and children, making it a meaningful step toward nurturing environmental consciousness at the grassroots level.\n\nThrough such initiatives, the Global Youth Foundation continues to strengthen its mission of community development and youth engagement, inspiring the next generation to become responsible stewards of the environment.\n",
       "fullDetails": "The Global Youth Foundation successfully conducted a plantation drive across various schools with the aim of promoting environmental awareness and encouraging young minds to take responsibility for a greener future. Students, teachers, and volunteers actively participated in planting saplings within school premises, symbolizing a collective commitment towards sustainability and ecological balance.\n\nThe initiative not only focused on increasing green cover but also on educating students about the importance of trees in combating climate change, improving air quality, and preserving biodiversity. The drive witnessed enthusiastic involvement from school authorities and children, making it a meaningful step toward nurturing environmental consciousness at the grassroots level.\n\nThrough such initiatives, the Global Youth Foundation continues to strengthen its mission of community development and youth engagement, inspiring the next generation to become responsible stewards of the environment.",
-      "image": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1200&q=80",
+      "image": "/uploads/event-1790231100837.jpg",
       "galleryImages": [
         "https://images.unsplash.com/photo-1618477461853-cf6ed80faba5?auto=format&fit=crop&w=800&q=80",
         "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&w=800&q=80"
@@ -360,25 +459,26 @@
       "status": "Completed",
       "attendeesCount": 420,
       "isPublished": true,
-      "createdAt": "2026-01-15T10:00:00.000Z"
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "attendees": "400+ Delegates"
     },
     {
       "id": "gyf-ev-6",
       "title": "UNITED IN HOPE AND SOLIDARITY: CANDLELIGHT PROTEST BY GLOBAL YOUTH FOUNDATION",
       "subheading": "Peaceful Democratic Expression, Hope & Community Vigils",
-      "date": "November 2018",
+      "date": "August 28, 2013",
       "time": "05:30 PM - 08:30 PM",
       "location": "Public Town Square & Civic Grounds, Srinagar, J&K",
       "category": "Peace, Justice & Social Harmony",
-      "documentPage": 7,
+      "documentPage": 2,
       "layoutType": "quad",
       "banners": [
         "KASHMIRI YOUTH STANDS FOR PEACE & COMMUNAL HARMONY",
         "PEACE GIVES LIFE VIOLENCE ENDS LIFE"
       ],
-      "description": "The Global Youth Foundation organized a peaceful candlelight protest to express solidarity and raise awareness on important social and humanitarian concerns affecting the community.",
+      "description": "The Global Youth Foundation organized a peaceful candlelight protest to express solidarity and raise awareness on important social and humanitarian concerns affecting the community. The event brought together youth, community members, and civil society representatives who stood united with candles in their hands, symbolizing hope, justice, and collective responsibility. The atmosphere remained calm, dignified, and disciplined, reflecting the Foundation’s commitment to peaceful democratic expression and constructive engagement.\n\nSpeakers at the gathering emphasized the importance of unity, empathy, and active citizenship in addressing societal challenges. The protest served not only as a mark of remembrance and support but also as a platform to encourage dialogue, awareness, and positive action. Through this initiative, the Global Youth Foundation once again reaffirmed its mission to stand with the people, amplify their concerns, and promote social justice through peaceful and meaningful advocacy\n",
       "fullDetails": "The Global Youth Foundation organized a peaceful candlelight protest to express solidarity and raise awareness on important social and humanitarian concerns affecting the community. The event brought together youth, community members, and civil society representatives who stood united with candles in their hands, symbolizing hope, justice, and collective responsibility. The atmosphere remained calm, dignified, and disciplined, reflecting the Foundation’s commitment to peaceful democratic expression and constructive engagement.\n\nSpeakers at the gathering emphasized the importance of unity, empathy, and active citizenship in addressing societal challenges. The protest served not only as a mark of remembrance and support but also as a platform to encourage dialogue, awareness, and positive action. Through this initiative, the Global Youth Foundation once again reaffirmed its mission to stand with the people, amplify their concerns, and promote social justice through peaceful and meaningful advocacy.",
-      "image": "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=1200&q=80",
+      "image": "/uploads/event-1790225652276.jpg",
       "galleryImages": [
         "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80",
         "https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=800&q=80"
@@ -406,14 +506,15 @@
       "status": "Completed",
       "attendeesCount": 260,
       "isPublished": true,
-      "createdAt": "2026-01-15T10:00:00.000Z"
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "attendees": "400+ Delegates"
     },
     {
       "id": "gyf-ev-7",
       "title": "WOMEN EMPOWERMENT DAY COMMEMORATED WITH AWARENESS AND COMMUNITY ENGAGEMENT",
       "subheading": "Celebrating Strength, Education, Leadership & Self-Reliance",
-      "date": "March 8, 2019",
-      "time": "11:00 AM - 04:30 PM",
+      "date": "March 9, 2024",
+      "time": "11:00 AM - 04:00 PM",
       "location": "District Hall & Educational Auditoriums, J&K",
       "category": "Women & Girl Child Empowerment",
       "documentPage": 8,
@@ -421,9 +522,9 @@
       "banners": [
         "WOMEN EMPOWERMENT DAY - GLOBAL YOUTH FOUNDATION"
       ],
-      "description": "On the occasion of Women Empowerment Day, the Global Youth Foundation organized a meaningful program dedicated to recognizing the strength, resilience, and achievements of women in our community.",
+      "description": "On the occasion of Women Empowerment Day, the Global Youth Foundation organized a meaningful program dedicated to recognizing the strength, resilience, and achievements of women in our community. The event served as a platform to reaffirm our commitment to gender equality and to encourage young girls and women to pursue their aspirations with confidence and determination\n\nThe program brought together students, community members, and volunteers for a series of interactive sessions and discussions focused on education, leadership, and self reliance. Speakers highlighted the importance of equal opportunities, access to education, and the collective responsibility of society in creating a safe and supportive environment for women. Young participants actively engaged in conversations about their goals and the challenges they face, making the event both inspiring and impactful.\n",
       "fullDetails": "On the occasion of Women Empowerment Day, the Global Youth Foundation organized a meaningful program dedicated to recognizing the strength, resilience, and achievements of women in our community. The event served as a platform to reaffirm our commitment to gender equality and to encourage young girls and women to pursue their aspirations with confidence and determination\n\nThe program brought together students, community members, and volunteers for a series of interactive sessions and discussions focused on education, leadership, and self reliance. Speakers highlighted the importance of equal opportunities, access to education, and the collective responsibility of society in creating a safe and supportive environment for women. Young participants actively engaged in conversations about their goals and the challenges they face, making the event both inspiring and impactful.",
-      "image": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&q=80",
+      "image": "/uploads/event-1790229295828.jpg",
       "galleryImages": [
         "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80",
         "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=800&q=80"
@@ -449,13 +550,14 @@
       "status": "Completed",
       "attendeesCount": 210,
       "isPublished": true,
-      "createdAt": "2026-01-15T10:00:00.000Z"
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "attendees": "400+ Delegates"
     },
     {
       "id": "gyf-ev-8",
       "title": "TOWARDS A DRUG FREE SOCIETY: A STEP FORWARD BY GLOBAL YOUTH FOUNDATION",
       "subheading": "Substance Abuse Prevention, Awareness Cum Training on HIV Act 2017",
-      "date": "July 2019",
+      "date": "October 5, 2023",
       "time": "10:30 AM - 03:30 PM",
       "location": "District Conference Hall & Institutional Auditoriums, Baramulla",
       "category": "Substance Abuse Prevention & De-Addiction",
@@ -464,9 +566,9 @@
       "banners": [
         "AWARENESS CUM TRAINING ON HIV ACT - 2017 & DRUG DE-ADDICTION - GLOBAL YOUTH FOUNDATION (NGO)"
       ],
-      "description": "The Global Youth Foundation organized an awareness programme focused on addressing the growing concern of drug addiction and its impact on youth and society.",
+      "description": "The Global Youth Foundation organized an awareness programme focused on addressing the growing concern of drug addiction and its impact on youth and society. The initiative was aimed at educating young people about the physical, psychological, and social consequences of substance abuse, while encouraging a culture of prevention, responsibility, and informed decision making.\n\nThe programme brought together students, community members, and volunteers who participated in interactive sessions and open discussions. Resource persons highlighted the serious health risks associated with drug dependency and emphasized the importance of early awareness, strong family support, and positive peer influence. Participants were encouraged to speak openly about the challenges faced by young people and the pressures that can lead to harmful choices.\n\nThrough this initiative, the Foundation reinforced the message that awareness and community engagement are powerful tools in combating addiction. By promoting healthy lifestyles, constructive activities, and strong support systems, GYF continues to work toward safeguarding the future of our youth.\n",
       "fullDetails": "The Global Youth Foundation organized an awareness programme focused on addressing the growing concern of drug addiction and its impact on youth and society. The initiative was aimed at educating young people about the physical, psychological, and social consequences of substance abuse, while encouraging a culture of prevention, responsibility, and informed decision making.\n\nThe programme brought together students, community members, and volunteers who participated in interactive sessions and open discussions. Resource persons highlighted the serious health risks associated with drug dependency and emphasized the importance of early awareness, strong family support, and positive peer influence. Participants were encouraged to speak openly about the challenges faced by young people and the pressures that can lead to harmful choices.\n\nThrough this initiative, the Foundation reinforced the message that awareness and community engagement are powerful tools in combating addiction. By promoting healthy lifestyles, constructive activities, and strong support systems, GYF continues to work toward safeguarding the future of our youth.",
-      "image": "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80",
+      "image": "/uploads/event-1790227522317.jpg",
       "galleryImages": [
         "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80",
         "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80"
@@ -505,13 +607,14 @@
       "status": "Completed",
       "attendeesCount": 280,
       "isPublished": true,
-      "createdAt": "2026-01-15T10:00:00.000Z"
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "attendees": "400+ Delegates"
     },
     {
       "id": "gyf-ev-9",
       "title": "TREKKING PROGRAMME ORGANIZED BY GLOBAL YOUTH FOUNDATION",
       "subheading": "Endurance, Physical Fitness, Teamwork & Environmental Awareness",
-      "date": "September 2019",
+      "date": "June 23, 2023",
       "time": "06:00 AM - 05:00 PM",
       "location": "Alpine Trails, Ridges & Mountain Summits, Kashmir",
       "category": "Youth Leadership, Sports & Culture",
@@ -520,9 +623,9 @@
       "banners": [
         "TREKKING PROGRAMME - GLOBAL YOUTH FOUNDATION"
       ],
-      "description": "The Global Youth Foundation organized a trekking programme to promote physical fitness, confidence, and teamwork among youth. The initiative encouraged participants to engage in a healthy outdoor activity while strengthening bonds of cooperation and mutual support.",
+      "description": "The Global Youth Foundation organized a trekking programme to promote physical fitness, confidence, and teamwork among youth. The initiative encouraged participants to engage in a healthy outdoor activity while strengthening bonds of cooperation and mutual support.\n\nStudents and volunteers took part with great enthusiasm, demonstrating discipline and collective spirit throughout the trek. Along with building endurance, the programme also emphasized leadership, environmental awareness, and social responsibility.\n\nThrough such activities, GYF continues to provide positive platforms that empower young people and promote personal growth through meaningful engagement\n",
       "fullDetails": "The Global Youth Foundation organized a trekking programme to promote physical fitness, confidence, and teamwork among youth. The initiative encouraged participants to engage in a healthy outdoor activity while strengthening bonds of cooperation and mutual support.\n\nStudents and volunteers took part with great enthusiasm, demonstrating discipline and collective spirit throughout the trek. Along with building endurance, the programme also emphasized leadership, environmental awareness, and social responsibility.\n\nThrough such activities, GYF continues to provide positive platforms that empower young people and promote personal growth through meaningful engagement.",
-      "image": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80",
+      "image": "/uploads/event-1790230063152.jpg",
       "galleryImages": [
         "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
         "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80"
@@ -561,7 +664,8 @@
       "status": "Completed",
       "attendeesCount": 120,
       "isPublished": true,
-      "createdAt": "2026-01-15T10:00:00.000Z"
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "attendees": "400+ Delegates"
     },
     {
       "id": "gyf-ev-10",
@@ -576,9 +680,9 @@
       "banners": [
         "Global Youth Foundation presents ENCOUNTER OF POLEMICS in collaboration with Municipal Council Baramulla"
       ],
-      "description": "The Global Youth Foundation organized the “Encounter of Polemics” programme to promote constructive dialogue and critical thinking among youth. The event provided a respectful platform for students to express diverse viewpoints on important social issues.",
+      "description": "The Global Youth Foundation organized the “Encounter of Polemics” programme to promote constructive dialogue and critical thinking among youth. The event provided a respectful platform for students to express diverse viewpoints on important social issues.\n\nParticipants engaged confidently in thoughtful discussions, emphasizing mutual respect and evidence based arguments. Through this initiative, GYF continues to nurture informed, articulate, and responsible young citizens while strengthening the culture of healthy debate.\n",
       "fullDetails": "The Global Youth Foundation organized the “Encounter of Polemics” programme to promote constructive dialogue and critical thinking among youth. The event provided a respectful platform for students to express diverse viewpoints on important social issues.\n\nParticipants engaged confidently in thoughtful discussions, emphasizing mutual respect and evidence based arguments. Through this initiative, GYF continues to nurture informed, articulate, and responsible young citizens while strengthening the culture of healthy debate.",
-      "image": "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=1200&q=80",
+      "image": "/uploads/event-1790230257208.jpg",
       "galleryImages": [
         "https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&w=800&q=80",
         "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80"
@@ -609,24 +713,25 @@
       "status": "Completed",
       "attendeesCount": 190,
       "isPublished": true,
-      "createdAt": "2026-01-15T10:00:00.000Z"
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "attendees": "400+ Delegates"
     },
     {
       "id": "gyf-ev-11",
       "title": "SIGNATURE CAMPAIGN ORGANIZED BY GLOBAL YOUTH FOUNDATION",
       "subheading": "Civic Accountability, Peace & Participatory Democracy Drive",
-      "date": "May 2019",
-      "time": "10:00 AM - 05:00 PM",
-      "location": "Public Promenades & Campuses, Srinagar & Baramulla",
+      "date": "December 10, 2016",
+      "time": "10:00 AM - 04:00 PM",
+      "location": "Baramulla, Jammu and Kashmir",
       "category": "Peace, Justice & Social Harmony",
-      "documentPage": 12,
+      "documentPage": 7,
       "layoutType": "single",
       "banners": [
         "SIGNATURE CAMPAIGN FOR PEACE - GLOBAL YOUTH FOUNDATION"
       ],
-      "description": "The Global Youth Foundation conducted a signature campaign to raise public awareness and encourage collective responsibility toward important social issues. The initiative aimed to unite community members, especially youth, in expressing their support for positive change through a peaceful and participatory approach.",
+      "description": "The Global Youth Foundation conducted a signature campaign to raise public awareness and encourage collective responsibility toward important social issues. The initiative aimed to unite community members, especially youth, in expressing their support for positive change through a peaceful and participatory approach.\n\nStudents, volunteers, and local residents actively took part in the campaign by signing in solidarity with the cause. The programme reflected a shared commitment to awareness, accountability, and civic engagement.\n\nThrough such signature drives, GYF continues to promote active citizenship and community involvement, reinforcing the belief that meaningful change begins with informed and united voices.\n",
       "fullDetails": "The Global Youth Foundation conducted a signature campaign to raise public awareness and encourage collective responsibility toward important social issues. The initiative aimed to unite community members, especially youth, in expressing their support for positive change through a peaceful and participatory approach.\n\nStudents, volunteers, and local residents actively took part in the campaign by signing in solidarity with the cause. The programme reflected a shared commitment to awareness, accountability, and civic engagement.\n\nThrough such signature drives, GYF continues to promote active citizenship and community involvement, reinforcing the belief that meaningful change begins with informed and united voices.",
-      "image": "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1200&q=80",
+      "image": "/uploads/event-1790226105142.jpg",
       "galleryImages": [
         "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80",
         "https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=800&q=80"
@@ -642,13 +747,14 @@
       "status": "Completed",
       "attendeesCount": 650,
       "isPublished": true,
-      "createdAt": "2026-01-15T10:00:00.000Z"
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "attendees": "400+ Delegates"
     },
     {
       "id": "gyf-ev-12",
       "title": "PEACEFUL PROTESTS AGAINST INJUSTICE: A COLLECTIVE VOICE FOR CHANGE",
       "subheading": "Nonviolent Expression, Candlelight Gatherings & Peaceful Marches",
-      "date": "September 2020",
+      "date": "September 21, 2015",
       "time": "04:30 PM - 07:30 PM",
       "location": "Civic Corridors, Srinagar & Baramulla",
       "category": "Peace, Justice & Social Harmony",
@@ -657,9 +763,9 @@
       "banners": [
         "PEACE GIVES LIFE VIOLENCE ENDS LIFE - GLOBAL YOUTH FOUNDATION"
       ],
-      "description": "The Global Youth Foundation has consistently upheld the principle that peaceful and lawful expression is a vital pillar of a democratic society. In this spirit, the Foundation has organized and supported peaceful protests to raise awareness against various forms of injustice affecting communities.",
+      "description": "The Global Youth Foundation has consistently upheld the principle that peaceful and lawful expression is a vital pillar of a democratic society. In this spirit, the Foundation has organized and supported peaceful protests to raise awareness against various forms of injustice affecting communities.\n\nThese initiatives have included candlelight gatherings, silent marches, signature campaigns, and public awareness drives. Each programme was conducted with discipline and respect, ensuring that the message of justice, accountability, and reform was conveyed constructively. Youth participation remained central, reflecting their growing commitment to standing against inequality and unfair practices through lawful means.\n\nBy advocating nonviolence, dialogue, and civic responsibility, GYF continues to encourage communities to raise their voices in a manner that promotes harmony while seeking positive and meaningful change\n",
       "fullDetails": "The Global Youth Foundation has consistently upheld the principle that peaceful and lawful expression is a vital pillar of a democratic society. In this spirit, the Foundation has organized and supported peaceful protests to raise awareness against various forms of injustice affecting communities.\n\nThese initiatives have included candlelight gatherings, silent marches, signature campaigns, and public awareness drives. Each programme was conducted with discipline and respect, ensuring that the message of justice, accountability, and reform was conveyed constructively. Youth participation remained central, reflecting their growing commitment to standing against inequality and unfair practices through lawful means.\n\nBy advocating nonviolence, dialogue, and civic responsibility, GYF continues to encourage communities to raise their voices in a manner that promotes harmony while seeking positive and meaningful change.",
-      "image": "https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=1200&q=80",
+      "image": "/uploads/event-1790226372702.jpg",
       "galleryImages": [
         "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=800&q=80",
         "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80"
@@ -686,13 +792,14 @@
       "status": "Completed",
       "attendeesCount": 310,
       "isPublished": true,
-      "createdAt": "2026-01-15T10:00:00.000Z"
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "attendees": "400+ Delegates"
     },
     {
       "id": "gyf-ev-13",
       "title": "Promoting Women’s Hygiene and Dignity: Awareness Programme and Distribution Drive",
       "subheading": "“Wings of Hope” Menstrual Health Education & Sanitary Pad Distribution",
-      "date": "October 2020",
+      "date": "March 21, 2023",
       "time": "11:00 AM - 04:00 PM",
       "location": "Rural Villages & Community Centers, North Kashmir",
       "category": "Disaster Relief & Healthcare Outreach",
@@ -701,9 +808,9 @@
       "banners": [
         "GLOBAL YOUTH FOUNDATION PRESENTS WINGS OF HOPE"
       ],
-      "description": "The Global Youth Foundation organized a dedicated programme on women’s hygiene aimed at spreading awareness about menstrual health and breaking the stigma surrounding it.",
+      "description": "The Global Youth Foundation organized a dedicated programme on women’s hygiene aimed at spreading awareness about menstrual health and breaking the stigma surrounding it. The initiative focused on educating young girls and women about the importance of proper hygiene practices, health awareness, and self-care.\n\nAs part of the programme, sanitary napkins were distributed among participants to ensure access to safe and hygienic menstrual products. The session included informative discussions on menstrual health management, the importance of cleanliness, and addressing common misconceptions.\n\nThrough this effort, GYF reaffirmed its commitment to safeguarding the health, dignity, and confidence of women and girls. The Foundation continues to undertake such initiatives to promote awareness, accessibility, and empowerment within the community.\n",
       "fullDetails": "The Global Youth Foundation organized a dedicated programme on women’s hygiene aimed at spreading awareness about menstrual health and breaking the stigma surrounding it. The initiative focused on educating young girls and women about the importance of proper hygiene practices, health awareness, and self-care.\n\nAs part of the programme, sanitary napkins were distributed among participants to ensure access to safe and hygienic menstrual products. The session included informative discussions on menstrual health management, the importance of cleanliness, and addressing common misconceptions.\n\nThrough this effort, GYF reaffirmed its commitment to safeguarding the health, dignity, and confidence of women and girls. The Foundation continues to undertake such initiatives to promote awareness, accessibility, and empowerment within the community.",
-      "image": "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&q=80",
+      "image": "/uploads/event-1790227202732.jpg",
       "galleryImages": [
         "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80",
         "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=800&q=80"
@@ -734,13 +841,14 @@
       "status": "Completed",
       "attendeesCount": 390,
       "isPublished": true,
-      "createdAt": "2026-01-15T10:00:00.000Z"
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "attendees": "400+ Delegates"
     },
     {
       "id": "gyf-ev-14",
       "title": "DRUG DE ADDICTION CAMP ORGANIZED IN COLLABORATION WITH JK IMAM ASSOCIATION",
       "subheading": "Faith Leadership, Youth Counseling & Moral Guidance Coalition",
-      "date": "June 2021",
+      "date": "September 19, 2021",
       "time": "09:30 AM - 03:00 PM",
       "location": "Central Historic Mosque & Assembly Grounds, J&K",
       "category": "Substance Abuse Prevention & De-Addiction",
@@ -749,9 +857,9 @@
       "banners": [
         "Drug De-Addiction Programme - Organized By JK IMAM ASSOCIATION - Just Say No"
       ],
-      "description": "The Global Youth Foundation, in collaboration with the JK Imam Association, organized a Drug De Addiction Camp aimed at addressing the growing concern of substance abuse among youth.",
+      "description": "The Global Youth Foundation, in collaboration with the JK Imam Association, organized a Drug De Addiction Camp aimed at addressing the growing concern of substance abuse among youth. The initiative focused on awareness, counseling, and community engagement to promote a healthier and drug free society.\n\nThe camp brought together community members, students, and volunteers who participated in informative sessions highlighting the physical, psychological, and social consequences of drug dependency. Resource persons emphasized the importance of early intervention, family support, and moral guidance in preventing addiction and supporting recovery.\n\nThrough this collaborative effort, both organizations reaffirmed their shared commitment to safeguarding the well-being of young people and encouraging positive lifestyle choices. The programme served as a meaningful step toward building awareness, strengthening community responsibility, and promoting long term social reform.\n",
       "fullDetails": "The Global Youth Foundation, in collaboration with the JK Imam Association, organized a Drug De Addiction Camp aimed at addressing the growing concern of substance abuse among youth. The initiative focused on awareness, counseling, and community engagement to promote a healthier and drug free society.\n\nThe camp brought together community members, students, and volunteers who participated in informative sessions highlighting the physical, psychological, and social consequences of drug dependency. Resource persons emphasized the importance of early intervention, family support, and moral guidance in preventing addiction and supporting recovery.\n\nThrough this collaborative effort, both organizations reaffirmed their shared commitment to safeguarding the well-being of young people and encouraging positive lifestyle choices. The programme served as a meaningful step toward building awareness, strengthening community responsibility, and promoting long term social reform.",
-      "image": "https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1200&q=80",
+      "image": "/uploads/event-1790228936269.jpg",
       "galleryImages": [
         "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80",
         "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80"
@@ -770,13 +878,14 @@
       "status": "Completed",
       "attendeesCount": 340,
       "isPublished": true,
-      "createdAt": "2026-01-15T10:00:00.000Z"
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "attendees": "400+ Delegates"
     },
     {
       "id": "gyf-ev-15",
       "title": "TALENT HUNT PROGRAMME: CELEBRATING YOUTH POTENTIAL",
       "subheading": "“Kashmir’s Got Talent” Auditions & Cultural Showcase",
-      "date": "September 2021",
+      "date": "August1, 2018",
       "time": "10:00 AM - 05:00 PM",
       "location": "Lawn Amphitheatre & Open-Air Stage, Srinagar",
       "category": "Youth Leadership, Sports & Culture",
@@ -785,9 +894,9 @@
       "banners": [
         "AK Productions Presents KASHMIR’S GOT TALENT - AUDITIONS"
       ],
-      "description": "The Global Youth Foundation organized a dynamic Talent Hunt Programme aimed at discovering and encouraging the diverse abilities of young individuals within the community.",
+      "description": "The Global Youth Foundation organized a dynamic Talent Hunt Programme aimed at discovering and encouraging the diverse abilities of young individuals within the community. The event provided a vibrant platform for participants to showcase their skills in areas such as singing, poetry, public speaking, art, and cultural performances.\n\nStudents participated with great enthusiasm and confidence, presenting their talents before an encouraging audience of peers, mentors, and volunteers. The programme not only highlighted creativity and expression but also strengthened self-belief and stage confidence among participants.\n\nThrough such initiatives, GYF continues to promote holistic development by nurturing creativity, leadership, and positive engagement among youth. The Talent Hunt Programme reflected the Foundation’s commitment to empowering young voices and celebrating their unique potential.\n",
       "fullDetails": "The Global Youth Foundation organized a dynamic Talent Hunt Programme aimed at discovering and encouraging the diverse abilities of young individuals within the community. The event provided a vibrant platform for participants to showcase their skills in areas such as singing, poetry, public speaking, art, and cultural performances.\n\nStudents participated with great enthusiasm and confidence, presenting their talents before an encouraging audience of peers, mentors, and volunteers. The programme not only highlighted creativity and expression but also strengthened self-belief and stage confidence among participants.\n\nThrough such initiatives, GYF continues to promote holistic development by nurturing creativity, leadership, and positive engagement among youth. The Talent Hunt Programme reflected the Foundation’s commitment to empowering young voices and celebrating their unique potential.",
-      "image": "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&q=80",
+      "image": "/uploads/event-1790230858737.jpg",
       "galleryImages": [
         "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
         "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=800&q=80"
@@ -814,13 +923,14 @@
       "status": "Completed",
       "attendeesCount": 275,
       "isPublished": true,
-      "createdAt": "2026-01-15T10:00:00.000Z"
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "attendees": "400+ Delegates"
     },
     {
       "id": "gyf-ev-16",
       "title": "EMPOWERING YOUNG GIRLS THROUGH DISCIPLINE AND CONFIDENCE",
       "subheading": "4th State Budokan Karate Championship & Self-Defense Training",
-      "date": "October 2021",
+      "date": "April 29, 2018",
       "time": "09:00 AM - 04:30 PM",
       "location": "Indoor Sports Complex & Outdoor Greens, Baramulla",
       "category": "Women & Girl Child Empowerment",
@@ -829,9 +939,9 @@
       "banners": [
         "4TH STATE BUDOKAN KARATE CHAMPIONSHIP 2018-2019"
       ],
-      "description": "The Global Youth Foundation remains committed to promoting confidence, self-discipline, and physical fitness among young girls through constructive engagement programmes.",
+      "description": "The Global Youth Foundation remains committed to promoting confidence, self-discipline, and physical fitness among young girls through constructive engagement programmes. The moment captured reflects a group of dedicated participants dressed in martial arts uniforms, symbolizing strength, focus, and determination.\n\nGuided by Foundation members, these young girls are not only learning self-defense techniques but also developing resilience, teamwork, and self-belief. Such initiatives aim to create a safe and empowering environment where girls can build both physical capability and mental confidence.\n\nBy encouraging participation in structured activities like martial arts training, GYF continues to work toward nurturing strong, capable, and self-assured young individuals who are prepared to face challenges with courage and discipline.\n",
       "fullDetails": "The Global Youth Foundation remains committed to promoting confidence, self-discipline, and physical fitness among young girls through constructive engagement programmes. The moment captured reflects a group of dedicated participants dressed in martial arts uniforms, symbolizing strength, focus, and determination.\n\nGuided by Foundation members, these young girls are not only learning self-defense techniques but also developing resilience, teamwork, and self-belief. Such initiatives aim to create a safe and empowering environment where girls can build both physical capability and mental confidence.\n\nBy encouraging participation in structured activities like martial arts training, GYF continues to work toward nurturing strong, capable, and self-assured young individuals who are prepared to face challenges with courage and discipline.",
-      "image": "https://images.unsplash.com/photo-1555597673-b21d5c935865?auto=format&fit=crop&w=1200&q=80",
+      "image": "/uploads/event-1790229662448.jpg",
       "galleryImages": [
         "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80",
         "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80"
@@ -862,13 +972,14 @@
       "status": "Completed",
       "attendeesCount": 185,
       "isPublished": true,
-      "createdAt": "2026-01-15T10:00:00.000Z"
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "attendees": "400+ Delegates"
     },
     {
       "id": "gyf-ev-17",
       "title": "COMMUNITY DIALOGUE WITH RELIGIOUS LEADERS ON DE RADICALIZATION AND SOCIAL HARMONY",
       "subheading": "Consultative Conference on Tolerance, Guidance & Social Harmony at Hotel Lalrukh",
-      "date": "December 2021",
+      "date": "May 1, 2016",
       "time": "10:30 AM - 03:30 PM",
       "location": "Hotel Lalrukh Conference Hall, Srinagar, J&K",
       "category": "Peace, Justice & Social Harmony",
@@ -877,9 +988,9 @@
       "banners": [
         "HOTEL LALRUKH - CONSULTATIVE DIALOGUE ON HARMONY"
       ],
-      "description": "The Global Youth Foundation organized a consultative programme with respected Imams and religious scholars to address the important issue of de radicalization and the promotion of peace within society.",
+      "description": "The Global Youth Foundation organized a consultative programme with respected Imams and religious scholars to address the important issue of de radicalization and the promotion of peace within society.\n\nThe discussion centered on the collective responsibility of community leaders in guiding youth toward constructive and lawful paths. The Imams highlighted the core values of faith rooted in compassion, tolerance, and coexistence, while emphasizing the need to prevent misinterpretations that can negatively influence young minds.\n\nParticipants stressed the importance of education, moral guidance, and strong community engagement in countering extremist narratives and fostering balanced thinking. The programme concluded with a shared commitment to strengthening social harmony and ensuring that religious institutions continue to serve as pillars of unity and positive guidance.\n\nThrough such initiatives, GYF continues to work toward building an informed, peaceful, and resilient society.\n",
       "fullDetails": "The Global Youth Foundation organized a consultative programme with respected Imams and religious scholars to address the important issue of de radicalization and the promotion of peace within society.\n\nThe discussion centered on the collective responsibility of community leaders in guiding youth toward constructive and lawful paths. The Imams highlighted the core values of faith rooted in compassion, tolerance, and coexistence, while emphasizing the need to prevent misinterpretations that can negatively influence young minds.\n\nParticipants stressed the importance of education, moral guidance, and strong community engagement in countering extremist narratives and fostering balanced thinking. The programme concluded with a shared commitment to strengthening social harmony and ensuring that religious institutions continue to serve as pillars of unity and positive guidance.\n\nThrough such initiatives, GYF continues to work toward building an informed, peaceful, and resilient society.",
-      "image": "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1200&q=80",
+      "image": "/uploads/event-1790226627698.jpg",
       "galleryImages": [
         "https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=800&q=80",
         "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80"
@@ -902,55 +1013,11 @@
       "status": "Completed",
       "attendeesCount": 140,
       "isPublished": true,
-      "createdAt": "2026-01-15T10:00:00.000Z"
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "attendees": "400+ Delegates"
     }
   ],
-  "contactMessages": [
-    {
-      "id": "msg-01",
-      "name": "Suhail Bashir",
-      "email": "suhail.bashir@example.com",
-      "phone": "+91 94190 44211",
-      "subject": "Youth Leadership Workshop Collaboration",
-      "message": "Greetings GYF Team, We are organizing an inter-college youth conclave next month and would love to collaborate with GYF for a keynote and leadership training session.",
-      "isRead": false,
-      "status": "unread",
-      "createdAt": "2026-02-28 10:30 AM"
-    },
-    {
-      "id": "msg-02",
-      "name": "Dr. Mehak Qureshi",
-      "email": "mehak.q@kashmiruniv.edu",
-      "phone": "+91 98581 12345",
-      "subject": "Legal Literacy Camp Partnership",
-      "message": "Hello, our department of law is interested in partnering with Global Youth Foundation for a free community legal aid and human rights awareness camp in rural Baramulla.",
-      "isRead": false,
-      "status": "unread",
-      "createdAt": "2026-02-27 03:45 PM"
-    },
-    {
-      "id": "msg-03",
-      "name": "Imran Farooq",
-      "email": "imran.f@gmail.com",
-      "phone": "+91 97970 99881",
-      "subject": "Donation Receipt & Tax Certificate Query",
-      "message": "Dear Secretariat, I made a transfer of INR 5,000 yesterday towards the Winter Warmth Relief Drive. Could you please share the official stamped 80G receipt?",
-      "isRead": true,
-      "status": "read",
-      "createdAt": "2026-02-25 11:15 AM"
-    },
-    {
-      "id": "msg-04",
-      "name": "Fariha Jan",
-      "email": "fariha.youth@outlook.com",
-      "phone": "+91 91035 77665",
-      "subject": "Volunteer Chapter in South Kashmir",
-      "message": "Respected Team, We have a group of 20 college students in Anantnag eager to establish a local GYF youth club and environmental drive chapter. How can we get affiliated?",
-      "isRead": true,
-      "status": "read",
-      "createdAt": "2026-02-24 02:10 PM"
-    }
-  ],
+  "contactMessages": [],
   "adminProfile": {
     "fullName": "Executive Administrator",
     "email": "admin@gyf.org",

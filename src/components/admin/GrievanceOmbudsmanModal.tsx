@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { 
-  ShieldCheck, 
-  MapPin, 
-  Clock, 
-  Calendar, 
-  User, 
-  CheckCircle2, 
-  AlertCircle, 
-  UserCheck, 
+import {
+  ShieldCheck,
+  MapPin,
+  Clock,
+  Calendar,
+  User,
+  CheckCircle2,
+  AlertCircle,
+  UserCheck,
   ArrowRight,
   FileText,
   Mail,
@@ -97,12 +97,11 @@ export const GrievanceOmbudsmanModal: React.FC<GrievanceOmbudsmanModalProps> = (
                     await onUpdatePriority(grievance.id, newP);
                   }
                 }}
-                className={`px-2.5 py-1 rounded-full text-xs font-black uppercase tracking-wider cursor-pointer border focus:outline-none focus:ring-2 ${
-                  grievance.priority === 'Urgent' ? 'bg-rose-600 text-white border-rose-400 focus:ring-rose-400' :
-                  grievance.priority === 'High' ? 'bg-amber-600 text-white border-amber-400 focus:ring-amber-400' :
-                  grievance.priority === 'Medium' ? 'bg-sky-600 text-white border-sky-400 focus:ring-sky-400' :
-                  'bg-slate-700 text-slate-200 border-slate-600 focus:ring-slate-400'
-                }`}
+                className={`px-2.5 py-1 rounded-full text-xs font-black uppercase tracking-wider cursor-pointer border focus:outline-none focus:ring-2 ${grievance.priority === 'Urgent' ? 'bg-rose-600 text-white border-rose-400 focus:ring-rose-400' :
+                    grievance.priority === 'High' ? 'bg-amber-600 text-white border-amber-400 focus:ring-amber-400' :
+                      grievance.priority === 'Medium' ? 'bg-sky-600 text-white border-sky-400 focus:ring-sky-400' :
+                        'bg-slate-700 text-slate-200 border-slate-600 focus:ring-slate-400'
+                  }`}
                 title="Change Grievance Priority"
               >
                 <option value="Low" className="bg-slate-900 text-white">LOW PRIORITY</option>
@@ -343,8 +342,10 @@ export const GrievanceOmbudsmanModal: React.FC<GrievanceOmbudsmanModalProps> = (
             <button
               type="button"
               onClick={() => {
-                onDeleteComplaint(grievance.id);
-                onClose();
+                if (window.confirm('Are you certain you want to permanently delete this grievance docket? This action cannot be undone.')) {
+                  onDeleteComplaint(grievance.id);
+                  onClose();
+                }
               }}
               className="text-xs font-bold text-rose-600 hover:text-rose-800"
             >

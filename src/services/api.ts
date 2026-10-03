@@ -1,18 +1,18 @@
 import { supabase, isSupabaseConfigured } from './supabase';
-import { 
-  UserAccount, 
-  VolunteerPermissions, 
-  NewsItem, 
-  DonationRecord, 
-  GrievanceRecord, 
-  ComplaintTimelineEvent, 
-  ComplaintStatus, 
-  MembershipRecord, 
-  EventItem, 
-  Program, 
-  FAQItem, 
-  ChatbotQueryLog, 
-  ActivityLog, 
+import {
+  UserAccount,
+  VolunteerPermissions,
+  NewsItem,
+  DonationRecord,
+  GrievanceRecord,
+  ComplaintTimelineEvent,
+  ComplaintStatus,
+  MembershipRecord,
+  EventItem,
+  Program,
+  FAQItem,
+  ChatbotQueryLog,
+  ActivityLog,
   UserRole,
   ContactMessage,
   VolunteerProgramAssignment,
@@ -23,13 +23,13 @@ import {
   WebsiteContent,
   LeadershipMember
 } from '../types';
-import { 
-  PROGRAMS as INITIAL_PROGRAMS, 
-  EVENTS as INITIAL_EVENTS, 
-  NEWS_ITEMS as INITIAL_BLOGS, 
-  INITIAL_COMPLAINTS, 
+import {
+  PROGRAMS as INITIAL_PROGRAMS,
+  EVENTS as INITIAL_EVENTS,
+  NEWS_ITEMS as INITIAL_BLOGS,
+  INITIAL_COMPLAINTS,
   FAQS as INITIAL_FAQS,
-  INITIAL_CONTACT_MESSAGES 
+  INITIAL_CONTACT_MESSAGES
 } from '../data/mockData';
 
 // Local storage persistent fallback keys
@@ -37,7 +37,7 @@ const STORAGE_KEYS = {
   USERS: 'gyf_db_users_v2',
   VOLUNTEER_PERMS: 'gyf_db_volunteer_perms_v2',
   BLOGS: 'gyf_db_blogs_v2',
-  DONATIONS: 'gyf_db_donations_v2',
+  DONATIONS: 'gyf_db_donations_v3',
   GRIEVANCES: 'gyf_db_grievances_v2',
   EVENTS: 'gyf_db_events_v3',
   EVENT_REGISTRATIONS: 'gyf_db_event_registrations_v2',
@@ -313,47 +313,8 @@ export const SEED_VOLUNTEER_PERMS: Record<string, VolunteerPermissions> = {
   }
 };
 
-const SEED_DONATIONS: DonationRecord[] = [
-  {
-    id: 'don-2026-001',
-    donorName: 'Dr. Rafiq Ahmad Qadri',
-    email: 'rafiq.qadri@example.com',
-    phone: '+91 94190 00112',
-    amount: 15000,
-    currency: 'INR',
-    donationDate: '2026-02-20',
-    paymentStatus: 'Verified',
-    transactionId: 'UTR-JAKB-2901928371',
-    notes: 'Contribution towards 2026 Youth Fellowship Study Material & Kits',
-    createdAt: '2026-02-20T10:15:00Z'
-  },
-  {
-    id: 'don-2026-002',
-    donorName: 'Kashmir Valley Green Supporters',
-    email: 'green.supporters@example.org',
-    phone: '+91 98581 22334',
-    amount: 25000,
-    currency: 'INR',
-    donationDate: '2026-02-24',
-    paymentStatus: 'Verified',
-    transactionId: 'UTR-HDFC-9918237123',
-    notes: 'Support for Lake Cleanup drives and native sapling tree purchases',
-    createdAt: '2026-02-24T14:30:00Z'
-  },
-  {
-    id: 'don-2026-003',
-    donorName: 'Anonymous Community Donor',
-    email: 'citizen.donor@gmail.com',
-    phone: '+91 91035 00000',
-    amount: 5000,
-    currency: 'INR',
-    donationDate: '2026-02-27',
-    paymentStatus: 'Pending Verification',
-    transactionId: 'UTR-SBIN-8472910482',
-    notes: 'Winter Warmth Ration Kits distribution fund',
-    createdAt: '2026-02-27T09:00:00Z'
-  }
-];
+// No seed donations — start with a clean slate
+const SEED_DONATIONS: DonationRecord[] = [];
 
 const SEED_MEMBERSHIPS: MembershipRecord[] = [
   {
@@ -756,7 +717,7 @@ export function initSeedDataIfEmpty(): void {
     let dirty = false;
 
     // Check for corrupt admin accounts
-    const adminIdx = currentUsers.findIndex(u => u.email?.toLowerCase() === 'admin@gyf.org');
+    const adminIdx = currentUsers.findIndex(u => u.id === 'usr-gyf-admin-01' || u.email?.toLowerCase() === 'admin@gyf.org');
     if (adminIdx !== -1) {
       if (currentUsers[adminIdx].role !== 'admin' || currentUsers[adminIdx].membershipStatus !== 'Admin') {
         currentUsers[adminIdx] = {
@@ -766,7 +727,7 @@ export function initSeedDataIfEmpty(): void {
           role: 'admin',
           membershipStatus: 'Admin',
           roleTitle: 'Secretariat Director',
-          fullName: 'Executive Administrator',
+          fullName: currentUsers[adminIdx].fullName || 'Executive Administrator',
           isActive: true
         };
         dirty = true;
@@ -901,8 +862,8 @@ export const api = {
             ...SEED_USERS[0],
             ...users[adminIdx],
             id: 'usr-gyf-admin-01',
-            email: 'admin@gyf.org',
-            fullName: 'Executive Administrator',
+            email: users[adminIdx].email || 'admin@gyf.org',
+            fullName: users[adminIdx].fullName || 'Executive Administrator',
             role: 'admin',
             membershipStatus: 'Admin',
             roleTitle: 'Secretariat Director',
@@ -1091,8 +1052,8 @@ export const api = {
   volunteers: {
     async getAll(): Promise<UserAccount[]> {
       const users = await api.users.getAll();
-      return users.filter(u => 
-        (u.role as string) === 'volunteer' || 
+      return users.filter(u =>
+        (u.role as string) === 'volunteer' ||
         u.membershipStatus === 'Volunteer' ||
         (u.roleTitle?.toLowerCase().includes('volunteer') ?? false)
       );
@@ -1290,7 +1251,7 @@ export const api = {
           }));
         }
       }
-      return getLocal<DonationRecord[]>(STORAGE_KEYS.DONATIONS, SEED_DONATIONS);
+      return getLocal<DonationRecord[]>(STORAGE_KEYS.DONATIONS, []);
     },
 
     async create(donationData: Omit<DonationRecord, 'id' | 'createdAt'>): Promise<DonationRecord> {
@@ -1301,7 +1262,7 @@ export const api = {
         createdAt: new Date().toISOString()
       };
 
-      const list = getLocal<DonationRecord[]>(STORAGE_KEYS.DONATIONS, SEED_DONATIONS);
+      const list = getLocal<DonationRecord[]>(STORAGE_KEYS.DONATIONS, []);
       list.unshift(newDonation);
       setLocal(STORAGE_KEYS.DONATIONS, list);
 
@@ -1322,7 +1283,7 @@ export const api = {
     },
 
     async updateStatus(id: string, status: 'Verified' | 'Pending Verification' | 'Failed'): Promise<boolean> {
-      const list = getLocal<DonationRecord[]>(STORAGE_KEYS.DONATIONS, SEED_DONATIONS);
+      const list = getLocal<DonationRecord[]>(STORAGE_KEYS.DONATIONS, []);
       const don = list.find(d => d.id === id);
       if (!don) return false;
       don.paymentStatus = status;
@@ -1330,6 +1291,18 @@ export const api = {
 
       if (isSupabaseConfigured && supabase) {
         await supabase.from('donations').update({ payment_status: status }).eq('id', id);
+      }
+      return true;
+    },
+
+    async delete(id: string): Promise<boolean> {
+      const list = getLocal<DonationRecord[]>(STORAGE_KEYS.DONATIONS, []);
+      const filtered = list.filter(d => d.id !== id);
+      if (filtered.length === list.length) return false;
+      setLocal(STORAGE_KEYS.DONATIONS, filtered);
+
+      if (isSupabaseConfigured && supabase) {
+        await supabase.from('donations').delete().eq('id', id);
       }
       return true;
     }
@@ -1553,7 +1526,7 @@ export const api = {
 
       const now = new Date();
       const stamp = `${now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} • ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
-      
+
       record.timeline.push({
         status: 'Assigned',
         date: stamp,
@@ -2333,9 +2306,9 @@ export const api = {
     },
 
     async updateProgramProgress(
-      assignmentId: string, 
-      volunteerId: string, 
-      progress: number, 
+      assignmentId: string,
+      volunteerId: string,
+      progress: number,
       newNote?: string,
       volunteerName?: string
     ): Promise<VolunteerProgramAssignment | null> {
@@ -2399,10 +2372,10 @@ export const api = {
     },
 
     async updateEventStatus(
-      assignmentId: string, 
-      volunteerId: string, 
-      status: 'Assigned' | 'In Progress' | 'Completed', 
-      isCompleted: boolean, 
+      assignmentId: string,
+      volunteerId: string,
+      status: 'Assigned' | 'In Progress' | 'Completed',
+      isCompleted: boolean,
       newNote?: string,
       volunteerName?: string
     ): Promise<VolunteerEventAssignment | null> {
@@ -2602,7 +2575,7 @@ export const api = {
     // 12.6 Profile & Hours
     async updateProfile(volunteerId: string, updates: Partial<UserAccount>): Promise<UserAccount | null> {
       if (!volunteerId) throw new Error('Unauthorized volunteer request');
-      
+
       // CRITICAL: Strip role or permission updates from volunteer payload
       const safeUpdates: Partial<UserAccount> = {
         fullName: updates.fullName,
@@ -2731,7 +2704,7 @@ export const api = {
       const vol = users.find(u => u.id === volunteerId);
 
       const all = getLocal<VolunteerProgramAssignment[]>(STORAGE_KEYS.VOLUNTEER_PROGRAMS, SEED_VOLUNTEER_PROGRAMS);
-      
+
       const newAssignment: VolunteerProgramAssignment = {
         id: `vpa-${Date.now()}`,
         volunteerId,
@@ -2781,7 +2754,7 @@ export const api = {
       const vol = users.find(u => u.id === volunteerId);
 
       const all = getLocal<VolunteerEventAssignment[]>(STORAGE_KEYS.VOLUNTEER_EVENTS, SEED_VOLUNTEER_EVENTS);
-      
+
       const newAssignment: VolunteerEventAssignment = {
         id: `vea-${Date.now()}`,
         volunteerId,

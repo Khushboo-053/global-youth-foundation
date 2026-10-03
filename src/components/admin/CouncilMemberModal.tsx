@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  X, 
-  Users, 
-  Upload, 
-  Sparkles, 
-  Check, 
+import {
+  X,
+  Users,
+  Upload,
+  Sparkles,
+  Check,
   Image as ImageIcon,
-  UserCheck
+  UserCheck,
+  Loader2
 } from 'lucide-react';
 import { LeadershipMember } from '../../types';
+import { DragDropImageUpload } from './DragDropImageUpload';
 
 interface CouncilMemberModalProps {
   isOpen: boolean;
@@ -112,7 +114,7 @@ export const CouncilMemberModal: React.FC<CouncilMemberModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
       <div className="w-full max-w-2xl bg-white rounded-3xl border border-slate-200 shadow-2xl overflow-hidden my-8">
-        
+
         {/* Header */}
         <div className="bg-[#2C3292] text-white p-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -139,13 +141,13 @@ export const CouncilMemberModal: React.FC<CouncilMemberModalProps> = ({
 
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
-          
+
           {/* Card Preview */}
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-2">
               Live Card Preview (How it appears on About Page)
             </span>
-            
+
             <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col sm:flex-row items-center gap-4">
               <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-100 shrink-0 border-2 border-teal-800/20 shadow-xs">
                 <img
@@ -245,39 +247,12 @@ export const CouncilMemberModal: React.FC<CouncilMemberModalProps> = ({
           </div>
 
           {/* Profile Photo Selection */}
-          <div className="space-y-3 pt-1">
-            <label className="text-xs font-bold text-slate-700 block">
-              Profile Photo (URL, File Upload, or Preset)
-            </label>
-
-            {/* Custom URL Input */}
-            <div className="space-y-1">
-              <div className="relative">
-                <input
-                  type="url"
-                  value={image}
-                  onChange={(e) => setImage(e.target.value)}
-                  placeholder="https://images.unsplash.com/photo-..."
-                  className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono text-slate-700 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-800"
-                />
-                <ImageIcon className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-              </div>
-            </div>
-
-            {/* File Upload Button */}
-            <div className="flex items-center gap-3">
-              <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer transition-colors">
-                <Upload className="w-3.5 h-3.5 text-slate-500" />
-                <span>Upload Photo File</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileUpload}
-                  className="hidden"
-                />
-              </label>
-              <span className="text-[11px] text-slate-400">JPG, PNG or WebP up to 3MB</span>
-            </div>
+          <div className="space-y-4">
+            <DragDropImageUpload
+              label="Profile Photo (Upload or drag and drop)"
+              value={image}
+              onChange={(url) => setImage(url)}
+            />
 
             {/* Preset Avatars Selection */}
             <div>
@@ -290,9 +265,8 @@ export const CouncilMemberModal: React.FC<CouncilMemberModalProps> = ({
                     key={idx}
                     type="button"
                     onClick={() => setImage(preset.url)}
-                    className={`relative w-12 h-12 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
-                      image === preset.url ? 'border-teal-800 ring-2 ring-teal-800/30 scale-105' : 'border-slate-200 hover:border-slate-300 opacity-80 hover:opacity-100'
-                    }`}
+                    className={`relative w-12 h-12 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${image === preset.url ? 'border-teal-800 ring-2 ring-teal-800/30 scale-105' : 'border-slate-200 hover:border-slate-300 opacity-80 hover:opacity-100'
+                      }`}
                   >
                     <img
                       src={preset.url}
