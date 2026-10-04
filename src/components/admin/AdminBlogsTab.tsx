@@ -186,9 +186,12 @@ export const AdminBlogsTab: React.FC<AdminBlogsTabProps> = ({
                   {/* Article Image */}
                   <div className="relative h-44 bg-slate-100 overflow-hidden">
                     <img
-                      src={blog.image}
+                      src={blog.image || 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1000&q=80'}
                       alt={blog.title}
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1000&q=80';
+                      }}
                     />
                     <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-slate-900/80 backdrop-blur-xs text-white text-[11px] font-bold">
                       {blog.category}

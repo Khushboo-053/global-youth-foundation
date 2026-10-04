@@ -11,11 +11,14 @@ export const NewsCard: React.FC<{
       {/* Image */}
       <div className="relative h-44 overflow-hidden bg-slate-100">
         <img
-          src={item.image}
+          src={item.image || 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1000&q=80'}
           alt={item.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
           referrerPolicy="no-referrer"
+          onError={(e) => {
+            e.currentTarget.src = 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1000&q=80';
+          }}
         />
         <div className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-md text-teal-800 text-xs font-bold shadow-xs flex items-center gap-1">
           <Tag className="w-3 h-3 text-teal-600" />

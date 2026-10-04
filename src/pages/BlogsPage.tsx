@@ -195,10 +195,13 @@ export const BlogsPage: React.FC = () => {
             {/* Featured Image */}
             <div className="relative rounded-2xl overflow-hidden shadow-xs bg-slate-100 max-h-[460px]">
               <img
-                src={selectedArticle.image}
+                src={selectedArticle.image || 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1000&q=80'}
                 alt={selectedArticle.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover max-h-[460px]"
                 referrerPolicy="no-referrer"
+                onError={(e) => {
+                  e.currentTarget.src = 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1000&q=80';
+                }}
               />
             </div>
 
@@ -240,7 +243,14 @@ export const BlogsPage: React.FC = () => {
                     className="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs hover:shadow-md transition-all cursor-pointer space-y-2 group"
                   >
                     <div className="h-32 rounded-xl overflow-hidden bg-slate-100">
-                      <img src={rel.image} alt={rel.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      <img 
+                        src={rel.image || 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1000&q=80'} 
+                        alt={rel.title} 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => {
+                          e.currentTarget.src = 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1000&q=80';
+                        }}
+                      />
                     </div>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-teal-50 text-teal-800 uppercase tracking-wider inline-block">
                       {rel.category}
@@ -350,11 +360,14 @@ export const BlogsPage: React.FC = () => {
                       {/* Cover Photo */}
                       <div className="relative h-48 bg-slate-100 overflow-hidden">
                         <img
-                          src={article.image}
+                          src={article.image || 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1000&q=80'}
                           alt={article.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           loading="lazy"
                           referrerPolicy="no-referrer"
+                          onError={(e) => {
+                            e.currentTarget.src = 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1000&q=80';
+                          }}
                         />
                         <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-slate-900/80 backdrop-blur-xs text-white text-[11px] font-bold">
                           {article.category}
