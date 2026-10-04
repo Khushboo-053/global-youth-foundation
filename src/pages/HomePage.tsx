@@ -453,7 +453,7 @@ export const HomePage: React.FC = () => {
               <NewsCard
                 key={item.id}
                 item={item}
-                onReadMore={(n) => setSelectedNews(n)}
+                onReadMore={(n) => navigate(`/blogs?id=${encodeURIComponent(n.id)}`)}
               />
             ))}
           </div>
