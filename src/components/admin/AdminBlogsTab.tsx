@@ -248,9 +248,10 @@ export const AdminBlogsTab: React.FC<AdminBlogsTabProps> = ({
                 <div className="px-5 py-3.5 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between">
                   <Link
                     to={`/blogs?id=${encodeURIComponent(blog.id)}`}
+                    target="_blank"
                     id={`blog-view-live-${blog.id}`}
                     className="text-xs font-bold text-teal-800 hover:text-teal-950 flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-teal-50 hover:bg-teal-100 transition-colors cursor-pointer"
-                    title={`Open "${blog.title}" live in newsroom`}
+                    title={`Open "${blog.title}" live in newsroom in a new window`}
                   >
                     <span>View Live</span>
                     <ExternalLink className="w-3.5 h-3.5" />

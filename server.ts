@@ -5,7 +5,7 @@ import fs from 'fs';
 import multer from 'multer';
 import { createServer as createViteServer } from 'vite';
 import { ARCHIVAL_EVENTS } from './src/data/archivalEvents';
-import { PROGRAMS } from './src/data/mockData';
+import { PROGRAMS, NEWS_ITEMS } from './src/data/mockData';
 
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3040;
@@ -72,6 +72,11 @@ const DEFAULT_DB = {
     isPublished: true,
     createdAt: e.createdAt || '2026-01-15T10:00:00.000Z'
   })),
+  blogs: NEWS_ITEMS.map(b => ({
+    ...b,
+    isPublished: true,
+    createdAt: '2026-01-15T10:00:00.000Z'
+  })),
   contactMessages: [
     {
       id: 'msg-01',
@@ -137,6 +142,16 @@ function loadDatabase() {
       const parsed = JSON.parse(data);
 
       let changed = false;
+
+      // --- Migration for blogs ---
+      if (!parsed.blogs || !Array.isArray(parsed.blogs)) {
+        parsed.blogs = NEWS_ITEMS.map(b => ({
+          ...b,
+          isPublished: true,
+          createdAt: '2026-01-15T10:00:00.000Z'
+        }));
+        changed = true;
+      }
 
       // --- NON-DESTRUCTIVE events migration ---
       // Only seed archival events that are genuinely missing by ID.
@@ -474,6 +489,76 @@ app.delete('/api/events/:id', (req: Request, res: Response) => {
 
   saveDatabase(db);
   res.json({ success: true, message: 'Event deleted successfully' });
+});
+
+// -------------------------------------------------------------
+// BLOGS CRUD
+// -------------------------------------------------------------
+app.get('/api/blogs', (req: Request, res: Response) => {
+  res.json(db.blogs || []);
+});
+
+app.post('/api/blogs', (req: Request, res: Response) => {
+  const { title, category, date, shortDescription, content, image, author, readTime, isPublished, articleImages } = req.body;
+
+  if (!title) {
+    return res.status(400).json({ error: 'Blog title is required' });
+  }
+
+  const newBlog = {
+    id: 'blog-' + Date.now(),
+    title: title.trim(),
+    category: category || 'Youth Empowerment',
+    date: date || new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    shortDescription: shortDescription || '',
+    content: content || '',
+    image: image || 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80',
+    author: author || 'Editorial Desk, GYF',
+    readTime: readTime || '4 min read',
+    isPublished: isPublished ?? true,
+    articleImages: articleImages || [],
+    createdAt: new Date().toISOString()
+  };
+
+  if (!db.blogs) db.blogs = [];
+  db.blogs.unshift(newBlog);
+  saveDatabase(db);
+  res.status(201).json(newBlog);
+});
+
+app.put('/api/blogs/:id', (req: Request, res: Response) => {
+  const { id } = req.params;
+  if (!db.blogs) db.blogs = [];
+  const index = db.blogs.findIndex((b: any) => b.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({ error: 'Blog article not found' });
+  }
+
+  const existing = db.blogs[index];
+  const updated = {
+    ...existing,
+    ...req.body,
+    updatedAt: new Date().toISOString()
+  };
+
+  db.blogs[index] = updated;
+  saveDatabase(db);
+  res.json(updated);
+});
+
+app.delete('/api/blogs/:id', (req: Request, res: Response) => {
+  const { id } = req.params;
+  if (!db.blogs) db.blogs = [];
+  const initialLength = db.blogs.length;
+  db.blogs = db.blogs.filter((b: any) => b.id !== id);
+
+  if (db.blogs.length === initialLength) {
+    return res.status(404).json({ error: 'Blog article not found' });
+  }
+
+  saveDatabase(db);
+  res.json({ success: true, message: 'Blog deleted successfully' });
 });
 
 // -------------------------------------------------------------

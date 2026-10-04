@@ -1117,6 +1117,19 @@ export const api = {
   // 3. BLOGS / NEWS ARTICLES API
   blogs: {
     async getAll(): Promise<NewsItem[]> {
+      try {
+        const res = await fetch('/api/blogs');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setLocal(STORAGE_KEYS.BLOGS, data);
+            return data;
+          }
+        }
+      } catch (e) {
+        console.warn('Backend /api/blogs fetch error, falling back to local storage:', e);
+      }
+
       if (isSupabaseConfigured && supabase) {
         const { data, error } = await supabase.from('blogs').select('*').order('created_at', { ascending: false });
         if (!error && data && data.length > 0) {
@@ -1138,7 +1151,7 @@ export const api = {
       const updated = local.map(b => {
         const seed = INITIAL_BLOGS.find(s => s.id === b.id);
         if (seed && (!b.articleImages || b.articleImages.length === 0) && seed.articleImages) {
-          return { ...b, articleImages: seed.articleImages, content: b.content.includes('![') ? b.content : seed.content };
+          return { ...b, articleImages: seed.articleImages };
         }
         return b;
       });
@@ -1151,40 +1164,75 @@ export const api = {
     },
 
     async create(blogData: Omit<NewsItem, 'id'>): Promise<NewsItem> {
-      const id = `blog-${Date.now()}`;
-      const newBlog: NewsItem = {
-        ...blogData,
-        id,
-        isPublished: blogData.isPublished ?? true,
-        createdAt: new Date().toISOString()
-      };
+      let createdBlog: NewsItem | null = null;
+      try {
+        const res = await fetch('/api/blogs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(blogData)
+        });
+        if (res.ok) {
+          createdBlog = await res.json();
+        }
+      } catch (e) {
+        console.warn('Backend /api/blogs POST error, using local fallback:', e);
+      }
+
+      if (!createdBlog) {
+        const id = `blog-${Date.now()}`;
+        createdBlog = {
+          ...blogData,
+          id,
+          isPublished: blogData.isPublished ?? true,
+          createdAt: new Date().toISOString()
+        };
+      }
 
       const blogs = getLocal<NewsItem[]>(STORAGE_KEYS.BLOGS, INITIAL_BLOGS);
-      blogs.unshift(newBlog);
+      const existingIdx = blogs.findIndex(b => b.id === createdBlog!.id);
+      if (existingIdx !== -1) {
+        blogs[existingIdx] = createdBlog;
+      } else {
+        blogs.unshift(createdBlog);
+      }
       setLocal(STORAGE_KEYS.BLOGS, blogs);
 
       if (isSupabaseConfigured && supabase) {
         await supabase.from('blogs').insert({
-          id,
-          title: newBlog.title,
-          category: newBlog.category,
-          date: newBlog.date,
-          short_description: newBlog.shortDescription,
-          content: newBlog.content,
-          image: newBlog.image,
-          author: newBlog.author,
-          read_time: newBlog.readTime,
-          is_published: newBlog.isPublished
+          id: createdBlog.id,
+          title: createdBlog.title,
+          category: createdBlog.category,
+          date: createdBlog.date,
+          short_description: createdBlog.shortDescription,
+          content: createdBlog.content,
+          image: createdBlog.image,
+          author: createdBlog.author,
+          read_time: createdBlog.readTime,
+          is_published: createdBlog.isPublished
         });
       }
-      return newBlog;
+      return createdBlog;
     },
 
     async update(id: string, updates: Partial<NewsItem>): Promise<NewsItem | null> {
+      let updatedBlog: NewsItem | null = null;
+      try {
+        const res = await fetch(`/api/blogs/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updates)
+        });
+        if (res.ok) {
+          updatedBlog = await res.json();
+        }
+      } catch (e) {
+        console.warn('Backend /api/blogs PUT error, using local fallback:', e);
+      }
+
       const blogs = getLocal<NewsItem[]>(STORAGE_KEYS.BLOGS, INITIAL_BLOGS);
       const idx = blogs.findIndex(b => b.id === id);
       if (idx !== -1) {
-        blogs[idx] = { ...blogs[idx], ...updates, updatedAt: new Date().toISOString() };
+        blogs[idx] = updatedBlog ? updatedBlog : { ...blogs[idx], ...updates, updatedAt: new Date().toISOString() };
         setLocal(STORAGE_KEYS.BLOGS, blogs);
 
         if (isSupabaseConfigured && supabase) {
@@ -1202,23 +1250,26 @@ export const api = {
         }
         return blogs[idx];
       }
-      return null;
+      return updatedBlog;
     },
 
     async togglePublish(id: string): Promise<boolean> {
       const blogs = getLocal<NewsItem[]>(STORAGE_KEYS.BLOGS, INITIAL_BLOGS);
       const blog = blogs.find(b => b.id === id);
       if (!blog) return false;
-      blog.isPublished = !blog.isPublished;
-      setLocal(STORAGE_KEYS.BLOGS, blogs);
-
-      if (isSupabaseConfigured && supabase) {
-        await supabase.from('blogs').update({ is_published: blog.isPublished }).eq('id', id);
-      }
+      const nextPub = !blog.isPublished;
+      
+      await api.blogs.update(id, { isPublished: nextPub });
       return true;
     },
 
     async delete(id: string): Promise<boolean> {
+      try {
+        await fetch(`/api/blogs/${id}`, { method: 'DELETE' });
+      } catch (e) {
+        console.warn('Backend /api/blogs DELETE error:', e);
+      }
+
       let blogs = getLocal<NewsItem[]>(STORAGE_KEYS.BLOGS, INITIAL_BLOGS);
       blogs = blogs.filter(b => b.id !== id);
       setLocal(STORAGE_KEYS.BLOGS, blogs);
