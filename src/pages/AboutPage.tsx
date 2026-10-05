@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Target, 
@@ -31,40 +31,64 @@ import {
 import { ORG_INFO } from '../data/mockData';
 import { useApp } from '../context/AppContext';
 import { LeadershipMember } from '../types';
+import { MemberLightboxModal } from '../components/MemberLightboxModal';
 
 const DEFAULT_LEADERS: LeadershipMember[] = [
   {
     id: 'lead-founder',
     name: 'Mr. Touseef Mehraj Raina',
-    role: 'Founder',
+    role: 'Founder/Chairman',
     bio: 'Established GYF in 2010 together with socially conscious students to champion youth empowerment, peace, human rights, and humanitarian causes across Jammu, Kashmir, and Ladakh.',
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80'
   },
   {
-    id: 'lead-2',
+    id: 'lead-suhail',
+    name: 'Suhail Aslam',
+    role: 'Co-Founder',
+    bio: 'Co-Founder dedicated to social service, community development, youth empowerment, and creating positive change through meaningful grassroots initiatives.',
+    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80'
+  },
+  {
+    id: 'lead-yasir',
+    name: 'Syed Yasir Ali Jalali',
+    role: 'Co Founder',
+    bio: 'A passionate community leader and Co-Founder, committed to empowering youth, supporting communities, and driving positive social change.',
+    image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&q=80'
+  },
+  {
+    id: 'lead-zahid',
+    name: 'Zahid Fayaz Mir',
+    role: 'District Coordinator Baramulla',
+    bio: 'Our commitment is unwavering to empower youth, strengthen communities and create lasting pathways toward a future of dignity, opportunity and impact.',
+    image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=600&q=80'
+  },
+  {
+    id: 'lead-shafia',
     name: 'Shafia Hassan',
     role: 'Head of Grievance Redressal & Legal Aid',
     bio: 'Paralegal specialist committed to accessible justice, citizen rights, and transparent civic dispute mediation.',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80'
+    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80'
   },
   {
-    id: 'lead-3',
+    id: 'lead-muzamil',
     name: 'Muzamil Bashir',
     role: 'Director of Programs & Youth Partnerships',
     bio: 'Mobilizing student councils, community development initiatives, and environmental chapters across regional districts.',
-    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80'
+    image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=600&q=80'
   },
   {
-    id: 'lead-4',
+    id: 'lead-rabia',
     name: 'Dr. Rabia Qadir',
     role: 'Chief Advisor - Health & Community Upliftment',
     bio: 'Public health researcher guiding adolescent wellness drives, substance prevention clinics, and humanitarian outreach.',
-    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80'
+    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=600&q=80'
   }
 ];
 
 export const AboutPage: React.FC = () => {
   const { websiteContent } = useApp();
+  const [selectedMemberIndex, setSelectedMemberIndex] = useState<number | null>(null);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   const leadershipTeam = (websiteContent?.leadershipTeam && websiteContent.leadershipTeam.length > 0)
     ? websiteContent.leadershipTeam
@@ -580,26 +604,45 @@ export const AboutPage: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {leadershipTeam.map((member, i) => (
-              <div key={i} className="group bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden text-left hover:border-teal-300 transition-all shadow-xs">
-                <div className="h-52 overflow-hidden bg-slate-200">
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    loading="lazy"
-                    referrerPolicy="no-referrer"
-                  />
-                </div>
-                <div className="p-5 space-y-1.5">
-                  <h3 className="text-base font-bold text-slate-900 group-hover:text-teal-700 transition-colors">
-                    {member.name}
-                  </h3>
-                  <div className="text-xs font-semibold text-teal-700">
-                    {member.role}
+              <div 
+                key={i} 
+                onClick={() => {
+                  setSelectedMemberIndex(i);
+                  setIsLightboxOpen(true);
+                }}
+                className="group bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden text-left hover:border-teal-400 transition-all shadow-xs hover:shadow-md cursor-pointer flex flex-col justify-between"
+              >
+                <div>
+                  <div className="h-56 overflow-hidden bg-slate-200 relative">
+                    <img
+                      src={member.image}
+                      alt={member.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                      referrerPolicy="no-referrer"
+                    />
+                    <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-2">
+                      <div className="px-3 py-1.5 rounded-full bg-slate-900/90 backdrop-blur-xs border border-white/20 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-all">
+                        <Eye className="w-3.5 h-3.5 text-teal-400" />
+                        <span>Click to view photos</span>
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-xs text-slate-500 pt-2 leading-relaxed">
-                    {member.bio}
-                  </p>
+                  <div className="p-5 space-y-1.5">
+                    <h3 className="text-base font-bold text-slate-900 group-hover:text-teal-700 transition-colors">
+                      {member.name}
+                    </h3>
+                    <div className="text-xs font-semibold text-teal-700">
+                      {member.role}
+                    </div>
+                    <p className="text-xs text-slate-500 pt-2 leading-relaxed line-clamp-3">
+                      {member.bio}
+                    </p>
+                  </div>
+                </div>
+                <div className="px-5 pb-4 text-[11px] font-bold text-teal-700 group-hover:text-teal-800 flex items-center gap-1 transition-colors">
+                  <span>View photo & bio</span>
+                  <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
             ))}
@@ -643,6 +686,14 @@ export const AboutPage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Member Photo Lightbox Modal */}
+      <MemberLightboxModal
+        isOpen={isLightboxOpen}
+        onClose={() => setIsLightboxOpen(false)}
+        members={leadershipTeam}
+        initialIndex={selectedMemberIndex !== null ? selectedMemberIndex : 0}
+      />
 
     </div>
   );

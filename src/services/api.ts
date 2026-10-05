@@ -60,30 +60,51 @@ export const DEFAULT_LEADERSHIP_COUNCIL: LeadershipMember[] = [
   {
     id: 'lead-1',
     name: 'Mr. Touseef Mehraj Raina',
-    role: 'Founder',
+    role: 'Founder/Chairman',
     bio: 'Established GYF in 2010 to promote social change, community development, youth empowerment, and humanitarian causes across Jammu, Kashmir, and Ladakh.',
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80'
+  },
+  {
+    id: 'lead-suhail',
+    name: 'Suhail Aslam',
+    role: 'Co-Founder',
+    bio: 'Co-Founder dedicated to social service, community development, youth empowerment, and creating positive change through meaningful grassroots initiatives.',
+    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80'
+  },
+  {
+    id: 'lead-yasir',
+    name: 'Syed Yasir Ali Jalali',
+    role: 'Co Founder',
+    bio: 'A passionate community leader and Co-Founder, committed to empowering youth, supporting communities, and driving positive social change.',
+    image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&q=80'
+  },
+  {
+    id: 'lead-zahid',
+    name: 'Zahid Fayaz Mir',
+    role: 'District Coordinator Baramulla',
+    bio: 'Our commitment is unwavering to empower youth, strengthen communities and create lasting pathways toward a future of dignity, opportunity and impact.',
+    image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=600&q=80'
   },
   {
     id: 'lead-2',
     name: 'Shafia Hassan',
     role: 'Head of Grievance Redressal & Legal Aid',
     bio: 'Paralegal specialist committed to accessible justice and transparent civic complaint resolution.',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80'
+    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80'
   },
   {
     id: 'lead-3',
     name: 'Muzamil Bashir',
     role: 'Director of Programs & Youth Partnerships',
     bio: 'Mobilizing student councils and environmental chapters across regional higher education centers.',
-    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80'
+    image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=600&q=80'
   },
   {
     id: 'lead-4',
     name: 'Dr. Rabia Qadir',
     role: 'Chief Advisor - Health & Community Upliftment',
     bio: 'Public health researcher guiding adolescent wellness drives and winter relief campaigns.',
-    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80'
+    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=600&q=80'
   }
 ];
 
