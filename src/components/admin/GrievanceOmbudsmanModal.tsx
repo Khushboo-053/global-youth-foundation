@@ -13,7 +13,8 @@ import {
   Mail,
   Phone,
   Paperclip,
-  Tag
+  Tag,
+  Trash2
 } from 'lucide-react';
 import { GrievanceRecord, ComplaintStatus, UserAccount } from '../../types';
 import { Modal } from '../Modal';
