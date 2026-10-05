@@ -779,8 +779,7 @@ export function initSeedDataIfEmpty(): void {
   if (!localStorage.getItem(STORAGE_KEYS.DONATIONS)) {
     setLocal(STORAGE_KEYS.DONATIONS, SEED_DONATIONS);
   }
-  const existingGrievances = getLocal<GrievanceRecord[]>(STORAGE_KEYS.GRIEVANCES, []);
-  if (!existingGrievances || existingGrievances.length === 0) {
+  if (!localStorage.getItem(STORAGE_KEYS.GRIEVANCES)) {
     const initialWithVolunteer = INITIAL_COMPLAINTS.map(c => {
       if (c.id === 'GYF-2026-319042') {
         return {
@@ -794,12 +793,6 @@ export function initSeedDataIfEmpty(): void {
       return c;
     });
     setLocal(STORAGE_KEYS.GRIEVANCES, initialWithVolunteer);
-  } else {
-    const existingIds = new Set(existingGrievances.map(g => g.id));
-    const toAdd = INITIAL_COMPLAINTS.filter(c => !existingIds.has(c.id));
-    if (toAdd.length > 0) {
-      setLocal(STORAGE_KEYS.GRIEVANCES, [...existingGrievances, ...toAdd]);
-    }
   }
   const existingEvents = getLocal<EventItem[]>(STORAGE_KEYS.EVENTS, []);
   if (!existingEvents || existingEvents.length < INITIAL_EVENTS.length || existingEvents.some(e => e.id.startsWith('ev-0'))) {
@@ -1621,7 +1614,7 @@ export const api = {
 
     async delete(id: string): Promise<boolean> {
       let list = getLocal<GrievanceRecord[]>(STORAGE_KEYS.GRIEVANCES, INITIAL_COMPLAINTS);
-      list = list.filter(g => g.id !== id);
+      list = list.filter(g => g.id.trim().toLowerCase() !== id.trim().toLowerCase());
       setLocal(STORAGE_KEYS.GRIEVANCES, list);
 
       if (isSupabaseConfigured && supabase) {

@@ -8,12 +8,77 @@ import {
   Calendar,
   Layers
 } from 'lucide-react';
-import { GALLERY_ITEMS } from '../data/mockData';
+import { useApp } from '../context/AppContext';
 import { GalleryItem } from '../types';
 
 export const GalleryGrid: React.FC = () => {
+  const { programs, events } = useApp();
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [activeLightboxIndex, setActiveLightboxIndex] = useState<number | null>(null);
+
+  const dynamicGalleryItems = React.useMemo(() => {
+    const items: GalleryItem[] = [];
+
+    // Extract from Programs
+    programs?.forEach(program => {
+      if (program.image) {
+        let cat = 'Campaigns';
+        if (program.category.includes('Workshop') || program.category.includes('Education')) cat = 'Workshops';
+        else if (program.category.includes('Community') || program.category.includes('Relief')) cat = 'Community Work';
+        
+        items.push({
+          id: `prog-${program.id}`,
+          title: program.title,
+          category: cat as any,
+          type: 'photo',
+          url: program.image,
+          thumbnail: program.image,
+          caption: program.shortDescription || program.title,
+          date: program.date || 'Ongoing'
+        });
+      }
+    });
+
+    // Extract from Events
+    events?.forEach(event => {
+      if (event.image) {
+        let cat = 'Events';
+        if (event.category.includes('Workshop') || event.category.includes('Training')) cat = 'Workshops';
+        else if (event.category.includes('Community') || event.category.includes('Drive')) cat = 'Community Work';
+        else if (event.category.includes('Youth') || event.category.includes('Dialogue')) cat = 'Youth Activities';
+
+        items.push({
+          id: `ev-${event.id}`,
+          title: event.title,
+          category: cat as any,
+          type: 'photo',
+          url: event.image,
+          thumbnail: event.image,
+          caption: event.subheading || event.title,
+          date: event.date
+        });
+      }
+      
+      if (event.galleryImages && event.galleryImages.length > 0) {
+        event.galleryImages.forEach((imgUrl, idx) => {
+          items.push({
+            id: `ev-gal-${event.id}-${idx}`,
+            title: `${event.title} - Snapshot`,
+            category: 'Events',
+            type: 'photo',
+            url: imgUrl,
+            thumbnail: imgUrl,
+            caption: event.title,
+            date: event.date
+          });
+        });
+      }
+    });
+
+    // Sort by most recent effectively (since they are just mixed)
+    // Here we'll just return them as they are or reverse
+    return items.reverse();
+  }, [programs, events]);
 
   const categories = [
     'All',
@@ -25,8 +90,8 @@ export const GalleryGrid: React.FC = () => {
   ];
 
   const filteredItems = selectedCategory === 'All'
-    ? GALLERY_ITEMS
-    : GALLERY_ITEMS.filter(item => item.category === selectedCategory);
+    ? dynamicGalleryItems
+    : dynamicGalleryItems.filter(item => item.category === selectedCategory);
 
   const openLightbox = (index: number) => {
     setActiveLightboxIndex(index);
@@ -69,44 +134,50 @@ export const GalleryGrid: React.FC = () => {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        {filteredItems.map((item, index) => (
-          <div
-            key={item.id}
-            onClick={() => openLightbox(index)}
-            className="group relative rounded-2xl overflow-hidden bg-slate-900 cursor-pointer aspect-4/3 shadow-xs hover:shadow-lg transition-all duration-300 border border-slate-200/60"
-          >
-            <img
-              src={item.thumbnail}
-              alt={item.title}
-              className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500 opacity-90 group-hover:opacity-100"
-              loading="lazy"
-              referrerPolicy="no-referrer"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
-            
-            {/* Top Tag */}
-            <div className="absolute top-3 left-3 px-2 py-0.5 rounded-md bg-white/80 backdrop-blur-xs text-[10px] font-bold text-slate-900">
-              {item.category}
-            </div>
+      {filteredItems.length === 0 ? (
+        <div className="py-20 text-center text-slate-400">
+          <p className="text-sm font-semibold">No media items found in this category.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {filteredItems.map((item, index) => (
+            <div
+              key={item.id}
+              onClick={() => openLightbox(index)}
+              className="group relative rounded-2xl overflow-hidden bg-slate-900 cursor-pointer aspect-4/3 shadow-xs hover:shadow-lg transition-all duration-300 border border-slate-200/60"
+            >
+              <img
+                src={item.thumbnail}
+                alt={item.title}
+                className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+                loading="lazy"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
+              
+              {/* Top Tag */}
+              <div className="absolute top-3 left-3 px-2 py-0.5 rounded-md bg-white/80 backdrop-blur-xs text-[10px] font-bold text-slate-900">
+                {item.category}
+              </div>
 
-            {/* Hover Icon */}
-            <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/40 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <Maximize2 className="w-4 h-4" />
-            </div>
+              {/* Hover Icon */}
+              <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/40 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <Maximize2 className="w-4 h-4" />
+              </div>
 
-            {/* Bottom Info */}
-            <div className="absolute bottom-3 left-3 right-3 text-white space-y-0.5">
-              <h4 className="text-xs font-bold truncate leading-snug">
-                {item.title}
-              </h4>
-              <p className="text-[10px] text-slate-300 flex items-center gap-1">
-                <Calendar className="w-2.5 h-2.5" /> {item.date}
-              </p>
+              {/* Bottom Info */}
+              <div className="absolute bottom-3 left-3 right-3 text-white space-y-0.5">
+                <h4 className="text-xs font-bold truncate leading-snug">
+                  {item.title}
+                </h4>
+                <p className="text-[10px] text-slate-300 flex items-center gap-1">
+                  <Calendar className="w-2.5 h-2.5" /> {item.date}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Lightbox Modal */}
       {currentItem && (

@@ -303,6 +303,18 @@ export const AdminGrievancesTab: React.FC<AdminGrievancesTabProps> = ({
                         >
                           <Eye className="w-4 h-4" />
                         </button>
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            if (window.confirm(`Are you sure you want to permanently delete grievance docket "${c.id}" (${c.subject})?`)) {
+                              await onDeleteComplaint(c.id);
+                            }
+                          }}
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                          title="Delete Grievance Docket"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
                     </td>
                   </tr>

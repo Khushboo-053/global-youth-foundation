@@ -597,7 +597,10 @@ export const AdminDashboardPage: React.FC = () => {
                 onUpdateStatus={updateComplaintStatus}
                 onUpdatePriority={updateComplaintPriority}
                 onAssignVolunteer={assignGrievance}
-                onDeleteComplaint={deleteComplaint}
+                onDeleteComplaint={async (id) => {
+                  await deleteComplaint(id);
+                  showToast('Grievance docket deleted successfully');
+                }}
               />
             )}
 

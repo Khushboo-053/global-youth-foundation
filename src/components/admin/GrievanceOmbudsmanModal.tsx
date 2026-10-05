@@ -45,6 +45,7 @@ export const GrievanceOmbudsmanModal: React.FC<GrievanceOmbudsmanModalProps> = (
   const [selectedVolunteerId, setSelectedVolunteerId] = useState('');
   const [department, setDepartment] = useState('Youth Ombudsman Field Wing');
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
 
   if (!grievance) return null;
@@ -336,20 +337,26 @@ export const GrievanceOmbudsmanModal: React.FC<GrievanceOmbudsmanModalProps> = (
           </div>
         </form>
 
-        {/* Footer */}
         <div className="flex items-center justify-between pt-4 border-t border-slate-200">
           {onDeleteComplaint && (
             <button
               type="button"
-              onClick={() => {
+              disabled={isDeleting}
+              onClick={async () => {
                 if (window.confirm('Are you certain you want to permanently delete this grievance docket? This action cannot be undone.')) {
-                  onDeleteComplaint(grievance.id);
-                  onClose();
+                  setIsDeleting(true);
+                  try {
+                    await onDeleteComplaint(grievance.id);
+                    onClose();
+                  } finally {
+                    setIsDeleting(false);
+                  }
                 }
               }}
-              className="text-xs font-bold text-rose-600 hover:text-rose-800"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-rose-600 hover:text-rose-800 hover:bg-rose-50 px-3 py-1.5 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
             >
-              Delete Docket
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>{isDeleting ? 'Deleting Docket...' : 'Delete Docket'}</span>
             </button>
           )}
           <button
