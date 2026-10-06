@@ -117,6 +117,7 @@ export const DEFAULT_WEBSITE_CONTENT: WebsiteContent = {
   secondaryCtaText: 'Become a Member',
   missionText: 'To empower youth, strengthen communities, and promote a peaceful, just, inclusive, and harmonious society.',
   visionText: 'To build a more inclusive, liberal, secular, peaceful, and empowered society where every individual is treated with dignity and has equal opportunities to participate, contribute, and grow.',
+  visionImageUrl: '/hero/community-peace.jpg',
   statYouthTrained: '25,000+',
   statCasesResolved: '1,840+',
   statDistrictsCovered: '10',

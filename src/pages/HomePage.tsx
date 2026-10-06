@@ -55,7 +55,7 @@ export const HomePage: React.FC = () => {
   const heroBackgrounds = useMemo(() => [
     { src: '/hero/peace-with-justice.jpg', alt: 'GYF Peace With Justice march — students and volunteers carrying the foundation banner' },
     { src: '/hero/nasha-mukt.jpg', alt: 'GYF Nasha Mukt Jammu & Kashmir Abhiyan — field campaign with community members' },
-    { src: '/hero/flag-hoisting.jpg', alt: 'GYF youth delegates at a hilltop flag hoisting in Jammu and Kashmir' },
+    { src: '/hero/community-peace.jpg', alt: 'GYF youth community dialogue and peace initiative in Kashmir' },
     { src: '/hero/peace-day.jpg', alt: 'GYF International Peace Day candle vigil for justice, dignity, and peace' }
   ], []);
 
@@ -246,7 +246,7 @@ export const HomePage: React.FC = () => {
             <div className="lg:col-span-5 space-y-4">
               <div className="relative rounded-2xl overflow-hidden shadow-lg border border-slate-200">
                 <img
-                  src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80"
+                  src={websiteContent?.visionImageUrl || '/hero/community-peace.jpg'}
                   alt="GYF youth engagement"
                   className="w-full h-80 object-cover"
                   loading="lazy"

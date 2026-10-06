@@ -418,6 +418,7 @@ export interface WebsiteContent {
   secondaryCtaText: string;
   missionText: string;
   visionText: string;
+  visionImageUrl?: string;
   statYouthTrained: string;
   statCasesResolved: string;
   statDistrictsCovered: string;

@@ -90,6 +90,7 @@ export const AdminWebsiteContentTab: React.FC = () => {
   const [visionText, setVisionText] = useState(
     'Our vision is to build a more inclusive, liberal, secular, peaceful, and empowered society where every individual is treated with dignity and has equal opportunities to participate, contribute, and grow.'
   );
+  const [visionImageUrl, setVisionImageUrl] = useState('/hero/community-peace.jpg');
 
   // Impact Metrics
   const [statYouthTrained, setStatYouthTrained] = useState('25,000+');
@@ -175,6 +176,7 @@ export const AdminWebsiteContentTab: React.FC = () => {
       if (websiteContent.secondaryCtaText) setSecondaryCtaText(websiteContent.secondaryCtaText);
       if (websiteContent.missionText) setMissionText(websiteContent.missionText);
       if (websiteContent.visionText) setVisionText(websiteContent.visionText);
+      if (websiteContent.visionImageUrl) setVisionImageUrl(websiteContent.visionImageUrl);
       if (websiteContent.statYouthTrained) setStatYouthTrained(websiteContent.statYouthTrained);
       if (websiteContent.statCasesResolved) setStatCasesResolved(websiteContent.statCasesResolved);
       if (websiteContent.statDistrictsCovered) setStatDistrictsCovered(websiteContent.statDistrictsCovered);
@@ -322,6 +324,7 @@ export const AdminWebsiteContentTab: React.FC = () => {
         secondaryCtaText,
         missionText,
         visionText,
+        visionImageUrl,
         statYouthTrained,
         statCasesResolved,
         statDistrictsCovered,
@@ -366,6 +369,7 @@ export const AdminWebsiteContentTab: React.FC = () => {
         setSecondaryCtaText(reset.secondaryCtaText);
         setMissionText(reset.missionText);
         setVisionText(reset.visionText);
+        setVisionImageUrl(reset.visionImageUrl || '/hero/community-peace.jpg');
         setStatYouthTrained(reset.statYouthTrained);
         setStatCasesResolved(reset.statCasesResolved);
         setStatDistrictsCovered(reset.statDistrictsCovered);
@@ -788,6 +792,14 @@ export const AdminWebsiteContentTab: React.FC = () => {
                 className="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-teal-800"
               />
             </div>
+          </div>
+          
+          <div className="pt-2 border-t border-slate-100">
+            <DragDropImageUpload
+              label="Our Core Vision Image (Displayed on Homepage)"
+              value={visionImageUrl}
+              onChange={setVisionImageUrl}
+            />
           </div>
         </div>
 
