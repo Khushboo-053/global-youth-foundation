@@ -33,7 +33,9 @@ export const ProgramsPage: React.FC = () => {
   const [filter, setFilter] = useState<string>('All');
 
   const allProgramsList = (programs && programs.length > 0) ? programs : PROGRAMS;
-  const activePrograms = allProgramsList.filter(p => !p.status || p.status === 'Active' || (p.status as any) === 'Published');
+  const activePrograms = allProgramsList
+    .filter(p => !p.status || p.status === 'Active' || (p.status as any) === 'Published')
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   const categories = ['All', 'Leadership & Skills', 'Advocacy & Justice', 'Peace & Harmony', 'Climate & Ecology', 'Grassroots Upliftment', 'Education & Learning'];
 

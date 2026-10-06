@@ -66,7 +66,9 @@ export const HomePage: React.FC = () => {
     return () => clearInterval(interval);
   }, [heroBackgrounds.length]);
 
-  const displayPrograms = (livePrograms && livePrograms.length > 0) ? livePrograms.filter(p => !p.status || p.status === 'Active' || (p.status as any) === 'Published') : PROGRAMS;
+  const displayPrograms = ((livePrograms && livePrograms.length > 0) ? livePrograms : PROGRAMS)
+    .filter(p => !p.status || p.status === 'Active' || (p.status as any) === 'Published')
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   const displayEvents = (liveEvents && liveEvents.length > 0)
     ? liveEvents.filter(e => e.isPublished !== false && (e.status as any) !== 'Draft')
     : EVENTS;
