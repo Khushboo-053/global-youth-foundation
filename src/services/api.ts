@@ -2920,6 +2920,40 @@ export const api = {
   },
 
   websiteContent: {
+    async fetchFromServer(): Promise<WebsiteContent | null> {
+      try {
+        const res = await fetch(`/api/website-content?_t=${Date.now()}`, { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          if (data) {
+            setLocal(STORAGE_KEYS.WEBSITE_CONTENT, data);
+            return data;
+          } else {
+            // Server returned null. If we have existing data in localStorage, sync it UP.
+            const localRaw = localStorage.getItem(STORAGE_KEYS.WEBSITE_CONTENT);
+            if (localRaw) {
+              try {
+                const localData = JSON.parse(localRaw);
+                if (localData) {
+                  await fetch('/api/website-content', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(localData)
+                  });
+                  return localData;
+                }
+              } catch (parseErr) {
+                // ignore
+              }
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Backend /api/website-content GET error:', e);
+      }
+      return null;
+    },
+
     get(): WebsiteContent {
       const stored = getLocal<WebsiteContent>(STORAGE_KEYS.WEBSITE_CONTENT, DEFAULT_WEBSITE_CONTENT);
       const isOldPlaceholder = stored?.announcementText && stored.announcementText.includes('Applications Are Now Live! Pro-Bono');
@@ -2942,6 +2976,16 @@ export const api = {
         updatedAt: new Date().toISOString()
       };
       setLocal(STORAGE_KEYS.WEBSITE_CONTENT, updated);
+
+      try {
+        await fetch('/api/website-content', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updated)
+        });
+      } catch (e) {
+        console.warn('Backend /api/website-content PUT error:', e);
+      }
 
       await api.activity.log(
         'usr-gyf-admin-01',

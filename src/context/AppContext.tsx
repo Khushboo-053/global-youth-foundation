@@ -371,7 +371,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         api.chatbot.getFaqs(),
         api.activity.getLogs(),
         api.contact.getAll(),
-        api.notifications.getAll()
+        api.notifications.getAll(),
+        api.websiteContent.fetchFromServer()
       ]);
 
       setUsers(fetchedUsers);

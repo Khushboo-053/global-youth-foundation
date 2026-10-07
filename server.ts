@@ -131,7 +131,8 @@ const DEFAULT_DB = {
     chapter: 'Central Kashmir Hub (Headquarter Secretariat)',
     bio: 'Overseeing youth initiatives, grievance redressal, foundation compliance, and grassroots program deployment.',
     membershipId: 'GYF-ADM-2024-001'
-  }
+  },
+  websiteContent: null
 };
 
 // Database helper functions
@@ -634,6 +635,18 @@ app.delete('/api/contact/:id', (req: Request, res: Response) => {
 
   saveDatabase(db);
   res.json({ success: true, message: 'Contact message deleted successfully' });
+});
+
+// Website Content
+app.get('/api/website-content', (req: Request, res: Response) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.json(db.websiteContent || null);
+});
+
+app.put('/api/website-content', (req: Request, res: Response) => {
+  db.websiteContent = req.body;
+  saveDatabase(db);
+  res.json(db.websiteContent);
 });
 
 // -------------------------------------------------------------
