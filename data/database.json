@@ -1054,5 +1054,74 @@
       "isPublished": true,
       "createdAt": "2026-01-15T10:00:00.000Z"
     }
-  ]
+  ],
+  "websiteContent": {
+    "announcementText": "GYF Youth Fellowship 2026",
+    "announcementActive": true,
+    "heroTitle": "Empowering Youth. Defending Human Rights. Resolving Grievances.",
+    "heroSubtitle": "Global Youth Foundation operates Kashmir’s leading youth ombudsman network, pro-bono paralegal aid desk, and civic advocacy coalitions for institutional accountability.",
+    "primaryCtaText": "Submit a Grievance",
+    "secondaryCtaText": "Become a Member",
+    "missionText": "To empower youth, strengthen communities, and promote a peaceful, just, inclusive, and harmonious society.",
+    "visionText": "To build a more inclusive, liberal, secular, peaceful, and empowered society where every individual is treated with dignity and has equal opportunities to participate, contribute, and grow.",
+    "visionImageUrl": "/hero/community-peace.jpg",
+    "statYouthTrained": "25,000+",
+    "statCasesResolved": "1,840+",
+    "statDistrictsCovered": "10",
+    "statLegalAidProvided": "3,200+",
+    "contactEmail": "globalyouthfoundation.jk@gmail.com",
+    "contactPhone": "60058 15182 ",
+    "legalAidHotline": "1800-GYF-LEGAL (Toll Free)",
+    "hqAddress": "R&B ROAD, NEAR BOYS HIGHER SECONDARY SCHOOL BARAMULLA",
+    "bankAccountName": "Global Youth Foundation Trust",
+    "bankName": "Jammu & Kashmir Bank Ltd.",
+    "bankAccountNumber": "0012010100009842",
+    "bankIfsc": "JAKA0MACOMS",
+    "bankUpi": "gyf.ombudsman@jkb",
+    "bankQrCodeUrl": "",
+    "leadershipTeam": [
+      {
+        "id": "lead-1",
+        "name": "Mr. Touseef Mehraj Raina",
+        "role": "Founder/Chairman ",
+        "bio": "Established GYF in 2010 to promote social change, community development, youth empowerment, and humanitarian causes across Jammu, Kashmir, and Ladakh.",
+        "image": "/uploads/event-1791385035504.jpg"
+      },
+      {
+        "id": "lead-1791443717081",
+        "name": "Suhail Aslam",
+        "role": "Co-Founder",
+        "bio": "A dedicated social changemaker and Co-Founder of the NGO, committed to empowering communities, supporting youth, and creating meaningful opportunities for positive social change.",
+        "image": "/uploads/event-1791444980255.jpg"
+      },
+      {
+        "id": "lead-1791443868370",
+        "name": "Syed Yasir Ali Jalali",
+        "role": "Co-Founder",
+        "bio": "A passionate community leader and Co-Founder dedicated to youth development, social welfare, and building stronger, more inclusive communities through meaningful initiatives.",
+        "image": "/uploads/event-1791444986296.jpg"
+      },
+      {
+        "id": "lead-1791444007281",
+        "name": "Suhaib Reyaz",
+        "role": "Event Coordinater",
+        "bio": "A proactive and organized Event Coordinator committed to planning and executing impactful events, bringing people together, and ensuring every initiative is carried out smoothly and successfully.",
+        "image": "/uploads/event-1791445627540.jpg"
+      },
+      {
+        "id": "lead-1791444198042",
+        "name": "Zahid Fayaz Mir",
+        "role": "District Coordinator Baramulla",
+        "bio": "Our commitment is unwavering to empower youth strengthen communities and create lasting pathways towards a future of dignity opportunity and impact.",
+        "image": "/uploads/event-1791447659279.jpg"
+      }
+    ],
+    "updatedAt": "2026-10-09T05:34:06.931Z",
+    "helpDeskTitle": "Baramulla & Srinagar Grievance Cell",
+    "helpDeskBadge": "OPEN TODAY",
+    "helpDeskDescription": "Offering free citizen document drafting, legal counseling, student scholarship follow-ups, and ombudsman mediation.",
+    "helpDeskHours": "10:00 AM – 05:00 PM (Mon–Sat)",
+    "helpDeskPhone": "9469099988",
+    "helpDeskLocation": "Baramulla Main Town & Srinagar (Bemina)"
+  }
 }

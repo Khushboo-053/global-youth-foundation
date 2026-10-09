@@ -1092,6 +1092,16 @@ export const AdminWebsiteContentTab: React.FC = () => {
               </div>
 
               <div className="space-y-1">
+                <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider">Official Contact Phone</label>
+                <input
+                  type="text"
+                  value={contactPhone}
+                  onChange={(e) => setContactPhone(e.target.value)}
+                  className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900"
+                />
+              </div>
+
+              <div className="space-y-1">
                 <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider">Official Email</label>
                 <input
                   type="email"
