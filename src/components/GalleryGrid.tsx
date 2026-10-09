@@ -11,10 +11,15 @@ import {
 import { useApp } from '../context/AppContext';
 import { GalleryItem } from '../types';
 
-export const GalleryGrid: React.FC = () => {
+interface GalleryGridProps {
+  previewMode?: boolean;
+}
+
+export const GalleryGrid: React.FC<GalleryGridProps> = ({ previewMode = true }) => {
   const { programs, events } = useApp();
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [activeLightboxIndex, setActiveLightboxIndex] = useState<number | null>(null);
+  const [showAll, setShowAll] = useState(!previewMode);
 
   const dynamicGalleryItems = React.useMemo(() => {
     const items: GalleryItem[] = [];
@@ -93,6 +98,8 @@ export const GalleryGrid: React.FC = () => {
     ? dynamicGalleryItems
     : dynamicGalleryItems.filter(item => item.category === selectedCategory);
 
+  const displayedItems = showAll ? filteredItems : filteredItems.slice(0, 4);
+
   const openLightbox = (index: number) => {
     setActiveLightboxIndex(index);
   };
@@ -103,15 +110,15 @@ export const GalleryGrid: React.FC = () => {
 
   const prevItem = () => {
     if (activeLightboxIndex === null) return;
-    setActiveLightboxIndex((activeLightboxIndex - 1 + filteredItems.length) % filteredItems.length);
+    setActiveLightboxIndex((activeLightboxIndex - 1 + displayedItems.length) % displayedItems.length);
   };
 
   const nextItem = () => {
     if (activeLightboxIndex === null) return;
-    setActiveLightboxIndex((activeLightboxIndex + 1) % filteredItems.length);
+    setActiveLightboxIndex((activeLightboxIndex + 1) % displayedItems.length);
   };
 
-  const currentItem = activeLightboxIndex !== null ? filteredItems[activeLightboxIndex] : null;
+  const currentItem = activeLightboxIndex !== null ? displayedItems[activeLightboxIndex] : null;
 
   return (
     <div className="space-y-8">
@@ -121,7 +128,10 @@ export const GalleryGrid: React.FC = () => {
           <button
             key={cat}
             type="button"
-            onClick={() => setSelectedCategory(cat)}
+            onClick={() => {
+              setSelectedCategory(cat);
+              if (previewMode) setShowAll(false);
+            }}
             className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 ${
               selectedCategory === cat
                 ? 'bg-teal-600 text-white shadow-sm'
@@ -134,13 +144,13 @@ export const GalleryGrid: React.FC = () => {
       </div>
 
       {/* Grid */}
-      {filteredItems.length === 0 ? (
+      {displayedItems.length === 0 ? (
         <div className="py-20 text-center text-slate-400">
           <p className="text-sm font-semibold">No media items found in this category.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {filteredItems.map((item, index) => (
+          {displayedItems.map((item, index) => (
             <div
               key={item.id}
               onClick={() => openLightbox(index)}
@@ -176,6 +186,20 @@ export const GalleryGrid: React.FC = () => {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* View All Button */}
+      {!showAll && filteredItems.length > 4 && (
+        <div className="pt-4 flex justify-center">
+          <button
+            type="button"
+            onClick={() => setShowAll(true)}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-50 text-[#2C3292] hover:bg-blue-100 font-bold border border-blue-200 transition-colors shadow-sm"
+          >
+            <span>View All Media</span>
+            <Layers className="w-4 h-4 text-[#2C3292]" />
+          </button>
         </div>
       )}
 
@@ -241,7 +265,7 @@ export const GalleryGrid: React.FC = () => {
             <div className="p-4 bg-slate-950 text-slate-300 text-xs sm:text-sm border-t border-slate-800 flex justify-between items-center">
               <span>{currentItem.caption}</span>
               <span className="text-xs text-slate-500 font-mono">
-                {activeLightboxIndex !== null ? activeLightboxIndex + 1 : 0} / {filteredItems.length}
+                {activeLightboxIndex !== null ? activeLightboxIndex + 1 : 0} / {displayedItems.length}
               </span>
             </div>
           </div>
