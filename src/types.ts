@@ -434,6 +434,7 @@ export interface WebsiteContent {
   bankUpi: string;
   bankQrCodeUrl?: string;
   leadershipTeam: LeadershipMember[];
+  testimonials?: Testimonial[];
   updatedAt?: string;
   helpDeskTitle?: string;
   helpDeskBadge?: string;

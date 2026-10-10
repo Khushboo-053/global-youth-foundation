@@ -29,7 +29,8 @@ import {
 } from 'lucide-react';
 import { CouncilMemberModal } from './CouncilMemberModal';
 import { useApp } from '../../context/AppContext';
-import { LeadershipMember } from '../../types';
+import { LeadershipMember, Testimonial } from '../../types';
+import { TESTIMONIALS } from '../../data/mockData';
 
 export type { LeadershipMember };
 
@@ -159,6 +160,7 @@ export const AdminWebsiteContentTab: React.FC = () => {
 
   // Leadership Team (About Page)
   const [leadershipTeam, setLeadershipTeam] = useState<LeadershipMember[]>(DEFAULT_LEADERS);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(TESTIMONIALS);
   const [isCouncilModalOpen, setIsCouncilModalOpen] = useState(false);
   const [editingCouncilMember, setEditingCouncilMember] = useState<LeadershipMember | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -199,6 +201,9 @@ export const AdminWebsiteContentTab: React.FC = () => {
       if (websiteContent.helpDeskLocation) setHelpDeskLocation(websiteContent.helpDeskLocation);
       if (Array.isArray(websiteContent.leadershipTeam) && websiteContent.leadershipTeam.length > 0) {
         setLeadershipTeam(websiteContent.leadershipTeam);
+      }
+      if (Array.isArray(websiteContent.testimonials) && websiteContent.testimonials.length > 0) {
+        setTestimonials(websiteContent.testimonials);
       }
     }
   }, [websiteContent]);
@@ -311,6 +316,30 @@ export const AdminWebsiteContentTab: React.FC = () => {
     }
   };
 
+  const handleUpdateTestimonial = (id: string, field: keyof Testimonial, value: string) => {
+    setTestimonials(prev => prev.map(m => m.id === id ? { ...m, [field]: value } : m));
+  };
+
+  const handleAddTestimonial = () => {
+    const newTestimonial: Testimonial = {
+      id: `test-${Date.now()}`,
+      name: 'New Personality',
+      role: 'Guest Speaker',
+      location: 'Srinagar, J&K',
+      story: 'Enter genuine feedback here...',
+      image: '',
+      program: 'General Endorsement',
+      year: new Date().getFullYear().toString()
+    };
+    setTestimonials([...testimonials, newTestimonial]);
+  };
+
+  const handleRemoveTestimonial = (id: string) => {
+    if (window.confirm('Are you sure you want to remove this feedback?')) {
+      setTestimonials(testimonials.filter(t => t.id !== id));
+    }
+  };
+
   const handleSaveAll = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
@@ -340,6 +369,7 @@ export const AdminWebsiteContentTab: React.FC = () => {
         bankUpi,
         bankQrCodeUrl,
         leadershipTeam,
+        testimonials,
         helpDeskTitle,
         helpDeskBadge,
         helpDeskDescription,
@@ -385,6 +415,7 @@ export const AdminWebsiteContentTab: React.FC = () => {
         setBankUpi(reset.bankUpi);
         setBankQrCodeUrl(reset.bankQrCodeUrl || '');
         setLeadershipTeam(reset.leadershipTeam);
+        setTestimonials(reset.testimonials || TESTIMONIALS);
         setHelpDeskTitle(reset.helpDeskTitle || 'Baramulla & Srinagar Grievance Cell');
         setHelpDeskBadge(reset.helpDeskBadge || 'OPEN TODAY');
         setHelpDeskDescription(reset.helpDeskDescription || 'Offering free citizen document drafting, legal counseling, student scholarship follow-ups, and ombudsman mediation.');
@@ -685,6 +716,141 @@ export const AdminWebsiteContentTab: React.FC = () => {
                   label="Photo URL"
                   value={member.image}
                   onChange={(url) => handleUpdateLeader(member.id, 'image', url)}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* SECTION 2.5: Testimonials & Feedback */}
+        <div className="p-5 sm:p-6 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center">
+                <Megaphone className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider">
+                  Testimonials & Feedback (Real Impact)
+                </h3>
+                <p className="text-[11px] text-slate-400">
+                  Manage genuine feedback from respected personalities and community members
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleAddTestimonial}
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-xs hover:shadow-md transition-all cursor-pointer w-fit"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Add Feedback</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {testimonials.map((testimonial, index) => (
+              <div
+                key={testimonial.id || index}
+                className="p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition-all space-y-3 relative group"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-200 shrink-0 border border-slate-300 relative shadow-2xs">
+                    <img
+                      src={testimonial.image || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}
+                      alt={testimonial.name}
+                      className="w-full h-full object-cover"
+                      referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80';
+                      }}
+                    />
+                  </div>
+
+                  <div className="flex-1 space-y-2">
+                    <div>
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        Full Name
+                      </label>
+                      <input
+                        type="text"
+                        value={testimonial.name}
+                        onChange={(e) => handleUpdateTestimonial(testimonial.id, 'name', e.target.value)}
+                        className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-bold text-slate-900 focus:outline-none focus:ring-1 focus:ring-amber-600"
+                        placeholder="e.g. Dr. John Doe"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        Role / Designation
+                      </label>
+                      <input
+                        type="text"
+                        value={testimonial.role || ''}
+                        onChange={(e) => handleUpdateTestimonial(testimonial.id, 'role', e.target.value)}
+                        className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-semibold text-amber-700 focus:outline-none focus:ring-1 focus:ring-amber-600"
+                        placeholder="e.g. Community Health Partner"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveTestimonial(testimonial.id)}
+                      title="Remove Feedback"
+                      className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                      Location
+                    </label>
+                    <input
+                      type="text"
+                      value={testimonial.location}
+                      onChange={(e) => handleUpdateTestimonial(testimonial.id, 'location', e.target.value)}
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-amber-600"
+                      placeholder="e.g. Srinagar, J&K"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                      Program / Initiative
+                    </label>
+                    <input
+                      type="text"
+                      value={testimonial.program}
+                      onChange={(e) => handleUpdateTestimonial(testimonial.id, 'program', e.target.value)}
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-amber-600"
+                      placeholder="e.g. Youth Empowerment"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                    Feedback / Quote
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={testimonial.story}
+                    onChange={(e) => handleUpdateTestimonial(testimonial.id, 'story', e.target.value)}
+                    className="w-full p-2 rounded-lg bg-white border border-slate-200 text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-amber-600"
+                    placeholder="Enter genuine feedback here..."
+                  />
+                </div>
+
+                <DragDropImageUpload
+                  label="Photograph URL"
+                  value={testimonial.image}
+                  onChange={(url) => handleUpdateTestimonial(testimonial.id, 'image', url)}
                 />
               </div>
             ))}

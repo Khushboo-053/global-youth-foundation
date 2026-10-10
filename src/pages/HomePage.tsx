@@ -533,7 +533,7 @@ export const HomePage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {TESTIMONIALS.map((item) => (
+            {(websiteContent?.testimonials && websiteContent.testimonials.length > 0 ? websiteContent.testimonials : TESTIMONIALS).map((item) => (
               <TestimonialCard key={item.id} item={item} />
             ))}
           </div>
