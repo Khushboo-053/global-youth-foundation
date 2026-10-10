@@ -320,7 +320,7 @@ export const AdminWebsiteContentTab: React.FC = () => {
     setTestimonials(prev => prev.map(m => m.id === id ? { ...m, [field]: value } : m));
   };
 
-  const handleAddTestimonial = () => {
+  const handleAddTestimonial = async () => {
     const newTestimonial: Testimonial = {
       id: `test-${Date.now()}`,
       name: 'New Personality',
@@ -331,12 +331,20 @@ export const AdminWebsiteContentTab: React.FC = () => {
       program: 'General Endorsement',
       year: new Date().getFullYear().toString()
     };
-    setTestimonials([...testimonials, newTestimonial]);
+    const updated = [newTestimonial, ...testimonials];
+    setTestimonials(updated);
+    await updateWebsiteContent({ testimonials: updated });
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 4000);
   };
 
-  const handleRemoveTestimonial = (id: string) => {
+  const handleRemoveTestimonial = async (id: string) => {
     if (window.confirm('Are you sure you want to remove this feedback?')) {
-      setTestimonials(testimonials.filter(t => t.id !== id));
+      const updated = testimonials.filter(t => t.id !== id);
+      setTestimonials(updated);
+      await updateWebsiteContent({ testimonials: updated });
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 4000);
     }
   };
 
