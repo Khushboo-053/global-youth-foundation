@@ -21,7 +21,7 @@ export const ORG_INFO = {
   establishedYear: '2010',
   founder: 'Mr. Touseef Mehraj Raina',
   socialLinks: {
-    facebook: 'https://facebook.com',
+    facebook: 'https://www.facebook.com/share/1KRNv5pQPG/',
     instagram: 'https://instagram.com',
     linkedin: 'https://linkedin.com',
     youtube: 'https://youtube.com',
