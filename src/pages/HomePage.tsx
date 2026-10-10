@@ -72,11 +72,16 @@ export const HomePage: React.FC = () => {
   const displayEvents = [...((liveEvents && liveEvents.length > 0)
     ? liveEvents.filter(e => e.isPublished !== false && (e.status as any) !== 'Draft')
     : EVENTS)].sort((a, b) => {
+      const createdA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const createdB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      if (createdA !== createdB && !isNaN(createdA) && !isNaN(createdB)) {
+        return createdB - createdA;
+      }
       const dateA = new Date(a.date).getTime();
       const dateB = new Date(b.date).getTime();
       if (isNaN(dateA) && isNaN(dateB)) return 0;
-      if (isNaN(dateA)) return -1;
-      if (isNaN(dateB)) return 1;
+      if (isNaN(dateA)) return 1;
+      if (isNaN(dateB)) return -1;
       return dateB - dateA;
     });
   const displayNews = (liveBlogs && liveBlogs.length > 0) ? liveBlogs.filter(b => b.isPublished !== false) : NEWS_ITEMS;
