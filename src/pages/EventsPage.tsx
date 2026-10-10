@@ -37,7 +37,14 @@ export const EventsPage: React.FC = () => {
   const [monographPageIndex, setMonographPageIndex] = useState<number>(0);
   const [modalMode, setModalMode] = useState<'details' | 'documentPage'>('documentPage');
 
-  const allEventsList = (events && events.length > 0) ? events : EVENTS;
+  const allEventsList = [...((events && events.length > 0) ? events : EVENTS)].sort((a, b) => {
+    const dateA = new Date(a.date).getTime();
+    const dateB = new Date(b.date).getTime();
+    if (isNaN(dateA) && isNaN(dateB)) return 0;
+    if (isNaN(dateA)) return -1;
+    if (isNaN(dateB)) return 1;
+    return dateB - dateA;
+  });
 
   useEffect(() => {
     const eventParam = searchParams.get('event');

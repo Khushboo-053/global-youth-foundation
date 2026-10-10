@@ -55,6 +55,13 @@ export const AdminEventsTab: React.FC<AdminEventsTabProps> = ({
     const matchesCategory = categoryFilter === 'all' || ev.category === categoryFilter;
 
     return matchesSearch && matchesStatus && matchesCategory;
+  }).sort((a, b) => {
+    const dateA = new Date(a.date).getTime();
+    const dateB = new Date(b.date).getTime();
+    if (isNaN(dateA) && isNaN(dateB)) return 0;
+    if (isNaN(dateA)) return -1;
+    if (isNaN(dateB)) return 1;
+    return dateB - dateA;
   });
 
   const handleOpenAdd = (category?: string) => {

@@ -69,9 +69,16 @@ export const HomePage: React.FC = () => {
   const displayPrograms = ((livePrograms && livePrograms.length > 0) ? livePrograms : PROGRAMS)
     .filter(p => !p.status || p.status === 'Active' || (p.status as any) === 'Published')
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  const displayEvents = (liveEvents && liveEvents.length > 0)
+  const displayEvents = [...((liveEvents && liveEvents.length > 0)
     ? liveEvents.filter(e => e.isPublished !== false && (e.status as any) !== 'Draft')
-    : EVENTS;
+    : EVENTS)].sort((a, b) => {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+      if (isNaN(dateA) && isNaN(dateB)) return 0;
+      if (isNaN(dateA)) return -1;
+      if (isNaN(dateB)) return 1;
+      return dateB - dateA;
+    });
   const displayNews = (liveBlogs && liveBlogs.length > 0) ? liveBlogs.filter(b => b.isPublished !== false) : NEWS_ITEMS;
 
   const heroTitle = websiteContent?.heroTitle || 'Empowering Youth. Defending Human Rights. Resolving Grievances.';
