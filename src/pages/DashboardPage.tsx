@@ -762,7 +762,7 @@ export const DashboardPage: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-2">
                       <Phone className="w-3.5 h-3.5 text-teal-400 shrink-0" />
-                      <span>Hotline: {websiteContent?.helpDeskPhone || '+91 91035 99292'}</span>
+                      <span>Helpline: {websiteContent?.helpDeskPhone || '+91 91035 99292'}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <MapPin className="w-3.5 h-3.5 text-teal-400 shrink-0" />

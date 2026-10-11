@@ -22,7 +22,6 @@ import { useApp } from '../context/AppContext';
 export const ContactPage: React.FC = () => {
   const { submitContactMessage, websiteContent } = useApp();
   const contactPhone = websiteContent?.contactPhone || ORG_INFO.phone;
-  const legalAidHotline = websiteContent?.legalAidHotline || '1800-GYF-LEGAL (Toll Free)';
   const contactEmail = websiteContent?.contactEmail || ORG_INFO.email;
   const secretariatAddress = websiteContent?.hqAddress || ORG_INFO.addressDisplay;
 
@@ -147,29 +146,6 @@ export const ContactPage: React.FC = () => {
               {/* Info Cards */}
               <div className="space-y-4">
                 
-                {/* Legal Aid Toll-Free Hotline */}
-                {legalAidHotline && (
-                  <div className="p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 flex items-start gap-4">
-                    <div className="w-11 h-11 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
-                      <Phone className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="text-xs font-bold text-emerald-800 uppercase tracking-wider">
-                          Legal Aid Toll-Free Hotline
-                        </h4>
-                        <span className="px-2 py-0.5 rounded-full bg-emerald-200 text-emerald-900 text-[10px] font-bold">24/7 Redressal</span>
-                      </div>
-                      <a
-                        href={`tel:${legalAidHotline.replace(/[^\d+]/g, '')}`}
-                        className="text-base font-extrabold text-slate-900 hover:text-emerald-700 block mt-0.5 font-mono"
-                      >
-                        {legalAidHotline}
-                      </a>
-                      <span className="text-xs text-slate-500">Free pro-bono civil rights helpline</span>
-                    </div>
-                  </div>
-                )}
 
                 {/* Phone */}
                 <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-4">

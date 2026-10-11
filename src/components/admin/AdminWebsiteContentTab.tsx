@@ -104,7 +104,6 @@ export const AdminWebsiteContentTab: React.FC = () => {
   // Contact & Secretariat Info
   const [contactEmail, setContactEmail] = useState('contact@gyf.org');
   const [contactPhone, setContactPhone] = useState('+91 194 245 8921');
-  const [legalAidHotline, setLegalAidHotline] = useState('1800-GYF-LEGAL (Toll Free)');
   const [hqAddress, setHqAddress] = useState('Peace & Civic Action Complex, M.A. Road, Srinagar, J&K 190001');
 
   // Secretariat Help Desk & Grievance Cell (Shown on User Dashboard)
@@ -185,7 +184,6 @@ export const AdminWebsiteContentTab: React.FC = () => {
       if (websiteContent.statLegalAidProvided) setStatLegalAidProvided(websiteContent.statLegalAidProvided);
       if (websiteContent.contactEmail) setContactEmail(websiteContent.contactEmail);
       if (websiteContent.contactPhone) setContactPhone(websiteContent.contactPhone);
-      if (websiteContent.legalAidHotline) setLegalAidHotline(websiteContent.legalAidHotline);
       if (websiteContent.hqAddress) setHqAddress(websiteContent.hqAddress);
       if (websiteContent.bankAccountName) setBankAccountName(websiteContent.bankAccountName);
       if (websiteContent.bankName) setBankName(websiteContent.bankName);
@@ -368,7 +366,6 @@ export const AdminWebsiteContentTab: React.FC = () => {
         statLegalAidProvided,
         contactEmail,
         contactPhone,
-        legalAidHotline,
         hqAddress,
         bankAccountName,
         bankName,
@@ -414,7 +411,6 @@ export const AdminWebsiteContentTab: React.FC = () => {
         setStatLegalAidProvided(reset.statLegalAidProvided);
         setContactEmail(reset.contactEmail);
         setContactPhone(reset.contactPhone);
-        setLegalAidHotline(reset.legalAidHotline);
         setHqAddress(reset.hqAddress);
         setBankAccountName(reset.bankAccountName);
         setBankName(reset.bankName);
@@ -1249,21 +1245,12 @@ export const AdminWebsiteContentTab: React.FC = () => {
                 <Phone className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider">Secretariat & Hotlines</h3>
-                <p className="text-[11px] text-slate-400">Public contact and emergency redressal channels</p>
+                <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider">Secretariat Contact Details</h3>
+                <p className="text-[11px] text-slate-400">Public contact and official communication channels</p>
               </div>
             </div>
 
             <div className="space-y-3">
-              <div className="space-y-1">
-                <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider">Legal Aid Toll-Free Hotline</label>
-                <input
-                  type="text"
-                  value={legalAidHotline}
-                  onChange={(e) => setLegalAidHotline(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900"
-                />
-              </div>
 
               <div className="space-y-1">
                 <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider">Official Contact Phone</label>
@@ -1360,7 +1347,7 @@ export const AdminWebsiteContentTab: React.FC = () => {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider">Hotline Number</label>
+                  <label className="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider">Help Desk Phone</label>
                   <input
                     type="text"
                     value={helpDeskPhone}

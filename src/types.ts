@@ -425,7 +425,6 @@ export interface WebsiteContent {
   statLegalAidProvided: string;
   contactEmail: string;
   contactPhone: string;
-  legalAidHotline: string;
   hqAddress: string;
   bankAccountName: string;
   bankName: string;

@@ -124,7 +124,6 @@ export const DEFAULT_WEBSITE_CONTENT: WebsiteContent = {
   statLegalAidProvided: '3,200+',
   contactEmail: 'contact@gyf.org',
   contactPhone: '+91 194 245 8921',
-  legalAidHotline: '1800-GYF-LEGAL (Toll Free)',
   hqAddress: 'Peace & Civic Action Complex, M.A. Road, Srinagar, J&K 190001',
   bankAccountName: 'Global Youth Foundation Trust',
   bankName: 'Jammu & Kashmir Bank Ltd.',

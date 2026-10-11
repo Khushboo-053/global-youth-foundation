@@ -22,7 +22,6 @@ import { useApp } from '../context/AppContext';
 export const Footer: React.FC = () => {
   const { websiteContent } = useApp();
   const phone = websiteContent?.contactPhone || ORG_INFO.phone;
-  const legalAidHotline = websiteContent?.legalAidHotline || '1800-GYF-LEGAL (Toll Free)';
   const email = websiteContent?.contactEmail || ORG_INFO.email;
   const address = websiteContent?.hqAddress || ORG_INFO.addressDisplay || 'Peace & Civic Action Complex, M.A. Road, Srinagar, J&K 190001';
   return (
@@ -145,17 +144,6 @@ export const Footer: React.FC = () => {
               Official Contact
             </h4>
             <div className="space-y-3 text-sm text-slate-400">
-              {legalAidHotline && (
-                <div className="flex items-start gap-2.5">
-                  <Phone className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <div>
-                    <div className="text-[11px] text-emerald-400 font-semibold">Legal Aid Hotline (24/7)</div>
-                    <a href={`tel:${legalAidHotline.replace(/[^\d+]/g, '')}`} className="font-bold text-white hover:text-emerald-300 font-mono transition-colors">
-                      {legalAidHotline}
-                    </a>
-                  </div>
-                </div>
-              )}
 
               <div className="flex items-start gap-2.5">
                 <Phone className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />

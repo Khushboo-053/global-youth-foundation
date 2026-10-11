@@ -49,24 +49,6 @@
   ],
   "events": [
     {
-      "id": "ev-1791645817492",
-      "title": "khushboo",
-      "description": "qwertyuiopsdfghjklzxcvbnm",
-      "fullDetails": "qwertyuiopsdfghjklzxcvbnm",
-      "date": "oct 10, 2026",
-      "time": "10:00 AM - 04:00 PM IST",
-      "location": "SKICC Auditorium, Srinagar",
-      "image": "/uploads/event-1791645798197.jpeg",
-      "galleryImages": [
-        "/uploads/event-1791645811032.jpg"
-      ],
-      "category": "Peace, Justice & Social Harmony",
-      "status": "Ongoing",
-      "attendeesCount": 50,
-      "isPublished": true,
-      "createdAt": "2026-10-10T15:23:37.492Z"
-    },
-    {
       "id": "ev-1790312090741",
       "title": "Relive Your Childhood: A Two-Day Fun Fair at M.E.T. Campus Sopore",
       "description": "Global Youth Foundation organised a vibrant two-day Fun Fair at M.E.T. Campus, Sopore, bringing together entertainment, creativity and community spirit under the theme “Relive Your Childhood.” The event offered visitors a lively space to step away from routine and enjoy the simple joys of childhood.\n\nThe fair featured an exciting mix of shopping stalls, games and recreational activities, live music, art and craft stalls, food corners, exhibitions and much more. From creative displays and local products to fun-filled games and musical performances, every corner of the fair offered something engaging for visitors of all ages.\n\nMore than just an entertainment event, the Fun Fair created a shared platform for families, youngsters, artists, entrepreneurs and the local community to come together. With its cheerful atmosphere and diverse attractions, the programme celebrated the spirit of togetherness while giving everyone an opportunity to pause, reconnect and relive the joy of childhood.",
@@ -1089,7 +1071,6 @@
     "statLegalAidProvided": "3,200+",
     "contactEmail": "globalyouthfoundation.jk@gmail.com",
     "contactPhone": "9469099988",
-    "legalAidHotline": "NA",
     "hqAddress": "R&B ROAD, NEAR BOYS HIGHER SECONDARY SCHOOL BARAMULLA",
     "bankAccountName": "Global Youth Foundation Trust",
     "bankName": "Jammu & Kashmir Bank Ltd.",
