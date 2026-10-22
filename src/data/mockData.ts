@@ -25,7 +25,7 @@ export const ORG_INFO = {
     instagram: 'https://instagram.com',
     linkedin: 'https://linkedin.com',
     youtube: 'https://youtube.com',
-    twitter: 'https://twitter.com',
+    twitter: 'https://x.com/global_youthjk',
   },
   bankDetails: {
     bankName: 'J&K Bank',

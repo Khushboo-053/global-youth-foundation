@@ -21,7 +21,8 @@ import {
   VolunteerNotificationItem,
   VolunteerActivityReport,
   WebsiteContent,
-  VolunteerApplicationInput
+  VolunteerApplicationInput,
+  VisitorStatsSummary
 } from '../types';
 import { api, initSeedDataIfEmpty, SEED_USERS } from '../services/api';
 import { supabase, isSupabaseConfigured } from '../services/supabase';
@@ -44,6 +45,12 @@ interface AppContextType {
   registeredEvents: string[];
   legalAidAppointments: LegalAidAppointment[];
   isLoadingData: boolean;
+
+  // Admin Visitor Traffic & Analytics (Admin Only)
+  visitorStats: VisitorStatsSummary | null;
+  isLoadingVisitorStats: boolean;
+  refreshVisitorStats: () => Promise<void>;
+  resetVisitorStats: (baselineVisits?: number, baselineUniques?: number) => Promise<void>;
 
   // Volunteer Scoped State & Methods
   volunteerPrograms: VolunteerProgramAssignment[];
@@ -299,6 +306,45 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   });
 
+  // Visitor statistics (Admin only)
+  const [visitorStats, setVisitorStats] = useState<VisitorStatsSummary | null>(null);
+  const [isLoadingVisitorStats, setIsLoadingVisitorStats] = useState<boolean>(false);
+
+  const refreshVisitorStats = useCallback(async () => {
+    if (user?.role !== 'admin') return;
+    setIsLoadingVisitorStats(true);
+    try {
+      const stats = await api.visitors.getStats();
+      setVisitorStats(stats);
+    } catch (err) {
+      console.error('Failed to load visitor statistics:', err);
+    } finally {
+      setIsLoadingVisitorStats(false);
+    }
+  }, [user?.role]);
+
+  const resetVisitorStats = useCallback(async (baselineVisits?: number, baselineUniques?: number) => {
+    if (user?.role !== 'admin') return;
+    setIsLoadingVisitorStats(true);
+    try {
+      await api.visitors.reset(baselineVisits, baselineUniques);
+      const stats = await api.visitors.getStats();
+      setVisitorStats(stats);
+    } catch (err) {
+      console.error('Failed to reset visitor stats:', err);
+    } finally {
+      setIsLoadingVisitorStats(false);
+    }
+  }, [user?.role]);
+
+  useEffect(() => {
+    if (user?.role === 'admin') {
+      refreshVisitorStats();
+    } else {
+      setVisitorStats(null);
+    }
+  }, [user?.role, refreshVisitorStats]);
+
   const [legalAidAppointments, setLegalAidAppointments] = useState<LegalAidAppointment[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.LEGAL_APPOINTMENTS);
@@ -411,12 +457,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           setUser(found);
         }
       }
+
+      if (user?.role === 'admin') {
+        refreshVisitorStats();
+      }
     } catch (err) {
       console.error('Error refreshing backend data:', err);
     } finally {
       setIsLoadingData(false);
     }
-  }, [user?.id]);
+  }, [user?.id, user?.role, refreshVisitorStats]);
 
   useEffect(() => {
     refreshAllData();
@@ -1428,7 +1478,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         websiteContent,
         updateWebsiteContent,
         resetWebsiteContent,
-        refreshAllData
+        refreshAllData,
+        visitorStats,
+        isLoadingVisitorStats,
+        refreshVisitorStats,
+        resetVisitorStats
       }}
     >
       {children}

@@ -59,6 +59,7 @@ import { AdminChatbotTab } from '../components/admin/AdminChatbotTab';
 import { AdminMembershipsTab } from '../components/admin/AdminMembershipsTab';
 import { AdminWebsiteContentTab } from '../components/admin/AdminWebsiteContentTab';
 import { AdminVolunteerAssignmentsTab } from '../components/admin/AdminVolunteerAssignmentsTab';
+import { AdminVisitorsTab } from '../components/admin/AdminVisitorsTab';
 import { ProgramModal } from '../components/admin/ProgramModal';
 import { EventModal } from '../components/admin/EventModal';
 import { ContactDetailModal } from '../components/admin/ContactDetailModal';
@@ -67,6 +68,7 @@ import { GyfLogo } from '../components/GyfLogo';
 
 export type AdminTab =
   | 'overview'
+  | 'visitors'
   | 'users'
   | 'volunteers'
   | 'blogs'
@@ -134,7 +136,10 @@ export const AdminDashboardPage: React.FC = () => {
     createChatbotFaq,
     updateChatbotFaq,
     deleteChatbotFaq,
-    refreshAllData
+    refreshAllData,
+    visitorStats,
+    isLoadingVisitorStats,
+    refreshVisitorStats
   } = useApp();
 
   const navigate = useNavigate();
@@ -244,6 +249,7 @@ export const AdminDashboardPage: React.FC = () => {
 
   const primaryNavItems: NavItem[] = [
     { id: 'overview', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'visitors', label: 'Website Visitors & Traffic', icon: Globe, count: visitorStats?.uniqueVisitors },
     { id: 'users', label: 'Users', icon: Users, count: users.length },
     { id: 'volunteers', label: 'Volunteers', icon: UserCheck, count: volunteers.length, unreadCount: pendingVolunteersCount },
     { id: 'blogs', label: 'Blogs', icon: FileText, count: blogs.length },
@@ -557,6 +563,15 @@ export const AdminDashboardPage: React.FC = () => {
                   setShowEventModal(true);
                 }}
                 onOpenMessageModal={(msg) => setSelectedContactMessage(msg)}
+              />
+            )}
+
+            {/* TAB: WEBSITE VISITORS & TRAFFIC */}
+            {activeTab === 'visitors' && (
+              <AdminVisitorsTab
+                stats={visitorStats}
+                isLoading={isLoadingVisitorStats}
+                onRefresh={refreshVisitorStats}
               />
             )}
 

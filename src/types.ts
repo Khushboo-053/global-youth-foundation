@@ -443,3 +443,53 @@ export interface WebsiteContent {
   helpDeskLocation?: string;
 }
 
+export interface VisitorRecord {
+  id: string;
+  visitorId: string;
+  path: string;
+  referrer?: string;
+  device: 'Desktop' | 'Mobile' | 'Tablet';
+  browser: string;
+  timestamp: string;
+}
+
+export interface VisitorDailyTrend {
+  date: string;
+  visits: number;
+  uniqueVisitors: number;
+}
+
+export interface VisitorPageStat {
+  path: string;
+  label: string;
+  count: number;
+  percentage: number;
+}
+
+export interface VisitorDeviceStat {
+  device: string;
+  count: number;
+  percentage: number;
+}
+
+export interface VisitorBrowserStat {
+  browser: string;
+  count: number;
+  percentage: number;
+}
+
+export interface VisitorStatsSummary {
+  totalVisits: number;
+  uniqueVisitors: number;
+  todayVisits: number;
+  todayUnique: number;
+  thisWeekVisits: number;
+  thisMonthVisits: number;
+  pageBreakdown: VisitorPageStat[];
+  deviceBreakdown: VisitorDeviceStat[];
+  browserBreakdown: VisitorBrowserStat[];
+  dailyTrends: VisitorDailyTrend[];
+  recentVisitors: VisitorRecord[];
+  lastUpdated: string;
+}
+

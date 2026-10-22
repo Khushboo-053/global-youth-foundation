@@ -14,7 +14,8 @@ import {
   Users,
   HeartHandshake,
   ClipboardList,
-  Camera
+  Camera,
+  Globe
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Program, EventItem, ContactMessage, GrievanceRecord, DonationRecord } from '../../types';
@@ -53,16 +54,52 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({
 
   const pendingGrievances = complaints.filter(c => c.currentStatus !== 'Resolved' && c.currentStatus !== 'Closed').length;
 
-  const { volunteerActivityReports } = useApp();
+  const { volunteerActivityReports, visitorStats } = useApp();
   const totalReports = volunteerActivityReports?.length || 0;
   const pendingReports = (volunteerActivityReports || []).filter(r => r.status === 'Submitted').length;
   const reportsWithPhotos = (volunteerActivityReports || []).filter(r => (r.photos && r.photos.length > 0) || r.attachmentUrl).length;
+
+  const totalVisitors = visitorStats?.uniqueVisitors || 0;
+  const totalVisits = visitorStats?.totalVisits || 0;
+  const todayUniqueVisitors = visitorStats?.todayUnique || 0;
+  const todayVisits = visitorStats?.todayVisits || 0;
 
   return (
     <div className="space-y-8">
       
       {/* Primary Required Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
+        
+        {/* Total Website Visitors (Admin Only) */}
+        <div 
+          onClick={() => onNavigateTab('visitors')}
+          id="admin-overview-visitors-card"
+          className="cursor-pointer group p-6 rounded-3xl bg-white border border-slate-200/90 shadow-xs hover:shadow-lg hover:border-emerald-300 transition-all duration-300 flex flex-col justify-between"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-extrabold text-slate-500 uppercase tracking-wider">
+              People Visited
+            </span>
+            <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Globe className="w-6 h-6 stroke-[2.2]" />
+            </div>
+          </div>
+
+          <div className="my-4">
+            <div className="text-4xl font-black text-slate-900 tracking-tight">
+              {totalVisitors.toLocaleString()}
+            </div>
+            <div className="text-xs font-semibold text-emerald-700 mt-1 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse" />
+              <span>+{todayUniqueVisitors} today ({totalVisits.toLocaleString()} views)</span>
+            </div>
+          </div>
+
+          <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-600 group-hover:text-emerald-700">
+            <span>Visitor Analytics</span>
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </div>
+        </div>
         
         {/* Total Programs */}
         <div 
@@ -242,6 +279,15 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({
           >
             <Plus className="w-4 h-4" />
             <span>Add Event</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onNavigateTab('visitors')}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-xs transition-colors"
+          >
+            <Globe className="w-4 h-4" />
+            <span>Traffic Analytics</span>
           </button>
 
           <button

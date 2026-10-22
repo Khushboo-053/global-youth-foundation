@@ -31,6 +31,50 @@ const ScrollToTop: React.FC = () => {
   return null;
 };
 
+// Automatic Background Visitor Tracking (Public Pages only, excluded on Admin routes)
+const VisitorTracker: React.FC = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    // Exclude internal admin dashboard routes from public visitor stats
+    if (pathname.startsWith('/admin')) {
+      return;
+    }
+
+    try {
+      let visitorId = localStorage.getItem('gyf_visitor_id');
+      if (!visitorId) {
+        visitorId = 'vis_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+        localStorage.setItem('gyf_visitor_id', visitorId);
+      }
+
+      // Avoid double-counting rapid repeat hits in same tab within 15s
+      const sessionKey = 'gyf_last_tracked_' + pathname;
+      const lastTracked = sessionStorage.getItem(sessionKey);
+      const now = Date.now();
+      if (lastTracked && now - parseInt(lastTracked, 10) < 15000) {
+        return;
+      }
+      sessionStorage.setItem(sessionKey, now.toString());
+
+      fetch('/api/visitors/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          visitorId,
+          path: pathname,
+          referrer: document.referrer || '',
+          screenWidth: window.innerWidth
+        })
+      }).catch(() => {});
+    } catch {
+      // Safe non-blocking fallback
+    }
+  }, [pathname]);
+
+  return null;
+};
+
 // 404 Fallback
 const NotFoundPage: React.FC = () => (
   <div className="min-h-[70vh] bg-slate-50 flex items-center justify-center p-4">
@@ -68,6 +112,7 @@ export function App() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-teal-500 selection:text-white font-sans antialiased">
       <ScrollToTop />
+      <VisitorTracker />
       
       {/* Global Navigation - hidden on Auth pages and Portals (Normal User, Volunteer, Admin) */}
       {!hidePublicChrome && <Navbar />}
