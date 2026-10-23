@@ -9,12 +9,17 @@ interface GyfLogoProps {
   showText?: boolean;
 }
 
+// Returns the correct logo source based on variant
+const getLogoSrc = (variant: string) => {
+  return variant === 'white' ? '/GYF_Logo_White.svg' : '/GYF_Logo.png';
+};
+
 export const GyfIcon: React.FC<{ size?: number | string; className?: string; color?: string; variant?: 'color' | 'white' }> = ({ 
   size = 40, 
   className = '', 
   variant = 'color'
 }) => {
-  const logoSrc = '/GYF_Logo.png';
+  const logoSrc = getLogoSrc(variant);
   return (
     <img
       src={logoSrc}
@@ -44,7 +49,7 @@ export const GyfLogo: React.FC<GyfLogoProps> = ({
   };
 
   const currentHeight = heightClasses[size] || heightClasses.md;
-  const logoSrc = '/GYF_Logo.png';
+  const logoSrc = getLogoSrc(variant);
 
   return (
     <div className={`inline-flex items-center select-none ${className}`}>
